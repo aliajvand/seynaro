@@ -1,242 +1,347 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>SEYNARO Pitch Deck - REASON Accelerator (Golrang Ventures)</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEYNARO OS • پیچ‌دک رسمی شتاب‌دهنده ریزن (گلرنگ ونچرز)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0AB7A3;
+      --primary-glow: rgba(10, 183, 163, 0.25);
+      --coral: #FE5A40;
+      --coral-glow: rgba(254, 90, 64, 0.25);
+      --bg-dark: #080C14;
+      --card-bg: rgba(15, 23, 42, 0.65);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-white: #FFFFFF;
+      --text-light: #CBD5E1;
+      --text-muted: #94A3B8;
+    }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-font-smoothing: antialiased;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
 
-body {
-  font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #050811;
-  color: #F8FAFC;
-  direction: rtl;
-  overflow-x: hidden;
-}
+    body {
+      background: var(--bg-dark);
+      color: var(--text-white);
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
 
-@page {
-  size: 1920px 1080px;
-  margin: 0;
-}
+    /* Top presentation progress bar */
+    .top-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--coral), var(--primary));
+      z-index: 1000;
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
-.slide {
-  width: 1920px;
-  height: 1080px;
-  max-width: 1920px;
-  max-height: 1080px;
-  position: relative;
-  page-break-after: always;
-  background-color: #070B16;
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(10, 183, 163, 0.07) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(254, 90, 64, 0.06) 0%, transparent 40%),
-    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 60px 60px, 60px 60px;
-  padding: 44px 60px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
-  border-bottom: 2px solid #1E293B;
-}
+    /* Deck container */
+    .deck-container {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
 
-.slide-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
-  padding-bottom: 16px;
-  margin-bottom: 18px;
-}
+    /* Individual Slide */
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 48px 64px 36px 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(18px) scale(0.99);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      background: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(10, 183, 163, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(254, 90, 64, 0.06) 0%, transparent 45%);
+    }
 
-.header-left, .header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+      z-index: 10;
+    }
 
-.badge-tag {
-  background: rgba(10, 183, 163, 0.12);
-  border: 1.5px solid #0AB7A3;
-  color: #0AB7A3;
-  padding: 6px 16px;
-  border-radius: 9999px;
-  font-size: 14px;
-  font-weight: 800;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
+    /* Header */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 24px;
+    }
 
-.badge-tag.coral {
-  background: rgba(254, 90, 64, 0.12);
-  border-color: #FE5A40;
-  color: #FE5A40;
-}
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
 
-.slide-num-pill {
-  background: #0F172A;
-  border: 1px solid #1E293B;
-  color: #94A3B8;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 700;
-}
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(12px);
+      color: var(--text-light);
+    }
 
-.logo-text {
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-  color: #FFFFFF;
-}
+    .badge.teal {
+      color: var(--primary);
+      border-color: rgba(10, 183, 163, 0.35);
+      background: rgba(10, 183, 163, 0.1);
+    }
 
-.logo-text span {
-  color: #0AB7A3;
-}
+    .badge.coral {
+      color: var(--coral);
+      border-color: rgba(254, 90, 64, 0.35);
+      background: rgba(254, 90, 64, 0.1);
+    }
 
-.slide-title-group {
-  margin-bottom: 20px;
-}
+    .slide-counter {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: 1px solid var(--card-border);
+      letter-spacing: 1px;
+    }
 
-.slide-main-title {
-  font-size: 40px;
-  font-weight: 900;
-  line-height: 1.25;
-  color: #FFFFFF;
-  margin-bottom: 6px;
-}
+    /* Typography */
+    .title-group {
+      margin-bottom: 28px;
+    }
 
-.slide-subtitle {
-  font-size: 18px;
-  font-weight: 400;
-  color: #94A3B8;
-  line-height: 1.6;
-}
+    .main-title {
+      font-size: 40px;
+      font-weight: 900;
+      color: var(--text-white);
+      line-height: 1.25;
+      letter-spacing: -0.5px;
+    }
 
-.slide-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  z-index: 10;
-}
+    .sub-title {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
 
-.slide-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 13px;
-  color: #64748B;
-}
+    .gradient-teal {
+      background: linear-gradient(135deg, #0AB7A3 0%, #38BDF8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-.slide-footer-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
+    .gradient-coral {
+      background: linear-gradient(135deg, #FE5A40 0%, #FF8A75 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
-  align-items: center;
-}
+    /* Content Body Layout */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
 
-.card-dark {
-  background: #0F172A;
-  border: 1.5px solid #1E293B;
-  border-radius: 18px;
-  padding: 24px;
-  position: relative;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-}
+    /* Bento Cards */
+    .bento-grid {
+      display: grid;
+      gap: 20px;
+      width: 100%;
+    }
 
-.comp-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1.5px solid #1E293B;
-  background: #0A0F1D;
-  font-size: 13.5px;
-}
+    .bento-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(25px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
-.comp-table th {
-  background: #111827;
-  padding: 12px 10px;
-  color: #94A3B8;
-  font-weight: 700;
-  text-align: center;
-  border-bottom: 2px solid #1E293B;
-}
+    .bento-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(10, 183, 163, 0.35);
+      box-shadow: 0 16px 36px -12px rgba(10, 183, 163, 0.18);
+    }
 
-.comp-table th.th-feature {
-  text-align: right;
-  width: 32%;
-  color: #F8FAFC;
-  font-size: 14px;
-}
+    .bento-card.coral-glow:hover {
+      border-color: rgba(254, 90, 64, 0.35);
+      box-shadow: 0 16px 36px -12px rgba(254, 90, 64, 0.18);
+    }
 
-.comp-table th.th-seynaro {
-  background: rgba(10, 183, 163, 0.15);
-  color: #0AB7A3;
-  font-weight: 900;
-  font-size: 16px;
-  border-left: 2px solid #0AB7A3;
-  border-right: 2px solid #0AB7A3;
-}
+    /* Giant Stat Component */
+    .stat-number {
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
 
-.comp-table td {
-  padding: 10px 8px;
-  text-align: center;
-  border-bottom: 1px solid #1A2436;
-  color: #CBD5E1;
-}
+    .stat-number.coral { color: var(--coral); }
+    .stat-number.teal { color: var(--primary); }
 
-.comp-table td.td-feature {
-  text-align: right;
-  font-weight: 600;
-  color: #F1F5F9;
-}
+    /* Footer */
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #64748B;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      margin-top: 20px;
+    }
 
-.comp-table td.td-seynaro {
-  background: rgba(10, 183, 163, 0.08);
-  font-weight: 800;
-  border-left: 2px solid #0AB7A3;
-  border-right: 2px solid #0AB7A3;
-}
+    /* Interactive floating navigation buttons */
+    .nav-controls {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(20px);
+      padding: 8px 18px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      z-index: 100;
+    }
 
-.comp-table tr:last-child td {
-  border-bottom: none;
-}
-</style>
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      color: #FFFFFF;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 16px;
+    }
+
+    .nav-btn:hover {
+      background: var(--primary);
+      color: #080C14;
+      border-color: var(--primary);
+      transform: scale(1.08);
+    }
+
+    .nav-indicator {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      width: 24px;
+      border-radius: 12px;
+      background: var(--primary);
+    }
+
+    /* Print / PDF generation styles */
+    @media print {
+      body {
+        background: #080C14 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .deck-container {
+        height: auto !important;
+        overflow: visible !important;
+      }
+      .slide {
+        page-break-after: always;
+        break-after: page;
+        position: relative !important;
+        opacity: 1 !important;
+        transform: none !important;
+        width: 1920px !important;
+        height: 1080px !important;
+        display: flex !important;
+        padding: 60px 80px 40px 80px !important;
+        box-sizing: border-box !important;
+      }
+      .nav-controls, .top-progress {
+        display: none !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div class="slide" id="slide-1">
+  <!-- Top Progress Bar -->
+  <div class="top-progress" id="progressBar"></div>
+
+  <!-- Interactive Deck Container -->
+  <div class="deck-container" id="deckContainer">
+
+
+<!-- SLIDE 1: HERO COVER -->
+<div class="slide active" id="slide-1">
   <div class="slide-header">
     <div class="header-right">
-      <div class="logo-container">
-        <svg viewBox="540 360 860 960" width="44" height="50" style="vertical-align: middle;">
+      <svg viewBox="540 360 860 960" width="38" height="42" style="vertical-align: middle;">
   <defs>
     <mask id="logo_m" maskUnits="userSpaceOnUse" x="500" y="300" width="960" height="1100">
       <rect x="500" y="300" width="960" height="1100" fill="#fff"/>
@@ -251,115 +356,111 @@ body {
   <circle cx="1020" cy="740" r="54" fill="#FE5A40"/>
   <circle cx="910" cy="948" r="54" fill="#FE5A40"/>
 </svg>
-        <div class="logo-text">سِینارو <span>SEYNARO</span></div>
-      </div>
+      <span style="font-size: 20px; font-weight: 900; letter-spacing: 0.5px; color: #FFFFFF;">SEYNARO OS <span style="color: #0AB7A3;">• سینارو</span></span>
     </div>
     <div class="header-left">
-      <div class="badge-tag">شتاب‌دهنده هوش مصنوعی REASON • گلرنگ ونچرز</div>
-      <div class="slide-num-pill">ارائه سرمایه‌پذیری</div>
+      <span class="badge coral">ارائه سرمایه‌پذیری</span>
+      <span class="badge teal">شتاب‌دهنده هوش مصنوعی REASON • گلرنگ ونچرز</span>
+      <span class="slide-counter">۰۱ / ۱۰</span>
     </div>
   </div>
 
-  <div class="slide-body" style="align-items: center; text-align: center; justify-content: center;">
-    <div class="badge-tag coral" style="font-size: 15px; padding: 6px 20px; margin-bottom: 20px;">سیستم‌عامل تداوم کار و جانشین‌پروری عملیاتی</div>
+  <div class="slide-body" style="text-align: center; align-items: center;">
+    <div class="badge teal" style="margin-bottom: 20px; font-size: 14px; padding: 8px 22px;">
+      سیستم‌عامل تداوم کار و جانشین‌پروری عملیاتی • هوش مصنوعی استنتاجی Z3
+    </div>
     
-    <h1 style="font-size: 64px; font-weight: 900; line-height: 1.25; margin-bottom: 16px; color: #FFFFFF;">
+    <h1 style="font-size: 56px; font-weight: 900; line-height: 1.25; margin-bottom: 20px;">
       آدما جابه‌جا میشن؛<br>
-      <span style="color: #0AB7A3;">اما کار شرکت هرگز متوقف نمی‌شه.</span>
+      <span class="gradient-teal">اما کار شرکت هرگز متوقف نمیشه.</span>
     </h1>
-    
-    <p style="font-size: 22px; color: #94A3B8; max-width: 900px; line-height: 1.6; margin-bottom: 40px;">
-      راهکار جامع ثبت قلق‌های تجربی و منطق تصمیم با هوش مصنوعی قطعی (Z3)، با تفکیک مالکیت سند از منطق کار
+
+    <p style="font-size: 19px; color: #94A3B8; max-width: 820px; line-height: 1.6; margin-bottom: 40px;">
+      راهکار جامع ثبت قلق‌های تجربی و استخراج خودکار منطق تصمیم‌گیری بدون سرور ابری خارجی، با تفکیک کامل مالکیت سند از منطق کار.
     </p>
 
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; width: 100%; max-width: 1280px; text-align: right;">
-      <div class="card-dark" style="border-color: #0AB7A3;">
-        <div style="font-size: 13px; font-weight: 800; color: #0AB7A3; margin-bottom: 6px;">ستون ۰۱ • منطق قطعی</div>
-        <div style="font-size: 18px; font-weight: 900; color: #FFFFFF; margin-bottom: 8px;">استنتاج Z3 SMT</div>
-        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">اثبات ریاضی درستی تصمیمات بدون توهم مدل‌های زبانی.</div>
+    <!-- 3 Bento Hero Cards -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; width: 100%; max-width: 1100px;">
+      <div class="bento-card" style="text-align: right; border-color: rgba(10, 183, 163, 0.25);">
+        <div style="font-size: 28px; margin-bottom: 12px;">🔒</div>
+        <div style="font-size: 18px; font-weight: 800; color: #FFFFFF; margin-bottom: 6px;">گاوصندوق کارمند</div>
+        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">فایل خام در کنترل اختصاصی کاربر؛ منطق تصمیم در خدمت تداوم شرکت، بدون تضعیف امنیت شغلی.</div>
       </div>
 
-      <div class="card-dark" style="border-color: #0AB7A3;">
-        <div style="font-size: 13px; font-weight: 800; color: #0AB7A3; margin-bottom: 6px;">ستون ۰۲ • حفظ محرمانگی</div>
-        <div style="font-size: 18px; font-weight: 900; color: #FFFFFF; margin-bottom: 8px;">تفکیک سند از منطق</div>
-        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">فایل خام در گاوصندوق کارمند؛ منطق تصمیم در خدمت تداوم شرکت.</div>
+      <div class="bento-card" style="text-align: right; border-color: rgba(10, 183, 163, 0.35); background: rgba(10, 183, 163, 0.08);">
+        <div style="font-size: 28px; margin-bottom: 12px;">⚙️</div>
+        <div style="font-size: 18px; font-weight: 800; color: #0AB7A3; margin-bottom: 6px;">استنتاج قطعی Z3 SMT</div>
+        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">اثبات ریاضی درستی تصمیمات بدون توهم، خطا یا وابستگی به مدل‌های زبانی غیرقابل اعتماد.</div>
       </div>
 
-      <div class="card-dark" style="border-color: #FE5A40;">
-        <div style="font-size: 13px; font-weight: 800; color: #FE5A40; margin-bottom: 6px;">ستون ۰۳ • آزمون عملی</div>
-        <div style="font-size: 18px; font-weight: 900; color: #FFFFFF; margin-bottom: 8px;">سنجش Shadow Run</div>
-        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">مانور عملی جانشین در حل سناریوهای بحرانی قبل از غیبت نفر اصلی.</div>
-      </div>
-
-      <div class="card-dark" style="border-color: #0AB7A3;">
-        <div style="font-size: 13px; font-weight: 800; color: #0AB7A3; margin-bottom: 6px;">ستون ۰۴ • امنیت زیرساخت</div>
-        <div style="font-size: 18px; font-weight: 900; color: #FFFFFF; margin-bottom: 8px;">۱۰۰٪ On-Premise</div>
-        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">استقرار لوکال روی سرور شرکت بدون نیاز به اینترنت و بدون نشت داده.</div>
+      <div class="bento-card coral-glow" style="text-align: right; border-color: rgba(254, 90, 64, 0.25);">
+        <div style="font-size: 28px; margin-bottom: 12px;">🎯</div>
+        <div style="font-size: 18px; font-weight: 800; color: #FE5A40; margin-bottom: 6px;">سنجش عملی Shadow Run</div>
+        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">مانور حل بحران‌های واقعی توسط جانشین در محیط آزمایشی قبل از غیبت نفر اصلی.</div>
       </div>
     </div>
   </div>
 
   <div class="slide-footer">
-    <div>ارائه ارزیابی شتاب‌دهنده REASON (گلرنگ ونچرز) • پاییز ۱۴۰۵</div>
-    <div class="slide-footer-right">
-      <span>مرحله فعلی: دارای دموی تعاملی کارکردی (Interactive Demo Ready)</span>
-    </div>
+    <div>مرحله فعلی: دارای دموی تعاملی کارکردی (Interactive Functional Demo)</div>
+    <div style="color: #94A3B8;">جلسه ارائه حضوری کمیته سرمایه‌گذاری • پاییز ۱۴۰۵</div>
   </div>
 </div>
 
 
+
+<!-- SLIDE 2: PROBLEM (اسلاید ۱ از ۸) -->
 <div class="slide" id="slide-2">
   <div class="slide-header">
     <div class="header-right">
-      <div class="badge-tag coral">اسلاید ۱ از ۸ • مسئله</div>
+      <span class="badge coral">اسلاید ۱ از ۸ • مسئله</span>
     </div>
     <div class="header-left">
-      <div class="slide-num-pill">۰۲ / ۱۰</div>
+      <span class="slide-counter">۰۲ / ۱۰</span>
     </div>
   </div>
 
-  <div class="slide-title-group">
-    <h1 class="slide-main-title">
-      اگر فردا صبح ۳ کارشناس کلیدی نیایند، <span style="color: #FE5A40;">شرکت چقدر تاوان می‌دهد؟</span>
+  <div class="title-group">
+    <h1 class="main-title">
+      اگر فردا صبح ۳ کارشناس کلیدی نیایند، <span class="gradient-coral">شرکت چقدر تاوان می‌دهد؟</span>
     </h1>
-    <p class="slide-subtitle">
-      دستورالعمل‌ها در سیستم هست؛ اما قلق‌های حل بحران در ذهن افراد محبوس است و با رفتن آن‌ها عملیات متوقف می‌شود.
+    <p class="sub-title">
+      دستورالعمل‌ها در اتوماسیون ثبت است؛ اما قلق‌های حل بحران در ذهن افراد محبوس است و با رفتن آن‌ها خط عملیات متوقف می‌شود.
     </p>
   </div>
 
   <div class="slide-body">
-    <div class="grid-2">
-      <!-- Right: Knowledge Iceberg HTML + Vector Architecture -->
-      <div class="card-dark" style="border-color: #0AB7A3; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; height: 440px;">
-        <!-- Card Header -->
-        <div style="font-size: 16px; font-weight: 800; color: #0AB7A3; text-align: center;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: stretch; height: 100%;">
+      
+      <!-- Right Bento: Knowledge Iceberg -->
+      <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.3); display: flex; flex-direction: column; justify-content: space-between; padding: 28px;">
+        <div style="font-size: 17px; font-weight: 800; color: #0AB7A3; text-align: center;">
           کوه یخ دانش سازمانی: چرایی تصمیم‌ها کجاست؟
         </div>
 
-        <!-- Upper Tip: Explicit Knowledge (20%) -->
-        <div style="background: #F8FAFC; border: 1.5px solid #FFFFFF; border-radius: 12px; padding: 10px 16px; text-align: center; max-width: 340px; margin: 4px auto 0; box-shadow: 0 4px 15px rgba(0,0,0,0.4);">
-          <div style="font-size: 15px; font-weight: 900; color: #070B16;">۲۰٪ دانش صریح (مکتوب و رسمی)</div>
-          <div style="font-size: 12px; color: #334155; font-weight: 700; margin-top: 3px;">اکسل‌ها، مستندات، آیین‌نامه‌ها</div>
-          <div style="font-size: 11px; color: #FE5A40; font-weight: 800; margin-top: 2px;">(منسوخ پس از ۶ ماه)</div>
+        <!-- Upper Tip: Explicit Knowledge -->
+        <div style="background: rgba(248, 250, 252, 0.95); border-radius: 16px; padding: 14px 20px; text-align: center; max-width: 380px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.4);">
+          <div style="font-size: 16px; font-weight: 900; color: #070B16;">۲۰٪ دانش صریح (مکتوب و اداری)</div>
+          <div style="font-size: 12px; color: #475569; font-weight: 700; margin-top: 4px;">اکسل‌ها، مستندات رسمی، آیین‌نامه‌ها</div>
+          <div style="font-size: 11px; color: #FE5A40; font-weight: 900; margin-top: 2px;">(منسوخ پس از ۶ ماه)</div>
         </div>
 
-        <!-- Waterline Separator -->
-        <div style="margin: 8px 0; display: flex; align-items: center; justify-content: center; gap: 10px;">
-          <div style="flex: 1; height: 1.5px; background: repeating-linear-gradient(to left, #0AB7A3, #0AB7A3 8px, transparent 8px, transparent 14px);"></div>
-          <span style="font-size: 11px; font-weight: 800; color: #0AB7A3; background: #070B16; padding: 3px 12px; border-radius: 20px; border: 1px solid #0AB7A3;">سطح آب • مرز آشکاری دانش</span>
-          <div style="flex: 1; height: 1.5px; background: repeating-linear-gradient(to right, #0AB7A3, #0AB7A3 8px, transparent 8px, transparent 14px);"></div>
+        <!-- Waterline -->
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin: 10px 0;">
+          <div style="flex: 1; height: 2px; background: repeating-linear-gradient(to left, #0AB7A3, #0AB7A3 8px, transparent 8px, transparent 14px);"></div>
+          <span style="font-size: 12px; font-weight: 800; color: #0AB7A3; background: #080C14; padding: 4px 14px; border-radius: 20px; border: 1px solid #0AB7A3;">سطح آب • مرز آشکاری دانش</span>
+          <div style="flex: 1; height: 2px; background: repeating-linear-gradient(to right, #0AB7A3, #0AB7A3 8px, transparent 8px, transparent 14px);"></div>
         </div>
 
-        <!-- Lower Massive Body: Tacit Knowledge (80%) -->
-        <div style="background: linear-gradient(180deg, rgba(10, 183, 163, 0.2) 0%, rgba(6, 78, 59, 0.35) 100%); border: 1.5px solid #0AB7A3; border-radius: 14px; padding: 16px 20px; text-align: center; display: flex; flex-direction: column; gap: 8px;">
-          <div style="font-size: 18px; font-weight: 900; color: #FFFFFF;">۸۰٪ دانش ضمنی (کوه یخ پنهان)</div>
-          <div style="font-size: 14px; font-weight: 700; color: #A7F3D0;">قلق‌های تجربی و فوت‌وفن حیاتی کار</div>
+        <!-- Lower Submerged Chamber -->
+        <div style="background: linear-gradient(180deg, rgba(10, 183, 163, 0.15) 0%, rgba(6, 78, 59, 0.4) 100%); border: 1.5px solid rgba(10, 183, 163, 0.35); border-radius: 18px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 20px; font-weight: 900; color: #FFFFFF;">۸۰٪ دانش ضمنی (کوه یخ پنهان)</div>
+          <div style="font-size: 14px; font-weight: 700; color: #A7F3D0;">قلق‌های تجربی و فوت‌وفن واقعی حل بحران</div>
           <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
             «اگر مدیر باتجربه بود چه تصمیمی می‌گرفت؟»<br>
             استثناهای نانوشته در تسویه و انبار • ارتباطات غیررسمی برای ترخیص فوری
           </div>
-          
-          <div style="background: rgba(254, 90, 64, 0.2); border: 1px solid #FE5A40; border-radius: 8px; padding: 8px 12px; margin-top: 4px;">
+          <div style="background: rgba(254, 90, 64, 0.2); border: 1px solid #FE5A40; border-radius: 10px; padding: 10px 14px; margin-top: 6px;">
             <span style="font-size: 13px; font-weight: 900; color: #FE5A40;">
               با خروج یا غیبت کارشناس، این ۸۰٪ کاملاً در سازمان می‌سوزد!
             </span>
@@ -367,1145 +468,747 @@ body {
         </div>
       </div>
 
-      <!-- Left: Survey Infographic Cards (Clean HTML with high contrast & zero overlap) -->
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <span style="font-size: 16px; font-weight: 800; color: #FE5A40;">پیمایش میدانی از ۲۰ شرکت بالای ۳۰ نفر (مهر ۱۴۰۵)</span>
-          <span class="badge-tag coral" style="font-size: 11px; padding: 3px 10px;">داده‌های واقعی بازار</span>
-        </div>
-
-        <!-- Metric 1 -->
-        <div class="card-dark" style="border-color: #FE5A40; padding: 16px 20px; display: flex; align-items: center; gap: 18px;">
-          <div style="min-width: 68px; height: 68px; border-radius: 50%; background: rgba(254, 90, 64, 0.15); border: 2px solid #FE5A40; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #FE5A40;">
-            ۹۵٪
-          </div>
+      <!-- Left Bento: 4 Big Numbers (Market Reality) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+        
+        <div class="bento-card coral-glow" style="display: flex; flex-direction: column; justify-content: space-between; border-color: rgba(254, 90, 64, 0.25);">
+          <div class="stat-number coral">۹۵٪</div>
           <div>
-            <div style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">ضربه نبودن نفر کلیدی را خورده‌اند</div>
-            <div style="font-size: 13px; color: #CBD5E1;">۱۹ از ۲۰ شرکت: خروج یا مرخصی ناگهانی کارشناس، کار شرکت را مستقیماً فلج کرده است.</div>
+            <div style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 6px;">ضربه نبودن نفر کلیدی</div>
+            <div style="font-size: 13px; color: #94A3B8; line-height: 1.5;">۱۹ از ۲۰ شرکت: خروج یا مرخصی ناگهانی کارشناس، کار شرکت را مستقیماً فلج کرده است.</div>
           </div>
         </div>
 
-        <!-- Metric 2 -->
-        <div class="card-dark" style="border-color: #FE5A40; padding: 16px 20px; display: flex; align-items: center; gap: 18px;">
-          <div style="min-width: 68px; height: 68px; border-radius: 50%; background: rgba(254, 90, 64, 0.15); border: 2px solid #FE5A40; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #FE5A40;">
-            ۷۵٪
-          </div>
+        <div class="bento-card coral-glow" style="display: flex; flex-direction: column; justify-content: space-between; border-color: rgba(254, 90, 64, 0.25);">
+          <div class="stat-number coral">۷۵٪</div>
           <div>
-            <div style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">نمی‌دانند کدام کارها فقط به یک نفر وصل است</div>
-            <div style="font-size: 13px; color: #CBD5E1;">۱۵ از ۲۰ شرکت: مدیران تصویر شفافی از گلوگاه‌های تک‌نفره (SPOF) در سازمان خود ندارند.</div>
+            <div style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 6px;">گلوگاه‌های تک‌نفره پنهان</div>
+            <div style="font-size: 13px; color: #94A3B8; line-height: 1.5;">۱۵ از ۲۰ شرکت: مدیران تصویر شفافی از کارهای وابسته به یک نفر (SPOF) ندارند.</div>
           </div>
         </div>
 
-        <!-- Metric 3 -->
-        <div class="card-dark" style="border-color: #0AB7A3; padding: 16px 20px; display: flex; align-items: center; gap: 18px;">
-          <div style="min-width: 68px; height: 68px; border-radius: 50%; background: rgba(10, 183, 163, 0.15); border: 2px solid #0AB7A3; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #0AB7A3;">
-            ۵۵٪
-          </div>
+        <div class="bento-card" style="display: flex; flex-direction: column; justify-content: space-between; border-color: rgba(10, 183, 163, 0.25);">
+          <div class="stat-number teal">۵۵٪</div>
           <div>
-            <div style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">نگرانند با آموزش کار، جایگاهشان تضعیف شود</div>
-            <div style="font-size: 13px; color: #CBD5E1;">بدون حفظ احترام و امنیت شغلی، هیچ کارشناسی قلق‌های محرمانه کاری‌اش را ثبت نمی‌کند.</div>
+            <div style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 6px;">نگرانی از امنیت شغلی</div>
+            <div style="font-size: 13px; color: #94A3B8; line-height: 1.5;">پرسنل نگرانند با آموزش قلق‌ها، جایگاه شغلی‌شان در سازمان تضعیف شود.</div>
           </div>
         </div>
 
-        <!-- Metric 4 -->
-        <div class="card-dark" style="border-color: #0AB7A3; padding: 16px 20px; display: flex; align-items: center; gap: 18px;">
-          <div style="min-width: 68px; height: 68px; border-radius: 50%; background: rgba(10, 183, 163, 0.15); border: 2px solid #0AB7A3; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #0AB7A3;">
-            ۶۷٪
-          </div>
+        <div class="bento-card" style="display: flex; flex-direction: column; justify-content: space-between; border-color: rgba(10, 183, 163, 0.25);">
+          <div class="stat-number teal">۶۷٪</div>
           <div>
-            <div style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">مدیرعامل مستقیماً تصمیم خرید را می‌گیرد</div>
-            <div style="font-size: 13px; color: #CBD5E1;">۶ از ۹ مدیرعامل: نخوابیدن کار شرکت دغدغه مستقیم شخص اول سازمان و هیئت‌مدیره است.</div>
+            <div style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 6px;">تصمیم خرید شخص مدیرعامل</div>
+            <div style="font-size: 13px; color: #94A3B8; line-height: 1.5;">۶ از ۹ مدیرعامل: نخوابیدن عملیات شرکت، دغدغه مستقیم شخص اول و هیئت‌مدیره است.</div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
 
   <div class="slide-footer">
-    <div>نکته راهنمای شتاب‌دهنده: «ارائه را با مسئله آغاز کنید؛ اگر عدد یا نمونه واقعی دارید حتماً بیاورید.»</div>
-    <div class="slide-footer-right">
-      <span>کوه یخ دانش: ۲۰٪ صریح در برابر ۸۰٪ ضمنی محبوس</span>
-    </div>
+    <div>پیمایش میدانی از ۲۰ شرکت ایرانی بالای ۳۰ نفر (مهر ۱۴۰۵)</div>
+    <div>نکته شتاب‌دهنده: «ارائه را با مسئله آغاز کنید؛ نمونه واقعی و عدد بیاورید.»</div>
   </div>
 </div>
 
 
+
+<!-- SLIDE 3: SOLUTION & AI ROLE (اسلاید ۲ از ۸) -->
 <div class="slide" id="slide-3">
   <div class="slide-header">
     <div class="header-right">
-      <div class="badge-tag">اسلاید ۲ از ۸ • راهکار و نقش هوش مصنوعی</div>
+      <span class="badge teal">اسلاید ۲ از ۸ • راهکار و نقش هوش مصنوعی</span>
     </div>
     <div class="header-left">
-      <div class="badge-tag coral">مرحله فعلی: دارای دموی تعاملی کارکردی (Demo Ready)</div>
-      <div class="slide-num-pill">۰۳ / ۱۰</div>
+      <span class="badge" style="color: #38BDF8; border-color: rgba(56, 189, 248, 0.3);">دارای دموی تعاملی کارکردی</span>
+      <span class="slide-counter">۰۳ / ۱۰</span>
     </div>
   </div>
 
-  <div class="slide-title-group">
-    <h1 class="slide-main-title">
-      سند نزد کارمند، <span style="color: #0AB7A3;">منطق نزد شرکت:</span> بازی برد-برد تداوم سازمان
+  <div class="title-group">
+    <h1 class="main-title">
+      سند نزد کارمند، منطق نزد شرکت؛ <span class="gradient-teal">بازی برد-برد تداوم عملیات</span>
     </h1>
-    <p class="slide-subtitle">
-      چرا هوش مصنوعی؟ استنتاج قطعی Z3 SMT چرایی و شروط کار را استخراج می‌کند و مانور عملی جانشین (Shadow Run) تداوم را می‌سنجد.
+    <p class="sub-title">
+      چرا هوش مصنوعی استنتاجی؟ با استنتاج قطعی Z3 SMT، شروط و قواعد تصمیم‌گیری بدون توهم استخراج شده و تداوم کار پیش از غیبت افراد سنجیده می‌شود.
     </p>
   </div>
 
   <div class="slide-body">
-    <!-- SVG Architecture Flow -->
-    <div class="card-dark" style="border-color: #0AB7A3; padding: 16px; margin-bottom: 20px;">
-      <svg viewBox="0 0 1100 240" width="100%" height="230" style="overflow: visible;">
-  <!-- Node 1: Employee Vault -->
-  <g transform="translate(10, 20)">
-    <rect x="0" y="0" width="220" height="190" rx="16" fill="#0F172A" stroke="#0AB7A3" stroke-width="2"/>
-    <circle cx="110" cy="50" r="26" fill="rgba(10, 183, 163, 0.15)"/>
-    <text x="110" y="58" fill="#0AB7A3" font-size="24" font-weight="bold" text-anchor="middle">🔒</text>
-    <text x="110" y="105" fill="#FFFFFF" font-size="16" font-weight="bold" text-anchor="middle">گاوصندوق کارمند</text>
-    <text x="110" y="130" fill="#CBD5E1" font-size="12" text-anchor="middle">فایل خام + یادداشت محلی</text>
-    <text x="110" y="155" fill="#0AB7A3" font-size="12" font-weight="bold" text-anchor="middle">کلید رمزنگاری دست کاربر</text>
-    <rect x="25" y="165" width="170" height="2" fill="#0AB7A3"/>
-  </g>
-
-  <!-- Flow 1 -->
-  <path d="M 240 115 L 290 115" stroke="#0AB7A3" stroke-width="3" stroke-dasharray="4,4"/>
-  <polygon points="295,115 285,110 285,120" fill="#0AB7A3"/>
-  <text x="265" y="100" fill="#0AB7A3" font-size="11" text-anchor="middle">انتزاع منطق</text>
-
-  <!-- Node 2: Logic Extraction Gate -->
-  <g transform="translate(300, 20)">
-    <rect x="0" y="0" width="220" height="190" rx="16" fill="#0F172A" stroke="#0AB7A3" stroke-width="2"/>
-    <circle cx="110" cy="50" r="26" fill="rgba(10, 183, 163, 0.15)"/>
-    <text x="110" y="58" fill="#0AB7A3" font-size="24" font-weight="bold" text-anchor="middle">⚙</text>
-    <text x="110" y="105" fill="#FFFFFF" font-size="16" font-weight="bold" text-anchor="middle">موتور استنتاج Z3 SMT</text>
-    <text x="110" y="130" fill="#CBD5E1" font-size="12" text-anchor="middle">استخراج قواعد IF-THEN</text>
-    <text x="110" y="155" fill="#0AB7A3" font-size="12" font-weight="bold" text-anchor="middle">تضمین ریاضی بدون توهم</text>
-    <rect x="25" y="165" width="170" height="2" fill="#0AB7A3"/>
-  </g>
-
-  <!-- Flow 2 -->
-  <path d="M 530 115 L 580 115" stroke="#0AB7A3" stroke-width="3" stroke-dasharray="4,4"/>
-  <polygon points="585,115 575,110 575,120" fill="#0AB7A3"/>
-  <text x="555" y="100" fill="#0AB7A3" font-size="11" text-anchor="middle">تثبیت رویه</text>
-
-  <!-- Node 3: Zero Interrogation Flow -->
-  <g transform="translate(590, 20)">
-    <rect x="0" y="0" width="220" height="190" rx="16" fill="#0F172A" stroke="#0AB7A3" stroke-width="2"/>
-    <circle cx="110" cy="50" r="26" fill="rgba(10, 183, 163, 0.15)"/>
-    <text x="110" y="58" fill="#0AB7A3" font-size="24" font-weight="bold" text-anchor="middle">⚡</text>
-    <text x="110" y="105" fill="#FFFFFF" font-size="16" font-weight="bold" text-anchor="middle">عدم بازجویی تکراری</text>
-    <text x="110" y="130" fill="#CBD5E1" font-size="12" text-anchor="middle">در رویه‌های جاافتاده</text>
-    <text x="110" y="155" fill="#0AB7A3" font-size="12" font-weight="bold" text-anchor="middle">تایید با ۱ کلیک (۰ سوال)</text>
-    <rect x="25" y="165" width="170" height="2" fill="#0AB7A3"/>
-  </g>
-
-  <!-- Flow 3 -->
-  <path d="M 820 115 L 870 115" stroke="#FE5A40" stroke-width="3" stroke-dasharray="4,4"/>
-  <polygon points="875,115 865,110 865,120" fill="#FE5A40"/>
-  <text x="845" y="100" fill="#FE5A40" font-size="11" text-anchor="middle">آزمون جانشین</text>
-
-  <!-- Node 4: Shadow Run Successor -->
-  <g transform="translate(880, 20)">
-    <rect x="0" y="0" width="210" height="190" rx="16" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-    <circle cx="105" cy="50" r="26" fill="rgba(254, 90, 64, 0.15)"/>
-    <text x="105" y="58" fill="#FE5A40" font-size="24" font-weight="bold" text-anchor="middle">🎯</text>
-    <text x="105" y="105" fill="#FFFFFF" font-size="16" font-weight="bold" text-anchor="middle">شبیه‌ساز Shadow Run</text>
-    <text x="105" y="130" fill="#CBD5E1" font-size="12" text-anchor="middle">مانور عملی در Sandbox</text>
-    <text x="105" y="155" fill="#FE5A40" font-size="12" font-weight="bold" text-anchor="middle">تضمین قطعی تداوم کار</text>
-    <rect x="25" y="165" width="160" height="2" fill="#FE5A40"/>
-  </g>
-</svg>
-    </div>
-
-    <!-- UI Mockup HTML Card (Clean, responsive, high contrast) -->
-    <div class="card-dark" style="padding: 20px;">
-      <div style="font-size: 14px; font-weight: 800; color: #FFFFFF; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-        <span>شمایل تعاملی نرم‌افزار سنارو (Interactive UI Mockup)</span>
-        <span class="badge-tag" style="font-size: 11px; padding: 2px 10px;">نمای کارکردی محصول</span>
+    <!-- Top Row: 4 Connected Bento Steps -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 24px;">
+      
+      <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 26px;">🔒</span>
+          <span class="badge teal" style="font-size: 11px; padding: 2px 10px;">گام ۰۱</span>
+        </div>
+        <div style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">گاوصندوق کارمند</div>
+        <div style="font-size: 12px; color: #94A3B8; line-height: 1.5;">کلید رمزنگاری محلی؛ فایل‌های شخصی هرگز برای مدیر افشا نمی‌شوند.</div>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-        <div class="card-dark" style="border-color: #0AB7A3; padding: 16px;">
-          <div style="font-size: 14px; font-weight: 800; color: #0AB7A3; margin-bottom: 6px;">گاوصندوق امن کارشناس</div>
-          <div style="font-size: 13px; color: #CBD5E1; margin-bottom: 6px;">فایل‌ها و اکسل‌های خام: رمزنگاری محلی</div>
-          <div style="font-size: 12px; color: #94A3B8;">استخراج خودکار منطق تصمیم: فعال</div>
-          <div style="font-size: 11px; color: #0AB7A3; margin-top: 8px; font-weight: bold;">✓ عدم دسترسی مستقیم مدیر به فایل‌های شخصی</div>
+      <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.35); background: rgba(10, 183, 163, 0.08);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 26px;">⚙️</span>
+          <span class="badge teal" style="font-size: 11px; padding: 2px 10px;">گام ۰۲</span>
+        </div>
+        <div style="font-size: 16px; font-weight: 800; color: #0AB7A3; margin-bottom: 4px;">موتور استنتاج Z3</div>
+        <div style="font-size: 12px; color: #94A3B8; line-height: 1.5;">استخراج شروط ریاضی IF-THEN-UNLESS بدون توهم مدل‌های زبانی.</div>
+      </div>
+
+      <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 26px;">⚡</span>
+          <span class="badge teal" style="font-size: 11px; padding: 2px 10px;">گام ۰۳</span>
+        </div>
+        <div style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">تایید با ۱ کلیک</div>
+        <div style="font-size: 12px; color: #94A3B8; line-height: 1.5;">تثبیت خودکار رویه‌های جاافتاده بدون بازجویی و پرسش‌های فرساینده از کارمند.</div>
+      </div>
+
+      <div class="bento-card coral-glow" style="border-color: rgba(254, 90, 64, 0.35); background: rgba(254, 90, 64, 0.08);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 26px;">🎯</span>
+          <span class="badge coral" style="font-size: 11px; padding: 2px 10px;">گام ۰۴</span>
+        </div>
+        <div style="font-size: 16px; font-weight: 800; color: #FE5A40; margin-bottom: 4px;">مانور Shadow Run</div>
+        <div style="font-size: 12px; color: #94A3B8; line-height: 1.5;">شبیه‌سازی سناریوی بحرانی برای جانشین در Sandbox بدون ریسک مالی برای شرکت.</div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Bento: App UI Interactive Canvas Preview -->
+    <div class="bento-card" style="border-color: rgba(255, 255, 255, 0.12); padding: 18px 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #FE5A40;"></span>
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #FBBF24;"></span>
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #0AB7A3;"></span>
+          <span style="font-size: 13px; font-weight: 700; color: #94A3B8; margin-right: 12px;">محیط کارکردی نرم‌افزار سینارو • SEYNARO OS Studio</span>
+        </div>
+        <span class="badge teal" style="font-size: 11px;">وضعیت: آماده دمو در جلسه</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 16px; align-items: center;">
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); border-radius: 14px; padding: 12px 16px;">
+          <div style="font-size: 12px; color: #94A3B8; margin-bottom: 4px;">ورودی کارشناس اصلی</div>
+          <div style="font-size: 14px; font-weight: 800; color: #FFFFFF;">تسویه فاکتور با مغایرت ۱۰٪</div>
+          <div style="font-size: 11px; color: #0AB7A3; margin-top: 4px;">✓ تایید شده با تبصره تخفیف ریالی</div>
         </div>
 
-        <div class="card-dark" style="border-color: #0AB7A3; padding: 16px;">
-          <div style="font-size: 14px; font-weight: 800; color: #FFFFFF; margin-bottom: 6px;">رویه مغایرت‌گیری انبار (تثبیت‌شده)</div>
-          <div style="font-size: 13px; color: #CBD5E1; margin-bottom: 6px;">شروط Z3: اثبات‌شده و بدون تناقض منطقی</div>
-          <div style="background: rgba(10, 183, 163, 0.2); border: 1px solid #0AB7A3; border-radius: 6px; padding: 6px; text-align: center; margin-top: 6px;">
-            <span style="font-size: 12px; font-weight: 800; color: #0AB7A3;">✓ تأیید با یک کلیک • بدون سوال تکراری</span>
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); border-radius: 14px; padding: 12px 16px;">
+          <div style="font-size: 12px; color: #94A3B8; margin-bottom: 4px;">موتور استنتاج Z3 SMT</div>
+          <div style="font-size: 14px; font-weight: 800; color: #38BDF8;">IF diff &lt; 10% AND acc_vip THEN pass</div>
+          <div style="font-size: 11px; color: #94A3B8; margin-top: 4px;">اثبات قطعی بدون تناقض با قوانین مالی</div>
+        </div>
+
+        <div style="background: rgba(254, 90, 64, 0.08); border: 1px solid rgba(254, 90, 64, 0.3); border-radius: 14px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 12px; color: #FE5A40; margin-bottom: 2px;">نتیجه مانور جانشین (Shadow Run)</div>
+            <div style="font-size: 14px; font-weight: 800; color: #FFFFFF;">تصمیم درست طبق شروط سازمانی</div>
           </div>
-        </div>
-
-        <div class="card-dark" style="border-color: #FE5A40; padding: 16px;">
-          <div style="font-size: 14px; font-weight: 800; color: #FE5A40; margin-bottom: 6px;">مانور آزمایشی جانشین (Shadow Run)</div>
-          <div style="font-size: 13px; color: #CBD5E1; margin-bottom: 6px;">سناریو: مغایرت ۱۰ درصدی پیش‌فاکتور</div>
-          <div style="font-size: 12px; color: #94A3B8;">نتیجه جانشین: تصمیم صحیح طبق شروط</div>
-          <div style="font-size: 11px; color: #FE5A40; margin-top: 8px; font-weight: bold;">✓ تداوم کار با موفقیت سنجیده شد (نمره ۹۲٪)</div>
+          <div style="font-size: 24px; font-weight: 900; color: #0AB7A3; background: rgba(10, 183, 163, 0.15); padding: 4px 12px; border-radius: 10px;">
+            ۹۲٪ ✓
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <div class="slide-footer">
-    <div>نکته راهنما: «بگویید هوش مصنوعی چه نقشی دارد و مرحله فعلی را صادقانه بیان کنید (دموی تعاملی آماده).»</div>
-    <div class="slide-footer-right">
-      <span>Z3 SMT Solver: اثبات ریاضی منطق بدون توهم</span>
-    </div>
+    <div>نقش کلیدی هوش مصنوعی: تبدیل تجربه شخصی به فرمول ریاضی و شبیه‌سازی جانشین بدون ریسک</div>
+    <div>Z3 SMT Solver: اثبات ریاضی منطق بدون توهم</div>
   </div>
 </div>
 
 
+
+<!-- SLIDE 4: PILOT EXECUTION (اسلاید ۳ از ۸ [ویژه REASON]) -->
 <div class="slide" id="slide-4">
   <div class="slide-header">
     <div class="header-right">
-      <div class="badge-tag coral">اسلاید ۳ از ۸ • اجرای آزمایشی (Pilot) [ویژه REASON]</div>
+      <span class="badge coral">اسلاید ۳ از ۸ • اجرای آزمایشی (Pilot) [ویژه REASON]</span>
     </div>
     <div class="header-left">
-      <div class="badge-tag">مدت پایلوت: ۳ ماه متمرکز در دوره شتاب‌دهی</div>
-      <div class="slide-num-pill">۰۴ / ۱۰</div>
+      <span class="badge teal">مدت پایلوت: ۳ ماه متمرکز</span>
+      <span class="slide-counter">۰۴ / ۱۰</span>
     </div>
   </div>
 
-  <div class="slide-title-group">
-    <h1 class="slide-main-title">
-      آزمون پایلوت ۳ ماهه در <span style="color: #FE5A40;">زنجیره پخش و توزیع گروه گلرنگ</span>
+  <div class="title-group">
+    <h1 class="main-title">
+      آزمون پایلوت ۳ ماهه در <span class="gradient-coral">زنجیره پخش و توزیع گروه گلرنگ</span>
     </h1>
-    <p class="slide-subtitle">
-      مشخصات پایلوت: شرکت کاندید (گل‌پخش اول / افق کوروش)، فرایند مغایرت‌گیری سه‌طرفه، دسترسی کاملاً ایمن و غیرتهاجمی
+    <p class="sub-title">
+      کاندیدای پایلوت: شرکت گلپخش اول / فروشگاه‌های افق کوروش • فرایند مغایرت‌گیری سه‌طرفه و تحویل کالا • کاملاً ایمن و غیرتهاجمی
     </p>
   </div>
 
   <div class="slide-body">
-    <!-- 4 Pilot Specification Cards -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px;">
-      <div class="card-dark" style="border-color: #0AB7A3; padding: 22px;">
-        <div style="font-size: 13px; font-weight: 800; color: #0AB7A3; margin-bottom: 6px;">بخش ۰۱ • کسب‌وکار هدف</div>
-        <div style="font-size: 19px; font-weight: 900; color: #FFFFFF; margin-bottom: 10px;">پخش مویرگی و خرده‌فروشی</div>
-        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.7;">
-          • کاندید: گل‌پخش اول / افق کوروش<br>
-          • دپارتمان تدارکات، لجستیک و انبار<br>
-          • روزانه صدها حواله و بارنامه<br>
-          • گلوگاه تکرار خطای انسانی در تحویل
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+      
+      <!-- Bento 1: Target Business -->
+      <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 16px; font-weight: 800; color: #FFFFFF;">پخش مویرگی و خرده‌فروشی</span>
+          <span class="badge teal" style="font-size: 11px;">محیط کسب‌وکار</span>
+        </div>
+        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
+          کاندید: **گلپخش اول / افق کوروش** در دپارتمان تدارکات و لجستیک انبار؛ روزانه صدها حواله و بارنامه با تکرار خطای انسانی در تحویل و تسویه مواجه است.
         </div>
       </div>
 
-      <div class="card-dark" style="border-color: #FE5A40; padding: 22px;">
-        <div style="font-size: 13px; font-weight: 800; color: #FE5A40; margin-bottom: 6px;">بخش ۰۲ • فرآیندهای پایلوت</div>
-        <div style="font-size: 19px; font-weight: 900; color: #FFFFFF; margin-bottom: 10px;">۳ گلوگاه فوق بحرانی</div>
-        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.7;">
-          • مغایرت‌گیری ۳طرفه خرید/انبار/مالی<br>
-          • انتقال تعهدات شیفت‌های انبار مرکزی<br>
-          • مدیریت مرجوعی‌ها و تفکیک ضایعات<br>
-          • رفع اتوماتیک بدون توقف خط عملیات
+      <!-- Bento 2: 3 Bottlenecks -->
+      <div class="bento-card coral-glow" style="border-color: rgba(254, 90, 64, 0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 16px; font-weight: 800; color: #FE5A40;">۳ گلوگاه فوق بحرانی فرآیند</span>
+          <span class="badge coral" style="font-size: 11px;">تمرکز آزمون</span>
+        </div>
+        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
+          ۱. مغایرت ۳ طرفه خرید/انبار/مالی • ۲. انتقال تعهدات در شیفت‌های انبار مرکزی • ۳. تصمیم‌گیری روی مرجوعی‌ها و تفکیک ضایعات بدون توقف خط.
         </div>
       </div>
 
-      <div class="card-dark" style="border-color: #0AB7A3; padding: 22px;">
-        <div style="font-size: 13px; font-weight: 800; color: #0AB7A3; margin-bottom: 6px;">بخش ۰۳ • داده و دسترسی</div>
-        <div style="font-size: 19px; font-weight: 900; color: #FFFFFF; margin-bottom: 10px;">کاملاً غیرتهاجمی</div>
-        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.7;">
-          • فایل‌های اکسل تسویه تاریخی<br>
-          • سوابق تیکت‌های رفع اختلاف گذشته<br>
-          • بدون نیاز به اتصال مستقیم به ERP<br>
-          • استقرار روی سرور مستقل (Sandbox)
+      <!-- Bento 3: Non-Invasive Data -->
+      <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 16px; font-weight: 800; color: #FFFFFF;">دسترسی کاملاً غیرتهاجمی</span>
+          <span class="badge teal" style="font-size: 11px;">امنیت ۱۰۰٪</span>
+        </div>
+        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
+          فقط فایل‌های اکسل تسویه تاریخی و تیکت‌های رفع اختلاف؛ **بدون نیاز به اتصال مستقیم به دیتابیس ERP**؛ استقرار امن روی سرور محلی شرکت (Sandbox).
         </div>
       </div>
 
-      <div class="card-dark" style="border-color: #0AB7A3; padding: 22px;">
-        <div style="font-size: 13px; font-weight: 800; color: #0AB7A3; margin-bottom: 6px;">بخش ۰۴ • شاخص‌های موفقیت</div>
-        <div style="font-size: 19px; font-weight: 900; color: #FFFFFF; margin-bottom: 10px;">سنجه‌های عینی پایلوت</div>
-        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.7;">
-          • کاهش ۷۰٪ زمان مغایرت‌گیری (۴h ⟶ ۱۵m)<br>
-          • موفقیت جانشین (Shadow Run) > ۸۵٪<br>
-          • تکمیل بدون سوال تکراری (ZICR) > ۷۵٪<br>
-          • رضایت پرسنل کلیدی > ۹۰٪
+      <!-- Bento 4: Measurable KPIs -->
+      <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.35); background: rgba(10, 183, 163, 0.08); display: flex; align-items: center; justify-content: space-around;">
+        <div style="text-align: center;">
+          <div class="stat-number teal" style="font-size: 44px;">۷۰٪-</div>
+          <div style="font-size: 12px; color: #CBD5E1; font-weight: 700; margin-top: 4px;">زمان مغایرت‌گیری<br>(۴ ساعت → ۱۵ دقیقه)</div>
+        </div>
+        <div style="width: 1px; height: 50px; background: rgba(255,255,255,0.1);"></div>
+        <div style="text-align: center;">
+          <div class="stat-number teal" style="font-size: 44px;">۸۵٪+</div>
+          <div style="font-size: 12px; color: #CBD5E1; font-weight: 700; margin-top: 4px;">موفقیت جانشین<br>(Shadow Run)</div>
+        </div>
+        <div style="width: 1px; height: 50px; background: rgba(255,255,255,0.1);"></div>
+        <div style="text-align: center;">
+          <div class="stat-number teal" style="font-size: 44px;">۹۰٪+</div>
+          <div style="font-size: 12px; color: #CBD5E1; font-weight: 700; margin-top: 4px;">رضایت پرسنل کلیدی<br>و رفع استرس شغلی</div>
         </div>
       </div>
+
     </div>
 
-    <!-- 3-Month Timeline Banner -->
-    <div class="card-dark" style="padding: 18px 28px;">
-      <div style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 12px;">زمان‌بندی اجرایی پایلوت (همخوان با دوره ۶ ماهه شتاب‌دهنده REASON):</div>
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-        <div style="background: rgba(10, 183, 163, 0.1); border: 1px solid #0AB7A3; border-radius: 10px; padding: 14px;">
-          <div style="font-size: 14px; font-weight: 800; color: #0AB7A3; margin-bottom: 4px;">ماه ۲ • آماده‌سازی و بارگذاری داده</div>
-          <div style="font-size: 12px; color: #CBD5E1;">بارگذاری اکسل‌های تاریخی و استخراج قواعد اولیه با Z3</div>
-        </div>
-        <div style="background: rgba(254, 90, 64, 0.1); border: 1px solid #FE5A40; border-radius: 10px; padding: 14px;">
-          <div style="font-size: 14px; font-weight: 800; color: #FE5A40; margin-bottom: 4px;">ماه ۳ • استقرار پایلوت در ۱ شعبه گلرنگ</div>
-          <div style="font-size: 12px; color: #CBD5E1;">اجرای آزمایشی رفع مغایرت و اجرای مانورهای Shadow Run</div>
-        </div>
-        <div style="background: rgba(10, 183, 163, 0.1); border: 1px solid #0AB7A3; border-radius: 10px; padding: 14px;">
-          <div style="font-size: 14px; font-weight: 800; color: #0AB7A3; margin-bottom: 4px;">ماه ۴ • سنجش KPI و گزارش نهایی</div>
-          <div style="font-size: 12px; color: #CBD5E1;">محاسبه کاهش زمان و ارائه گزارش به مدیران ارشد گلرنگ</div>
-        </div>
+    <!-- Bottom Stepper Timeline: 3 Months in REASON -->
+    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--card-border); border-radius: 18px; padding: 14px 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span class="badge teal" style="font-size: 12px;">ماه ۲</span>
+        <span style="font-size: 13px; color: #CBD5E1;">آماده‌سازی داده‌ها، بارگذاری اکسل‌ها و استخراج قواعد اولیه با Z3</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span class="badge coral" style="font-size: 12px;">ماه ۳</span>
+        <span style="font-size: 13px; color: #CBD5E1;">استقرار در ۱ شعبه گلرنگ و اجرای مانورهای Shadow Run جانشین</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span class="badge teal" style="font-size: 12px;">ماه ۴</span>
+        <span style="font-size: 13px; color: #CBD5E1;">سنجش عینی KPIها و ارائه گزارش مستند سودآوری به مدیران ارشد</span>
       </div>
     </div>
   </div>
 
   <div class="slide-footer">
-    <div>نکته راهنما: «این بخش برای REASON اهمیت ویژه دارد؛ نوع کسب‌وکار، فرایند، زمان و شاخص‌ها را مشخص کنید.»</div>
-    <div class="slide-footer-right">
-      <span>تضمین ارزش‌آفرینی مستقیم برای هلدینگ گلرنگ ونچرز</span>
-    </div>
+    <div>انطباق کامل با دوره ۶ ماهه شتاب‌دهی REASON • تضمین خلق ارزش تجاری مستقیم برای هلدینگ گلرنگ</div>
+    <div>هدف پایلوت: تبدیل تجربه آزمایشی به قرارداد لایسنس هلدینگی</div>
   </div>
 </div>
 
 
+
+<!-- SLIDE 5: MARKET & BUSINESS MODEL (اسلاید ۴ از ۸) -->
 <div class="slide" id="slide-5">
   <div class="slide-header">
     <div class="header-right">
-      <div class="badge-tag">اسلاید ۴ از ۸ • بازار و مدل درآمدی</div>
+      <span class="badge teal">اسلاید ۴ از ۸ • بازار و مدل درآمدی</span>
     </div>
     <div class="header-left">
-      <div class="slide-num-pill">۰۵ / ۱۰</div>
+      <span class="slide-counter">۰۵ / ۱۰</span>
     </div>
   </div>
 
-  <div class="slide-title-group">
-    <h1 class="slide-main-title">
-      فرصت بازار <span style="color: #0AB7A3;">۱۰ همتی ایران</span> و پیش‌بینی ۶۵ مشتری تا ۱۴۰۸
+  <div class="title-group">
+    <h1 class="main-title">
+      فرصت بازار ۱۰ همتی ایران و <span class="gradient-teal">پیش‌بینی ۶۵ مشتری تا ۱۴۰۸</span>
     </h1>
-    <p class="slide-subtitle">
-      فروش نرم‌افزار سازمانی با مدل B2B Enterprise License و چرخه تمدید سالانه؛ استراتژی ورود از ۱ شرکت و گسترش به هلدینگ
+    <p class="sub-title">
+      مدل فروش سازمانی B2B Enterprise License با چرخه تمدید سالانه؛ استراتژی ورود از ۱ شرکت و گسترش شبکه‌ای به کل هلدینگ (Land & Expand).
     </p>
   </div>
 
   <div class="slide-body">
-    <div class="grid-2">
-      <!-- Right: Concentric Circles SVG (Matching user Image 4) -->
-      <div class="card-dark" style="border-color: #0AB7A3; display: flex; justify-content: center; align-items: center; padding: 14px;">
-        <svg viewBox="0 0 540 500" width="100%" height="420" style="overflow: visible;">
-  <!-- Outer Circle: TAM -->
-  <circle cx="270" cy="250" r="235" fill="#0B1322" stroke="#475569" stroke-width="2.5"/>
-  <text x="270" y="48" fill="#FFFFFF" font-size="19" font-weight="900" text-anchor="middle">TAM • کل بازار ایران</text>
-  <text x="270" y="74" fill="#94A3B8" font-size="14" font-weight="bold" text-anchor="middle">۲۵ هزار شرکت بالای ۳۰ نفر (۱۰ همت)</text>
+    <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; align-items: center;">
+      
+      <!-- Right Bento: Market Circles SVG -->
+      <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.3); text-align: center; padding: 20px;">
+        <svg viewBox="0 0 540 460" width="100%" height="380" style="overflow: visible;">
+          <defs>
+            <radialGradient id="somGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FE5A40" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#E11D48" stop-opacity="1"/>
+            </radialGradient>
+          </defs>
 
-  <!-- Middle Circle: SAM -->
-  <circle cx="270" cy="275" r="165" fill="#082A26" stroke="#0AB7A3" stroke-width="3"/>
-  <text x="270" y="148" fill="#0AB7A3" font-size="19" font-weight="900" text-anchor="middle">SAM • بازار هدف ما</text>
-  <text x="270" y="174" fill="#E2E8F0" font-size="15" font-weight="bold" text-anchor="middle">۴ هزار شرکت (۱/۶ همت)</text>
+          <!-- TAM Outer Ring -->
+          <circle cx="270" cy="230" r="210" fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="6,4"/>
+          <text x="270" y="55" fill="#FFFFFF" font-size="16" font-weight="900" text-anchor="middle">TAM • کل بازار ایران</text>
+          <text x="270" y="78" fill="#94A3B8" font-size="13" text-anchor="middle">۲۵ هزار شرکت بالای ۳۰ نفر (۱۰ همت)</text>
 
-  <!-- Inner Circle: SOM (Vibrant Coral Orange matching user Image 4!) -->
-  <circle cx="270" cy="325" r="98" fill="#FE5A40" stroke="#FFFFFF" stroke-width="2.5"/>
-  <text x="270" y="305" fill="#FFFFFF" font-size="18" font-weight="900" text-anchor="middle">SOM • هدف ما</text>
-  <text x="270" y="333" fill="#FFFFFF" font-size="20" font-weight="900" text-anchor="middle">۶۵ مشتری فعال</text>
-  <text x="270" y="360" fill="#FFE4E1" font-size="14" font-weight="bold" text-anchor="middle">(۱/۶٪ از SAM)</text>
+          <!-- SAM Middle Ring -->
+          <circle cx="270" cy="275" r="145" fill="rgba(10, 183, 163, 0.12)" stroke="#0AB7A3" stroke-width="2.5"/>
+          <text x="270" y="165" fill="#0AB7A3" font-size="16" font-weight="900" text-anchor="middle">SAM • بازار هدف ما</text>
+          <text x="270" y="188" fill="#CBD5E1" font-size="13" font-weight="700" text-anchor="middle">۴ هزار شرکت (۱/۶ همت)</text>
 
-  <text x="270" y="495" fill="#8A96AC" font-size="14" font-weight="bold" text-anchor="middle">مشتریان هدف: شرکت‌های بالای ۳۰ نفر نیرو</text>
-</svg>
+          <!-- SOM Core (Glowing Coral) -->
+          <circle cx="270" cy="315" r="80" fill="url(#somGlow)" stroke="#FFFFFF" stroke-width="3" filter="drop-shadow(0 0 15px rgba(254,90,64,0.6))"/>
+          <text x="270" y="305" fill="#FFFFFF" font-size="16" font-weight="900" text-anchor="middle">SOM • هدف ما</text>
+          <text x="270" y="328" fill="#FFFFFF" font-size="18" font-weight="900" text-anchor="middle">۶۵ مشتری فعال</text>
+          <text x="270" y="348" fill="#FFE4E6" font-size="12" font-weight="800" text-anchor="middle">(۱/۶٪ از SAM • ۲۶ م.ت/سال)</text>
+        </svg>
+        <div style="font-size: 12px; color: #94A3B8; margin-top: 4px;">مشتریان هدف: شرکت‌های بالای ۳۰ نفر با فرآیندهای حساس عملیاتی</div>
       </div>
 
-      <!-- Left: Revenue & Land/Expand Strategy (Clean HTML cards with 0% overlap) -->
+      <!-- Left Bento: Revenue Architecture (3 Cards) -->
       <div style="display: flex; flex-direction: column; gap: 16px;">
-        <!-- License Card -->
-        <div class="card-dark" style="border-color: #0AB7A3; padding: 22px;">
-          <div style="font-size: 15px; font-weight: 800; color: #0AB7A3; margin-bottom: 6px;">مدل فروش سازمانی (B2B Enterprise License)</div>
-          <div style="font-size: 20px; font-weight: 900; color: #FFFFFF; margin-bottom: 6px;">میانگین ۴۰۰ میلیون تومان سالانه به ازای هر شرکت</div>
-          <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
-            بازه ۲۰۰ تا ۴۵۰ م.ت بر مبنای تعداد دپارتمان‌ها و فرآیندهای حساس عملیاتی.
-          </div>
+        
+        <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.25);">
+          <div style="font-size: 13px; color: #0AB7A3; font-weight: 700; margin-bottom: 4px;">مدل فروش سازمانی (B2B Enterprise License)</div>
+          <div style="font-size: 22px; font-weight: 900; color: #FFFFFF; margin-bottom: 4px;">میانگین ۴۰۰ میلیون تومان سالانه</div>
+          <div style="font-size: 13px; color: #94A3B8;">بازه ۲۰۰ تا ۴۵۰ م.ت بر مبنای تعداد دپارتمان‌ها و فرایندهای حساس تحت پوشش.</div>
         </div>
 
-        <!-- SLA Card -->
-        <div class="card-dark" style="border-color: #0AB7A3; padding: 22px;">
-          <div style="font-size: 15px; font-weight: 800; color: #0AB7A3; margin-bottom: 6px;">درآمد تکرارشونده پشتیبانی و ارتقا (Recurring SLA)</div>
-          <div style="font-size: 20px; font-weight: 900; color: #FFFFFF; margin-bottom: 6px;">۲۰٪ ارزش لایسنس سالانه (سال دوم به بعد)</div>
-          <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
-            به‌روزرسانی موتور استنتاج Z3، قواعد جدید قانونی، ارتقای ماژول‌ها و پشتیبانی فنی ۲۴/۷.
-          </div>
+        <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.25);">
+          <div style="font-size: 13px; color: #0AB7A3; font-weight: 700; margin-bottom: 4px;">درآمد تکرارشونده پشتیبانی و ارتقا (Recurring SLA)</div>
+          <div style="font-size: 22px; font-weight: 900; color: #FFFFFF; margin-bottom: 4px;">۲۰٪ ارزش لایسنس سالانه (سال دوم به بعد)</div>
+          <div style="font-size: 13px; color: #94A3B8;">به‌روزرسانی موتور استنتاج Z3، قواعد جدید قانونی، ارتقای ماژول‌ها و پشتیبانی فنی ۲۴/۷.</div>
         </div>
 
-        <!-- Land and Expand Card -->
-        <div class="card-dark" style="border-color: #FE5A40; padding: 22px;">
-          <div style="font-size: 15px; font-weight: 800; color: #FE5A40; margin-bottom: 6px;">استراتژی گسترش (Land & Expand) در هلدینگ‌ها</div>
-          <div style="font-size: 19px; font-weight: 900; color: #FFFFFF; margin-bottom: 6px;">ورود با ۱ شرکت پایلوت ⟵ گسترش به کل پورتفوی هلدینگ</div>
-          <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
-            حاشیه سود ناخالص بالای ۷۵٪ به دلیل استقرار لوکال On-Premise بدون هزینه‌های دلاری سرورهای ابری خارجی.<br>
-            <strong style="color: #FE5A40;">مسیر گسترش:</strong> شروع از گل‌پخش اول ⟵ تسری به افق کوروش و ۵۰ شرکت گلرنگ.
-          </div>
+        <div class="bento-card coral-glow" style="border-color: rgba(254, 90, 64, 0.3); background: rgba(254, 90, 64, 0.08);">
+          <div style="font-size: 13px; color: #FE5A40; font-weight: 700; margin-bottom: 4px;">استراتژی گسترش (Land &amp; Expand) در هلدینگ‌ها</div>
+          <div style="font-size: 20px; font-weight: 900; color: #FFFFFF; margin-bottom: 4px;">ورود با ۱ پایلوت ← گسترش به کل پورتفوی هلدینگ</div>
+          <div style="font-size: 13px; color: #CBD5E1;">حاشیه سود ناخالص بالای ۷۵٪ به دلیل استقرار لوکال On-Premise بدون هزینه‌های دلاری سرورهای خارجی.</div>
         </div>
+
       </div>
     </div>
   </div>
 
   <div class="slide-footer">
-    <div>نکته راهنما: «مشتریان هدف، اندازه بازار و مدل درآمد را بیاورید؛ نشان دهید چگونه از یک کسب‌وکار گسترش می‌یابید.»</div>
-    <div class="slide-footer-right">
-      <span>مشتریان هدف: شرکت‌های بالای ۳۰ نفر با عملیات حساس</span>
-    </div>
+    <div>مسیر درآمدی: نقطه سربرسر در ماه ۱۴ با ۲۰ مشتری سازمانی</div>
+    <div>نکته راهنما: «نشان دهید چگونه از یک کسب‌وکار به کسب‌وکارهای دیگر گسترش می‌یابید.»</div>
   </div>
 </div>
 
 
+
+<!-- SLIDE 6: COMPETITORS & ADVANTAGE (اسلاید ۵ از ۸) -->
 <div class="slide" id="slide-6">
   <div class="slide-header">
     <div class="header-right">
-      <div class="badge-tag">اسلاید ۵ از ۸ • رقبا و مزیت شما</div>
+      <span class="badge teal">اسلاید ۵ از ۸ • رقبا و مزیت شما</span>
     </div>
     <div class="header-left">
-      <div class="slide-num-pill">۰۶ / ۱۰</div>
+      <span class="slide-counter">۰۶ / ۱۰</span>
     </div>
   </div>
 
-  <div class="slide-title-group">
-    <h1 class="slide-main-title">
-      خارجی‌ها فقط داکیومنت؛ ایرانی‌ها فقط روزمرگی؛ <span style="color: #0AB7A3;">سنارو جانشین تربیت می‌کند!</span>
+  <div class="title-group">
+    <h1 class="main-title">
+      خارجی‌ها فقط داکیومنت؛ ایرانی‌ها فقط روزمرگی؛ <span class="gradient-teal">سینارو جانشین تربیت می‌کند!</span>
     </h1>
-    <p class="slide-subtitle">
+    <p class="sub-title">
       سینارو مکمل سیستم‌های ERP و اتوماسیون اداری است؛ نه رقیب آن‌ها. ما منطق تصمیم و استمرار کار را نگه می‌داریم.
     </p>
   </div>
 
   <div class="slide-body">
-    <div class="grid-2" style="align-items: start;">
-      <!-- Table 1: Iranian Competitors (Matching Image 3) -->
-      <div>
-        <div style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-          <span>مقایسه با سیستم‌های ایرانی (همکاران، چارگون، فراگستر)</span>
-          <span style="font-size: 11px; color: #94A3B8;">مستندات رسمی محصولات</span>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 16px;">
+      
+      <!-- Right: Iranian Systems Comparison -->
+      <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.25); padding: 18px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px;">
+          <span style="font-size: 15px; font-weight: 800; color: #FFFFFF;">در برابر سیستم‌های ایرانی (همکاران، چارگون، فراگستر)</span>
+          <span style="font-size: 11px; color: #94A3B8;">مستندات رسمی</span>
         </div>
-        <table class="comp-table">
-          <thead>
-            <tr>
-              <th class="th-feature">امکانات و قابلیت‌ها</th>
-              <th class="th-seynaro">سینارو</th>
-              <th>میزیتو</th>
-              <th>پندار KM</th>
-              <th>همکاران</th>
-              <th>فراگستر</th>
-              <th>چارگون</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="td-feature">نامه‌نگاری و اتوماسیون</td>
-              <td class="td-seynaro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-            </tr>
-            <tr>
-              <td class="td-feature">حسابداری و ERP</td>
-              <td class="td-seynaro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-            </tr>
-            <tr>
-              <td class="td-feature">مدیریت تسک تیمی</td>
-              <td class="td-seynaro"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-            </tr>
-            <tr>
-              <td class="td-feature">پایگاه دانش و مستندات</td>
-              <td class="td-seynaro"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-            </tr>
-            <tr style="background: rgba(10, 183, 163, 0.12);">
-              <td class="td-feature" style="color: #0AB7A3; font-weight: 800;">ثبت قلق‌ها و منطق با AI</td>
-              <td class="td-seynaro"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-            </tr>
-            <tr style="background: rgba(10, 183, 163, 0.12);">
-              <td class="td-feature" style="color: #0AB7A3; font-weight: 800;">سنجش عملی جانشین (Shadow)</td>
-              <td class="td-seynaro"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-            </tr>
-            <tr style="background: rgba(10, 183, 163, 0.12);">
-              <td class="td-feature" style="color: #0AB7A3; font-weight: 800;">پوشش مرخصی و تعادل بار</td>
-              <td class="td-seynaro"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-            </tr>
-            <tr>
-              <td class="td-feature">نصب روی سرور داخلی</td>
-              <td class="td-seynaro"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-            </tr>
-          </tbody>
-        </table>
-        <div style="font-size: 11px; color: #94A3B8; margin-top: 6px;">مستند به جدول رقبای ایرانی در ارائه هلدینگ گلرنگ</div>
-      </div>
-
-      <!-- Table 2: Global Competitors (Matching Image 2) -->
-      <div>
-        <div style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-          <span>مقایسه با ابزارهای جهانی (Tango، Guru، Wiki)</span>
-          <span style="font-size: 11px; color: #94A3B8;">گزارش‌های رسمی G2</span>
-        </div>
-        <table class="comp-table">
-          <thead>
-            <tr>
-              <th class="th-feature">امکانات و قابلیت‌ها</th>
-              <th class="th-seynaro">سینارو</th>
-              <th>Tango/Scribe</th>
-              <th>Trainual/Guru</th>
-              <th>Outline/Wiki</th>
-              <th>Snoooz/Sensay</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="td-feature">ضبط خودکار کلیک و اسکرین‌شات</td>
-              <td class="td-seynaro"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-            </tr>
-            <tr>
-              <td class="td-feature">اتصال به Slack و Teams</td>
-              <td class="td-seynaro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-            </tr>
-            <tr>
-              <td class="td-feature">ثبت چرایی تصمیم و قلق با AI</td>
-              <td class="td-seynaro"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-            </tr>
-            <tr style="background: rgba(10, 183, 163, 0.12);">
-              <td class="td-feature" style="color: #0AB7A3; font-weight: 800;">سنجش عملی جانشین (Shadow Run)</td>
-              <td class="td-seynaro"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-            </tr>
-            <tr style="background: rgba(10, 183, 163, 0.12);">
-              <td class="td-feature" style="color: #0AB7A3; font-weight: 800;">پوشش مرخصی و تعادل بار کاری</td>
-              <td class="td-seynaro"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-            </tr>
-            <tr style="background: rgba(10, 183, 163, 0.12);">
-              <td class="td-feature" style="color: #0AB7A3; font-weight: 800;">نصب داخلی بدون اینترنت + فارسی</td>
-              <td class="td-seynaro"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-              <td><svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg></td>
-              <td><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Unfair Moat Badge -->
-        <div class="card-dark" style="border-color: #0AB7A3; margin-top: 12px; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between;">
-          <div style="font-size: 13px; color: #CBD5E1;">
-            🎯 <strong>مزیت ناعادلانه سنارو (Moat):</strong> تنها سیستمی که جانشین را در عمل می‌آزماید و ۱۰۰٪ آفلاین کار می‌کند.
+        
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(255,255,255,0.02); border-radius: 8px;">
+            <span>نامه‌نگاری اداری و دبیرخانه</span>
+            <div><span style="color: #94A3B8; margin-left: 12px;">ایرانی‌ها: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(10, 183, 163, 0.2)" stroke="#0AB7A3" stroke-width="2"/><path d="M7.5 12L10.5 15L16.5 9" stroke="#0AB7A3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> <span style="color: #FE5A40;">سینارو: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(148, 163, 184, 0.1)" stroke="#475569" stroke-width="1.5"/><path d="M9 9L15 15M15 9L9 15" stroke="#64748B" stroke-width="2" stroke-linecap="round"/></svg> (مکمل)</span></div>
           </div>
-          <div class="badge-tag" style="font-size: 11px; padding: 4px 10px;">تضمین بقای عملیات</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(255,255,255,0.02); border-radius: 8px;">
+            <span>حسابداری و حقوق دستمزد ERP</span>
+            <div><span style="color: #94A3B8; margin-left: 12px;">ایرانی‌ها: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(10, 183, 163, 0.2)" stroke="#0AB7A3" stroke-width="2"/><path d="M7.5 12L10.5 15L16.5 9" stroke="#0AB7A3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> <span style="color: #FE5A40;">سینارو: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(148, 163, 184, 0.1)" stroke="#475569" stroke-width="1.5"/><path d="M9 9L15 15M15 9L9 15" stroke="#64748B" stroke-width="2" stroke-linecap="round"/></svg> (مکمل)</span></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(10,183,163,0.06); border-radius: 8px; border: 1px solid rgba(10,183,163,0.2);">
+            <span style="font-weight: 800; color: #0AB7A3;">ثبت قلق‌ها و منطق تصمیم با AI</span>
+            <div><span style="color: #94A3B8; margin-left: 12px;">ایرانی‌ها: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(148, 163, 184, 0.1)" stroke="#475569" stroke-width="1.5"/><path d="M9 9L15 15M15 9L9 15" stroke="#64748B" stroke-width="2" stroke-linecap="round"/></svg></span> <span style="color: #0AB7A3; font-weight: 900;">سینارو: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(10, 183, 163, 0.2)" stroke="#0AB7A3" stroke-width="2"/><path d="M7.5 12L10.5 15L16.5 9" stroke="#0AB7A3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(10,183,163,0.06); border-radius: 8px; border: 1px solid rgba(10,183,163,0.2);">
+            <span style="font-weight: 800; color: #0AB7A3;">سنجش عملی جانشین (Shadow Run)</span>
+            <div><span style="color: #94A3B8; margin-left: 12px;">ایرانی‌ها: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(148, 163, 184, 0.1)" stroke="#475569" stroke-width="1.5"/><path d="M9 9L15 15M15 9L9 15" stroke="#64748B" stroke-width="2" stroke-linecap="round"/></svg></span> <span style="color: #0AB7A3; font-weight: 900;">سینارو: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(10, 183, 163, 0.2)" stroke="#0AB7A3" stroke-width="2"/><path d="M7.5 12L10.5 15L16.5 9" stroke="#0AB7A3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(10,183,163,0.06); border-radius: 8px; border: 1px solid rgba(10,183,163,0.2);">
+            <span style="font-weight: 800; color: #0AB7A3;">پوشش مرخصی و تعادل بار کاری</span>
+            <div><span style="color: #94A3B8; margin-left: 12px;">ایرانی‌ها: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(148, 163, 184, 0.1)" stroke="#475569" stroke-width="1.5"/><path d="M9 9L15 15M15 9L9 15" stroke="#64748B" stroke-width="2" stroke-linecap="round"/></svg></span> <span style="color: #0AB7A3; font-weight: 900;">سینارو: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(10, 183, 163, 0.2)" stroke="#0AB7A3" stroke-width="2"/><path d="M7.5 12L10.5 15L16.5 9" stroke="#0AB7A3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          </div>
         </div>
       </div>
+
+      <!-- Left: Global Tools Comparison -->
+      <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.25); padding: 18px 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px;">
+          <span style="font-size: 15px; font-weight: 800; color: #FFFFFF;">در برابر ابزارهای جهانی (Tango, Guru, Trainual)</span>
+          <span style="font-size: 11px; color: #94A3B8;">گزارش‌های G2</span>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(255,255,255,0.02); border-radius: 8px;">
+            <span>ضبط خودکار کلیک و اسکرین‌شات</span>
+            <div><span style="color: #94A3B8; margin-left: 12px;">جهانی: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(10, 183, 163, 0.2)" stroke="#0AB7A3" stroke-width="2"/><path d="M7.5 12L10.5 15L16.5 9" stroke="#0AB7A3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> <span style="color: #FE5A40;">سینارو: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(254, 90, 64, 0.15)" stroke="#FE5A40" stroke-width="2"/><path d="M12 2A10 10 0 0 0 12 22Z" fill="#FE5A40"/></svg></span></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(255,255,255,0.02); border-radius: 8px;">
+            <span>اتصال به Slack و Teams ابری</span>
+            <div><span style="color: #94A3B8; margin-left: 12px;">جهانی: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(10, 183, 163, 0.2)" stroke="#0AB7A3" stroke-width="2"/><path d="M7.5 12L10.5 15L16.5 9" stroke="#0AB7A3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> <span style="color: #64748B;">سینارو: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(148, 163, 184, 0.1)" stroke="#475569" stroke-width="1.5"/><path d="M9 9L15 15M15 9L9 15" stroke="#64748B" stroke-width="2" stroke-linecap="round"/></svg> (تحریم)</span></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(10,183,163,0.06); border-radius: 8px; border: 1px solid rgba(10,183,163,0.2);">
+            <span style="font-weight: 800; color: #0AB7A3;">ثبت چرایی تصمیم و قلق با AI</span>
+            <div><span style="color: #94A3B8; margin-left: 12px;">جهانی: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(254, 90, 64, 0.15)" stroke="#FE5A40" stroke-width="2"/><path d="M12 2A10 10 0 0 0 12 22Z" fill="#FE5A40"/></svg></span> <span style="color: #0AB7A3; font-weight: 900;">سینارو: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(10, 183, 163, 0.2)" stroke="#0AB7A3" stroke-width="2"/><path d="M7.5 12L10.5 15L16.5 9" stroke="#0AB7A3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(10,183,163,0.06); border-radius: 8px; border: 1px solid rgba(10,183,163,0.2);">
+            <span style="font-weight: 800; color: #0AB7A3;">سنجش عملی جانشین (Shadow Run)</span>
+            <div><span style="color: #94A3B8; margin-left: 12px;">جهانی: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(148, 163, 184, 0.1)" stroke="#475569" stroke-width="1.5"/><path d="M9 9L15 15M15 9L9 15" stroke="#64748B" stroke-width="2" stroke-linecap="round"/></svg></span> <span style="color: #0AB7A3; font-weight: 900;">سینارو: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(10, 183, 163, 0.2)" stroke="#0AB7A3" stroke-width="2"/><path d="M7.5 12L10.5 15L16.5 9" stroke="#0AB7A3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(10,183,163,0.06); border-radius: 8px; border: 1px solid rgba(10,183,163,0.2);">
+            <span style="font-weight: 800; color: #0AB7A3;">نصب داخلی ۱۰۰٪ بدون اینترنت + فارسی</span>
+            <div><span style="color: #94A3B8; margin-left: 12px;">جهانی: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(148, 163, 184, 0.1)" stroke="#475569" stroke-width="1.5"/><path d="M9 9L15 15M15 9L9 15" stroke="#64748B" stroke-width="2" stroke-linecap="round"/></svg></span> <span style="color: #0AB7A3; font-weight: 900;">سینارو: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(10, 183, 163, 0.2)" stroke="#0AB7A3" stroke-width="2"/><path d="M7.5 12L10.5 15L16.5 9" stroke="#0AB7A3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Full-Width Bottom Moat Bento -->
+    <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.35); background: rgba(10, 183, 163, 0.08); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <span style="font-size: 15px; font-weight: 900; color: #0AB7A3; margin-left: 10px;">🛡️ خندق دفاعی و مزیت ناعادلانه (Moat):</span>
+        <span style="font-size: 13px; color: #E2E8F0;">تنها سیستمی که به جای تولید متن‌های بی‌خاصیت، جانشین را در عمل در سناریوهای بحرانی می‌آزماید و ۱۰۰٪ آفلاین است.</span>
+      </div>
+      <span class="badge teal" style="font-size: 11px; white-space: nowrap;">تضمین بقای عملیات</span>
     </div>
   </div>
 
   <div class="slide-footer">
-    <div>نکته راهنما: «از ادعای رقیب نداریم بپرهیزید؛ راه‌حل‌های موجود را معرفی کرده و بگویید چه چیزی شما را متمایز می‌کند.»</div>
-    <div class="slide-footer-right">
-      <span>راهنما: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0AB7A3"/>
-  <path d="M7 12.5L10.5 16L17 8.5" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg> دارد • <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <circle cx="12" cy="12" r="11" fill="#0F172A" stroke="#FE5A40" stroke-width="2"/>
-  <path d="M12 1A11 11 0 0 0 12 23Z" fill="#FE5A40"/>
-</svg> نسبی • <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-  <path d="M18 6L6 18M6 6L18 18" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
-</svg> ندارد</span>
-    </div>
+    <div>راهنما: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(10, 183, 163, 0.2)" stroke="#0AB7A3" stroke-width="2"/><path d="M7.5 12L10.5 15L16.5 9" stroke="#0AB7A3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> دارد • <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(254, 90, 64, 0.15)" stroke="#FE5A40" stroke-width="2"/><path d="M12 2A10 10 0 0 0 12 22Z" fill="#FE5A40"/></svg> نسبی • <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;"><circle cx="12" cy="12" r="10" fill="rgba(148, 163, 184, 0.1)" stroke="#475569" stroke-width="1.5"/><path d="M9 9L15 15M15 9L9 15" stroke="#64748B" stroke-width="2" stroke-linecap="round"/></svg> ندارد</div>
+    <div>نکته راهنما: «از ادعای رقیب نداریم بپرهیزید؛ راه‌حل‌های موجود را معرفی کرده و تمایز را بگویید.»</div>
   </div>
 </div>
 
 
+
+<!-- SLIDE 7: TEAM (اسلاید ۶ از ۸) -->
 <div class="slide" id="slide-7">
   <div class="slide-header">
     <div class="header-right">
-      <div class="badge-tag">اسلاید ۶ از ۸ • تیم</div>
+      <span class="badge teal">اسلاید ۶ از ۸ • تیم</span>
     </div>
     <div class="header-left">
-      <div class="slide-num-pill">۰۷ / ۱۰</div>
+      <span class="slide-counter">۰۷ / ۱۰</span>
     </div>
   </div>
 
-  <div class="slide-title-group">
-    <h1 class="slide-main-title">
-      تعهد تمام‌وقت بنیان‌گذار سولو و <span style="color: #0AB7A3;">برنامه ۳ جذب تخصصی در ماه ۳</span>
+  <div class="title-group">
+    <h1 class="main-title">
+      تعهد تمام‌وقت بنیان‌گذار سولو و <span class="gradient-teal">برنامه ۳ جذب تخصصی در ماه ۳</span>
     </h1>
-    <p class="slide-subtitle">
+    <p class="sub-title">
       معماری فنی و دموی کارکردی به دست بنیان‌گذار شکل گرفته است؛ در دوره شتاب‌دهی تیم فروش و استقرار با بودجه ریزن تکمیل می‌شود.
     </p>
   </div>
 
   <div class="slide-body">
-    <div class="grid-2">
-      <!-- Solo Founder Profile Card -->
-      <div class="card-dark" style="border-color: #0AB7A3; padding: 28px; display: flex; flex-direction: column; justify-content: space-between;">
+    <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; align-items: stretch;">
+      
+      <!-- Right: Solo Founder Card -->
+      <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.35); padding: 28px; display: flex; flex-direction: column; justify-content: space-between;">
         <div>
-          <div style="display: flex; align-items: center; gap: 18px; margin-bottom: 20px;">
-            <div style="width: 72px; height: 72px; border-radius: 50%; background: #0AB7A3; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #FFFFFF; font-weight: bold; border: 3px solid #00F2FE;">
+          <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+            <div style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #0AB7A3, #064E3B); border: 2.5px solid #0AB7A3; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 0 20px rgba(10,183,163,0.3);">
               👨‍💻
             </div>
             <div>
-              <div style="font-size: 26px; font-weight: 900; color: #FFFFFF;">بنیان‌گذار سِینارو</div>
-              <div style="font-size: 15px; font-weight: 700; color: #0AB7A3;">معمار ارشد سیستم و مهندس هوش مصنوعی</div>
+              <div style="font-size: 24px; font-weight: 900; color: #FFFFFF;">بنیان‌گذار سینارو</div>
+              <div style="font-size: 14px; color: #0AB7A3; font-weight: 700; margin-top: 2px;">معمار ارشد سیستم و مهندس هوش مصنوعی</div>
             </div>
           </div>
 
-          <p style="font-size: 15px; color: #CBD5E1; line-height: 1.8; margin-bottom: 20px;">
+          <p style="font-size: 14px; color: #CBD5E1; line-height: 1.7; margin-bottom: 20px;">
             توسعه کامل سیستم‌عامل سنارو، طراحی معماری موتور Z3 SMT، سیستم رمزنگاری محلی کارمند و دموی تعاملی پروژه به صورت تمام‌وقت و مستقل توسط بنیان‌گذار انجام شده است.
           </p>
 
           <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-            <span class="badge-tag" style="font-size: 12px; padding: 4px 12px;">معماری سیستم‌های توزیع‌شده</span>
-            <span class="badge-tag" style="font-size: 12px; padding: 4px 12px;">موتورهای استنتاج ریاضی Z3</span>
-            <span class="badge-tag" style="font-size: 12px; padding: 4px 12px;">هوش مصنوعی عامل‌محور</span>
-            <span class="badge-tag" style="font-size: 12px; padding: 4px 12px;">امنیت On-Premise</span>
+            <span class="badge" style="font-size: 11px;">معماری سیستم‌های توزیع‌شده</span>
+            <span class="badge" style="font-size: 11px;">موتورهای استنتاج ریاضی Z3</span>
+            <span class="badge" style="font-size: 11px;">هوش مصنوعی عامل‌محور</span>
+            <span class="badge" style="font-size: 11px;">امنیت On-Premise</span>
           </div>
         </div>
 
-        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 14px; color: #94A3B8;">تعهد در دوره شتاب‌دهی:</span>
-          <span style="font-size: 15px; font-weight: 800; color: #0AB7A3;">۱۰۰٪ تمام‌وقت، مستقر در ریزن</span>
+        <div style="background: rgba(10, 183, 163, 0.1); border: 1px solid rgba(10, 183, 163, 0.3); border-radius: 12px; padding: 12px 18px; margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 13px; color: #CBD5E1;">تعهد در دوره شتاب‌دهی:</span>
+          <span style="font-size: 14px; font-weight: 900; color: #0AB7A3;">۱۰۰٪ تمام‌وقت، مستقر در ریزن</span>
+        </div>
+      </div>
+
+      <!-- Left: 3 Strategic Hires Funded by REASON -->
+      <div style="display: flex; flex-direction: column; gap: 14px; justify-content: space-between;">
+        <div style="font-size: 15px; font-weight: 800; color: #0AB7A3;">برنامه تکمیل تیم در ماه سوم (همگام با بودجه REASON):</div>
+
+        <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.2); padding: 16px 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 16px; font-weight: 800; color: #FFFFFF;">۱. راهبر ارشد بک‌اند و بهینه‌سازی (Senior Backend)</span>
+            <span class="badge teal" style="font-size: 11px;">جذب ماه ۳</span>
+          </div>
+          <div style="font-size: 13px; color: #94A3B8; line-height: 1.5;">مسئول مقیاس‌پذیری پایگاه‌داده گراف، توزیع بار در پایلوت‌های چند هزار نفری و ارتقای سرعت پاسخ موتور Z3.</div>
+        </div>
+
+        <div class="bento-card coral-glow" style="border-color: rgba(254, 90, 64, 0.25); padding: 16px 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 16px; font-weight: 800; color: #FE5A40;">۲. مدیر فروش سازمانی (Enterprise Sales Lead B2B)</span>
+            <span class="badge coral" style="font-size: 11px;">جذب ماه ۳</span>
+          </div>
+          <div style="font-size: 13px; color: #94A3B8; line-height: 1.5;">مسئول پیشبرد جلسات دمو با مدیران ارشد هلدینگ‌ها، عقد قراردادهای لایسنس و تجاری‌سازی پایلوت‌ها.</div>
+        </div>
+
+        <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.2); padding: 16px 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 16px; font-weight: 800; color: #FFFFFF;">۳. طراح ارگونومی و UX سازمانی (Enterprise UX)</span>
+            <span class="badge teal" style="font-size: 11px;">جذب ماه ۴</span>
+          </div>
+          <div style="font-size: 13px; color: #94A3B8; line-height: 1.5;">تضمین قانون «عدم بازجویی» و کاهش اصطکاک کارمندان اداری تا کار با نرم‌افزار نیاز به آموزش پیچیده نداشته باشد.</div>
         </div>
       </div>
 
-      <!-- 3 Key Hires in Month 3 (Clean HTML cards with 0% overlap) -->
-      <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 2px;">برنامه تکمیل تیم در ماه سوم (همگام با بودجه REASON):</div>
-
-        <div class="card-dark" style="border-color: #0AB7A3; padding: 18px 22px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <span style="font-size: 16px; font-weight: 900; color: #FFFFFF;">۱. راهبر ارشد بک‌اند و بهینه‌سازی (Senior Backend)</span>
-            <span class="badge-tag" style="font-size: 11px; padding: 2px 10px;">جذب ماه ۳</span>
-          </div>
-          <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
-            مسئول مقیاس‌پذیری پایگاه‌داده گراف، توزیع بار در پایلوت‌های چند هزار نفری و ارتقای سرعت پاسخ موتور Z3.
-          </div>
-        </div>
-
-        <div class="card-dark" style="border-color: #FE5A40; padding: 18px 22px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <span style="font-size: 16px; font-weight: 900; color: #FFFFFF;">۲. مدیر فروش سازمانی B2B (Enterprise Sales Lead)</span>
-            <span class="badge-tag coral" style="font-size: 11px; padding: 2px 10px;">جذب ماه ۳</span>
-          </div>
-          <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
-            مسئول پیشبرد جلسات دمو با مدیران ارشد هلدینگ‌ها، عقد قراردادهای لایسنس و تجاری‌سازی پایلوت‌ها.
-          </div>
-        </div>
-
-        <div class="card-dark" style="border-color: #0AB7A3; padding: 18px 22px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <span style="font-size: 16px; font-weight: 900; color: #FFFFFF;">۳. طراح ارگونومی و UX سازمانی (Enterprise UX)</span>
-            <span class="badge-tag" style="font-size: 11px; padding: 2px 10px;">جذب ماه ۴</span>
-          </div>
-          <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
-            تضمین قانون «عدم بازجویی» و کاهش اصطکاک کارمندان اداری تا کار با نرم‌افزار نیاز به آموزش پیچیده نداشته باشد.
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
   <div class="slide-footer">
-    <div>نکته راهنما: «حتی اگر یک نفر هستید اما توانایی دارید، ما برای تکمیل تیم در کنارتان خواهیم بود.»</div>
-    <div class="slide-footer-right">
-      <span>تعهد بنیان‌گذار: تمرکز کامل بر استقرار فنی و میدانی در گلرنگ</span>
-    </div>
+    <div>تعهد بنیان‌گذار: تمرکز کامل بر استقرار فنی و میدانی در گلرنگ</div>
+    <div>نکته راهنما: «حتی اگر تنها یک نفر هستید اما توانایی لازم را دارید، ما برای تکمیل تیم در کنارتان خواهیم بود.»</div>
   </div>
 </div>
 
 
+
+<!-- SLIDE 8: FINANCIAL PLAN & 3 GATES (اسلاید ۷ از ۸) -->
 <div class="slide" id="slide-8">
   <div class="slide-header">
     <div class="header-right">
-      <div class="badge-tag">اسلاید ۷ از ۸ • برنامه مالی و استفاده از سرمایه</div>
+      <span class="badge coral">اسلاید ۷ از ۸ • برنامه مالی و استفاده از سرمایه</span>
     </div>
     <div class="header-left">
-      <div class="slide-num-pill">۰۸ / ۱۰</div>
+      <span class="slide-counter">۰۸ / ۱۰</span>
     </div>
   </div>
 
-  <div class="slide-title-group">
-    <h1 class="slide-main-title">
-      هزینه‌کرد شفاف بودجه در ۶ ماه و <span style="color: #FE5A40;">۳ دروازه بزرگ آینده محصول</span>
+  <div class="title-group">
+    <h1 class="main-title">
+      هزینه‌کرد شفاف بودجه در ۶ ماه و <span class="gradient-coral">۳ دروازه بزرگ آینده محصول</span>
     </h1>
-    <p class="slide-subtitle">
-      تخصیص دقیق سرمایه ۱ میلیارد تومانی شتاب‌دهنده ریزن در ۶ ماه، به همراه ۳ دروازه استراتژیک جهش ارزش محصول در افق ۳ ساله
+    <p class="sub-title">
+      تخصیص دقیق سرمایه ۱ میلیارد تومانی شتاب‌دهنده ریزن در ۶ ماه، به همراه ۳ دروازه استراتژیک جهش ارزش محصول در افق ۳ ساله.
     </p>
   </div>
 
   <div class="slide-body">
-    <div class="grid-2">
-      <!-- Right: Budget Allocation 1 Billion Tomans -->
-      <div class="card-dark" style="border-color: #0AB7A3; padding: 20px;">
-        <div style="font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 6px; display: flex; justify-content: space-between;">
-          <span>تخصیص ۱ میلیارد تومان سرمایه در ۶ ماه</span>
-          <span style="color: #0AB7A3;">شرایط مالی شفاف REASON</span>
+    <div style="display: grid; grid-template-columns: 1fr 1.15fr; gap: 24px; align-items: center;">
+      
+      <!-- Right: Donut Chart Bento -->
+      <div class="bento-card" style="border-color: rgba(254, 90, 64, 0.3); text-align: center; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 15px; font-weight: 800; color: #FFFFFF;">تخصیص ۱ میلیارد تومان سرمایه در ۶ ماه</span>
+          <span class="badge teal" style="font-size: 11px;">شرایط شفاف REASON</span>
         </div>
-        
-        <svg viewBox="0 0 440 360" width="100%" height="300" style="overflow: visible;">
-  <!-- Donut Ring -->
-  <!-- 45% Tech Z3 MVP: Teal (#0AB7A3) -->
-  <circle cx="220" cy="180" r="105" fill="none" stroke="#0AB7A3" stroke-width="44" stroke-dasharray="297 363" stroke-dashoffset="0"/>
-  <!-- 30% Golrang Pilots: Coral (#FE5A40) -->
-  <circle cx="220" cy="180" r="105" fill="none" stroke="#FE5A40" stroke-width="44" stroke-dasharray="198 462" stroke-dashoffset="-297"/>
-  <!-- 15% Servers & AI Hardware: White (#FFFFFF) -->
-  <circle cx="220" cy="180" r="105" fill="none" stroke="#FFFFFF" stroke-width="44" stroke-dasharray="99 561" stroke-dashoffset="-495"/>
-  <!-- 10% Legal & Reserve: Slate (#475569) -->
-  <circle cx="220" cy="180" r="105" fill="none" stroke="#475569" stroke-width="44" stroke-dasharray="66 594" stroke-dashoffset="-594"/>
 
-  <!-- Center Text -->
-  <text x="220" y="165" fill="#94A3B8" font-size="13" font-weight="bold" text-anchor="middle">سرمایه درخواستی</text>
-  <text x="220" y="195" fill="#FFFFFF" font-size="22" font-weight="900" text-anchor="middle">۱ میلیارد تومان</text>
-  <text x="220" y="218" fill="#0AB7A3" font-size="12" font-weight="bold" text-anchor="middle">دوره ۶ ماهه REASON</text>
-</svg>
+        <svg viewBox="0 0 420 300" width="100%" height="240" style="overflow: visible;">
+          <!-- 45% Teal: stroke-dasharray="297 363", offset=0 -->
+          <circle cx="210" cy="150" r="105" fill="none" stroke="#0AB7A3" stroke-width="36"
+                  stroke-dasharray="297 363" stroke-dashoffset="0" stroke-linecap="round"/>
+          <!-- 30% Coral: 198, offset=-297 -->
+          <circle cx="210" cy="150" r="105" fill="none" stroke="#FE5A40" stroke-width="36"
+                  stroke-dasharray="198 462" stroke-dashoffset="-297" stroke-linecap="round"/>
+          <!-- 15% White: 99, offset=-495 -->
+          <circle cx="210" cy="150" r="105" fill="none" stroke="#F8FAFC" stroke-width="36"
+                  stroke-dasharray="99 561" stroke-dashoffset="-495" stroke-linecap="round"/>
+          <!-- 10% Slate: 66, offset=-594 -->
+          <circle cx="210" cy="150" r="105" fill="none" stroke="#475569" stroke-width="36"
+                  stroke-dasharray="66 594" stroke-dashoffset="-594" stroke-linecap="round"/>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; font-size: 13px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="width: 12px; height: 12px; border-radius: 50%; background: #0AB7A3;"></span>
-            <span style="color: #E2E8F0;">۴۵٪ (۴۵۰ م.ت): توسعه هسته Z3</span>
-          </div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="width: 12px; height: 12px; border-radius: 50%; background: #FE5A40;"></span>
-            <span style="color: #E2E8F0;">۳۰٪ (۳۰۰ م.ت): استقرار پایلوت گلرنگ</span>
-          </div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="width: 12px; height: 12px; border-radius: 50%; background: #FFFFFF;"></span>
-            <span style="color: #E2E8F0;">۱۵٪ (۱۵۰ م.ت): سرور و سخت‌افزار تست</span>
-          </div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="width: 12px; height: 12px; border-radius: 50%; background: #475569;"></span>
-            <span style="color: #E2E8F0;">۱۰٪ (۱۰۰ م.ت): امور حقوقی و ذخیره</span>
-          </div>
+          <circle cx="210" cy="150" r="75" fill="#080C14"/>
+          <text x="210" y="140" fill="#94A3B8" font-size="12" text-anchor="middle">سرمایه درخواستی</text>
+          <text x="210" y="165" fill="#FFFFFF" font-size="18" font-weight="900" text-anchor="middle">۱ میلیارد تومان</text>
+          <text x="210" y="185" fill="#0AB7A3" font-size="11" font-weight="800" text-anchor="middle">دوره ۶ ماهه REASON</text>
+        </svg>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; margin-top: 10px; text-align: right;">
+          <div><span style="color: #0AB7A3;">●</span> ۴۵٪ (۴۵۰ م.ت): توسعه هسته Z3</div>
+          <div><span style="color: #FE5A40;">●</span> ۳۰٪ (۳۰۰ م.ت): استقرار پایلوت گلرنگ</div>
+          <div><span style="color: #F8FAFC;">●</span> ۱۵٪ (۱۵۰ م.ت): سرور و سخت‌افزار تست</div>
+          <div><span style="color: #475569;">●</span> ۱۰٪ (۱۰۰ م.ت): امور حقوقی و ذخیره</div>
         </div>
       </div>
 
-      <!-- Left: 3 Strategic Future Gates (Clean HTML cards with 0% overlap) -->
+      <!-- Left: 3 Strategic Future Gates -->
       <div style="display: flex; flex-direction: column; gap: 14px;">
-        <div style="font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 2px;">۳ دروازه استراتژیک جهش محصول در ۳ سال آینده:</div>
+        <div style="font-size: 15px; font-weight: 800; color: #0AB7A3;">۳ دروازه استراتژیک جهش محصول در ۳ سال آینده:</div>
 
-        <div class="card-dark" style="border-color: #0AB7A3; padding: 18px 22px;">
-          <div style="font-size: 15px; font-weight: 900; color: #0AB7A3; margin-bottom: 4px;">دروازه ۰۱: سیستم هوشمند پیشنهاد مقالات علمی (AI R&D)</div>
-          <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
+        <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.25); padding: 16px 20px;">
+          <div style="font-size: 16px; font-weight: 800; color: #0AB7A3; margin-bottom: 4px;">
+            دروازه ۰۱: سیستم هوشمند پیشنهاد مقالات علمی (AI R&amp;D)
+          </div>
+          <div style="font-size: 13px; color: #CBD5E1; line-height: 1.5;">
             رصد خودکار زمینه فعالیت تخصصی پرسنل و پیشنهاد آخرین مقالات و متدهای بهینه‌سازی روز دنیا پیش از آغاز پروژه‌ها برای ارتقای بنیه علمی شرکت.
           </div>
         </div>
 
-        <div class="card-dark" style="border-color: #FE5A40; padding: 18px 22px;">
-          <div style="font-size: 15px; font-weight: 900; color: #FE5A40; margin-bottom: 4px;">دروازه ۰۲: بازار فریلنسری درون‌سازمانی هلدینگ</div>
-          <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
+        <div class="bento-card coral-glow" style="border-color: rgba(254, 90, 64, 0.3); background: rgba(254, 90, 64, 0.08); padding: 16px 20px;">
+          <div style="font-size: 16px; font-weight: 800; color: #FE5A40; margin-bottom: 4px;">
+            دروازه ۰۲: بازار فریلنسری درون‌سازمانی هلدینگ
+          </div>
+          <div style="font-size: 13px; color: #CBD5E1; line-height: 1.5;">
             تبادل هوشمند تخصص پرسنل بین شرکت‌های مختلف تابعه هلدینگ گلرنگ برای انجام پروژه‌های متقاطع؛ کاهش هزینه‌های برون‌سپاری و درآمدزایی برای نیروهای ماهر.
           </div>
         </div>
 
-        <div class="card-dark" style="border-color: #0AB7A3; padding: 18px 22px;">
-          <div style="font-size: 15px; font-weight: 900; color: #0AB7A3; margin-bottom: 4px;">دروازه ۰۳: توسعه و بیشینه‌سازی پتانسیل تیمی</div>
-          <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
+        <div class="bento-card" style="border-color: rgba(10, 183, 163, 0.25); padding: 16px 20px;">
+          <div style="font-size: 16px; font-weight: 800; color: #0AB7A3; margin-bottom: 4px;">
+            دروازه ۰۳: توسعه و بیشینه‌سازی پتانسیل تیمی
+          </div>
+          <div style="font-size: 13px; color: #CBD5E1; line-height: 1.5;">
             شناسایی مهارت‌های خاموش و پنهان نیروها فراتر از شرح وظایف اداری و ارتقای ظرفیت عملیاتی تیم در حل بحران‌های غیرمنتظره.
           </div>
         </div>
       </div>
+
     </div>
   </div>
 
   <div class="slide-footer">
+    <div>پیش‌بینی مالی: نقطه سربرسر در ماه ۱۴ با ۲۰ مشتری سازمانی</div>
     <div>نکته راهنما: «شرایط مالی برنامه از پیش روشن است؛ نیازی به استدلال درباره ارزش‌گذاری نیست.»</div>
-    <div class="slide-footer-right">
-      <span>پیش‌بینی مالی: نقطه سربرسر در ماه ۱۴ با ۲۰ مشتری سازمانی</span>
-    </div>
   </div>
 </div>
 
 
+
+<!-- SLIDE 9: ROADMAP (اسلاید ۸ از ۸) -->
 <div class="slide" id="slide-9">
   <div class="slide-header">
     <div class="header-right">
-      <div class="badge-tag">اسلاید ۸ از ۸ • نقشه راه</div>
+      <span class="badge teal">اسلاید ۸ از ۸ • نقشه راه</span>
     </div>
     <div class="header-left">
-      <div class="slide-num-pill">۰۹ / ۱۰</div>
+      <span class="slide-counter">۰۹ / ۱۰</span>
     </div>
   </div>
 
-  <div class="slide-title-group">
-    <h1 class="slide-main-title">
-      مسیر ۶ مرحله‌ای شتاب‌دهی و <span style="color: #0AB7A3;">جهش مقیاس‌پذیری تجاری</span>
+  <div class="title-group">
+    <h1 class="main-title">
+      مسیر ۶ مرحله‌ای شتاب‌دهی و <span class="gradient-teal">جهش مقیاس‌پذیری تجاری</span>
     </h1>
-    <p class="slide-subtitle">
-      برنامه زمان‌بندی از منتورینگ تا فروش تجاری در هلدینگ گلرنگ و آمادگی برای راند سرمایه‌گذاری بعدی
+    <p class="sub-title">
+      برنامه زمان‌بندی از منتورینگ تا فروش تجاری در هلدینگ گلرنگ و آمادگی برای راند سرمایه‌گذاری بعدی.
     </p>
   </div>
 
   <div class="slide-body">
-    <div class="card-dark" style="border-color: #0AB7A3; padding: 22px; margin-bottom: 20px;">
-      <svg viewBox="0 0 1600 480" width="100%" height="430" style="overflow: visible;">
-  <defs>
-    <linearGradient id="waveGrad" x1="1" y1="0" x2="0" y2="0">
-      <stop offset="0%" stop-color="#0F172A"/>
-      <stop offset="25%" stop-color="#0F172A"/>
-      <stop offset="50%" stop-color="#FE5A40"/>
-      <stop offset="80%" stop-color="#0AB7A3"/>
-      <stop offset="100%" stop-color="#0AB7A3"/>
-    </linearGradient>
-  </defs>
-
-  <rect x="1080" y="20" width="480" height="42" rx="21" fill="#0F172A" stroke="#334155" stroke-width="1.5"/>
-  <text x="1320" y="47" fill="#F8FAFC" font-size="17" font-weight="900" text-anchor="middle">ساخت و تکمیل • ماه ۱ و ۲</text>
-
-  <rect x="560" y="20" width="480" height="42" rx="21" fill="#FE5A40" stroke="#FE5A40" stroke-width="1.5"/>
-  <text x="800" y="47" fill="#FFFFFF" font-size="17" font-weight="900" text-anchor="middle">آزمون میدانی • ماه ۳ و ۴</text>
-
-  <rect x="40" y="20" width="480" height="42" rx="21" fill="#0AB7A3" stroke="#0AB7A3" stroke-width="1.5"/>
-  <text x="280" y="47" fill="#FFFFFF" font-size="17" font-weight="900" text-anchor="middle">قرارداد و مقیاس • ماه ۵ و ۶</text>
-
-  <path d="M 1450,230 C 1300,230 1250,210 1170,180 C 1090,150 1000,140 920,180 C 840,220 750,240 670,190 C 590,140 500,120 420,160 C 340,200 240,160 100,120" 
-        fill="none" stroke="url(#waveGrad)" stroke-width="8" stroke-linecap="round"/>
-
-  <polygon points="60,110 100,95 100,125" fill="#0AB7A3"/>
-
-  <!-- NODE 1 -->
-  <g transform="translate(1450, 230)">
-    <circle cx="0" cy="0" r="34" fill="#0F172A" stroke="#F8FAFC" stroke-width="4"/>
-    <text x="0" y="8" fill="#FFFFFF" font-size="20" font-weight="900" text-anchor="middle">👥</text>
-    <circle cx="24" cy="-24" r="14" fill="#334155"/>
-    <text x="24" y="-19" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle">۱</text>
-  </g>
-  <text x="1450" y="300" fill="#FFFFFF" font-size="18" font-weight="900" text-anchor="middle">منتورینگ و هسته‌ی دانش</text>
-  <foreignObject x="1330" y="320" width="240" height="140">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Vazirmatn'; font-size:13px; color:#94A3B8; line-height:1.6; text-align:center;">
-      بررسی با منتورها، ارتباط‌گیری تخصصی و تکمیل MVP (حفظ دانش، Onboarding و Offboarding).
-    </div>
-  </foreignObject>
-
-  <!-- NODE 2 -->
-  <g transform="translate(1170, 180)">
-    <circle cx="0" cy="0" r="34" fill="#0F172A" stroke="#F8FAFC" stroke-width="4"/>
-    <text x="0" y="8" fill="#FFFFFF" font-size="20" font-weight="900" text-anchor="middle">🎯</text>
-    <circle cx="24" cy="-24" r="14" fill="#334155"/>
-    <text x="24" y="-19" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle">۲</text>
-  </g>
-  <text x="1170" y="250" fill="#FFFFFF" font-size="18" font-weight="900" text-anchor="middle">Skill Radar و دسترسی مدیر</text>
-  <foreignObject x="1050" y="270" width="240" height="140">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Vazirmatn'; font-size:13px; color:#94A3B8; line-height:1.6; text-align:center;">
-      تکمیل بخش Skill Radar (امتیازدهی و پیشنهاد کورس)، مدیریت فایل‌ها، دسترسی مدیر و تست محصول.
-    </div>
-  </foreignObject>
-
-  <!-- NODE 3 -->
-  <g transform="translate(920, 180)">
-    <circle cx="0" cy="0" r="34" fill="#FE5A40" stroke="#FFFFFF" stroke-width="4"/>
-    <text x="0" y="8" fill="#FFFFFF" font-size="20" font-weight="900" text-anchor="middle">🧪</text>
-    <circle cx="24" cy="-24" r="14" fill="#FE5A40"/>
-    <text x="24" y="-19" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle">۳</text>
-  </g>
-  <text x="920" y="250" fill="#FFA07A" font-size="18" font-weight="900" text-anchor="middle">تست در ۳ شرکت و مقالات</text>
-  <foreignObject x="800" y="270" width="240" height="140">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Vazirmatn'; font-size:13px; color:#CBD5E1; line-height:1.6; text-align:center;">
-      تست عملی محصول و دریافت بازخورد در ۳ شرکت پایلوت، همراه با شروع ساخت سرور خارجی مقالات.
-    </div>
-  </foreignObject>
-
-  <!-- NODE 4 -->
-  <g transform="translate(670, 190)">
-    <circle cx="0" cy="0" r="34" fill="#FE5A40" stroke="#FFFFFF" stroke-width="4"/>
-    <text x="0" y="8" fill="#FFFFFF" font-size="20" font-weight="900" text-anchor="middle">🔗</text>
-    <circle cx="24" cy="-24" r="14" fill="#FE5A40"/>
-    <text x="24" y="-19" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle">۴</text>
-  </g>
-  <text x="670" y="260" fill="#FFA07A" font-size="18" font-weight="900" text-anchor="middle">اتصال مقالات و شروع فروش</text>
-  <foreignObject x="550" y="280" width="240" height="140">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Vazirmatn'; font-size:13px; color:#CBD5E1; line-height:1.6; text-align:center;">
-      رفع ایرادات پایلوت، تکمیل و اتصال سرور خارجی مقالات به محصول و آغاز مذاکرات فروش.
-    </div>
-  </foreignObject>
-
-  <!-- NODE 5 -->
-  <g transform="translate(420, 160)">
-    <circle cx="0" cy="0" r="34" fill="#0AB7A3" stroke="#FFFFFF" stroke-width="4"/>
-    <text x="0" y="8" fill="#FFFFFF" font-size="20" font-weight="900" text-anchor="middle">📄</text>
-    <circle cx="24" cy="-24" r="14" fill="#0AB7A3"/>
-    <text x="24" y="-19" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle">۵</text>
-  </g>
-  <text x="420" y="230" fill="#6EE7B7" font-size="18" font-weight="900" text-anchor="middle">قراردادها و برندینگ</text>
-  <foreignObject x="300" y="250" width="240" height="140">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Vazirmatn'; font-size:13px; color:#CBD5E1; line-height:1.6; text-align:center;">
-      عقد قرارداد با شرکت‌ها، برندینگ سازمانی، فروش رسمی محصول و بهبود زیرساخت‌ها.
-    </div>
-  </foreignObject>
-
-  <!-- NODE 6 -->
-  <g transform="translate(140, 130)">
-    <circle cx="0" cy="0" r="36" fill="#0AB7A3" stroke="#FFFFFF" stroke-width="4"/>
-    <text x="0" y="8" fill="#FFFFFF" font-size="22" font-weight="900" text-anchor="middle">🚀</text>
-    <circle cx="24" cy="-24" r="14" fill="#0AB7A3"/>
-    <text x="24" y="-19" fill="#FFFFFF" font-size="11" font-weight="bold" text-anchor="middle">۶</text>
-  </g>
-  <text x="140" y="200" fill="#6EE7B7" font-size="19" font-weight="900" text-anchor="middle">مقیاس‌پذیری بزرگ</text>
-  <foreignObject x="20" y="220" width="240" height="140">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Vazirmatn'; font-size:13px; color:#CBD5E1; line-height:1.6; text-align:center;">
-      مذاکره با مشتریان بیشتر، گسترش فروش و توسعه‌ی زیرساخت برای کار در وسعت بزرگ هلدینگی.
-    </div>
-  </foreignObject>
-</svg>
-    </div>
-
-    <div class="card-dark" style="border-color: #FE5A40; padding: 16px 28px; display: flex; justify-content: space-between; align-items: center;">
-      <div style="display: flex; gap: 36px; align-items: center;">
-        <div style="font-size: 15px; font-weight: 800; color: #FFFFFF;">🎯 چشم‌انداز سال‌های ۲ و ۳:</div>
-        <div style="font-size: 13px; color: #0AB7A3;">استقرار در ۵۰ شرکت هلدینگ گلرنگ و صنایع برتر ایران</div>
-        <div style="font-size: 13px; color: #FE5A40;">درآمد سالانه ۲۶ میلیارد تومان (تحقق کامل SOM)</div>
-        <div style="font-size: 13px; color: #E2E8F0;">آمادگی برای جذب سرمایه سری A با ارزش‌گذاری چند برابری</div>
+    <!-- 3 Phase Badges at Top -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+      <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 9999px; padding: 8px 16px; text-align: center; font-size: 13px; font-weight: 800; color: #CBD5E1;">
+        ساخت و تکمیل • ماه ۱ و ۲
       </div>
-      <div class="badge-tag coral" style="font-size: 12px; padding: 4px 14px;">تداوم و بقای کسب‌وکار</div>
+      <div style="background: rgba(254, 90, 64, 0.12); border: 1px solid rgba(254, 90, 64, 0.35); border-radius: 9999px; padding: 8px 16px; text-align: center; font-size: 13px; font-weight: 800; color: #FE5A40;">
+        آزمون میدانی • ماه ۳ و ۴
+      </div>
+      <div style="background: rgba(10, 183, 163, 0.12); border: 1px solid rgba(10, 183, 163, 0.35); border-radius: 9999px; padding: 8px 16px; text-align: center; font-size: 13px; font-weight: 800; color: #0AB7A3;">
+        قرارداد و مقیاس • ماه ۵ و ۶
+      </div>
+    </div>
+
+    <!-- 6-Milestone Grid Cards matching Wave Path -->
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 24px;">
+      
+      <div class="bento-card" style="padding: 16px 14px; text-align: center;">
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: #080C14; border: 2px solid #FFFFFF; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #FFFFFF; font-size: 14px;">۱</div>
+        <div style="font-size: 13px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">منتورینگ و هسته دانش</div>
+        <div style="font-size: 11px; color: #94A3B8; line-height: 1.4;">بررسی با منتورها، تکمیل MVP حفظ دانش و Onboarding</div>
+      </div>
+
+      <div class="bento-card" style="padding: 16px 14px; text-align: center;">
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: #080C14; border: 2px solid #FFFFFF; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #FFFFFF; font-size: 14px;">۲</div>
+        <div style="font-size: 13px; font-weight: 800; color: #FFFFFF; margin-bottom: 4px;">Skill Radar و دسترسی</div>
+        <div style="font-size: 11px; color: #94A3B8; line-height: 1.4;">رادار مهارت پرسنل، مدیریت دسترسی فایل‌ها و تست محصول</div>
+      </div>
+
+      <div class="bento-card coral-glow" style="padding: 16px 14px; text-align: center; border-color: rgba(254, 90, 64, 0.35);">
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: #080C14; border: 2px solid #FE5A40; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #FE5A40; font-size: 14px;">۳</div>
+        <div style="font-size: 13px; font-weight: 800; color: #FE5A40; margin-bottom: 4px;">تست در ۳ شرکت</div>
+        <div style="font-size: 11px; color: #CBD5E1; line-height: 1.4;">تست عملی محصول و بازخورد پایلوت در ۳ شرکت گلرنگ</div>
+      </div>
+
+      <div class="bento-card coral-glow" style="padding: 16px 14px; text-align: center; border-color: rgba(254, 90, 64, 0.35);">
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: #080C14; border: 2px solid #FE5A40; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #FE5A40; font-size: 14px;">۴</div>
+        <div style="font-size: 13px; font-weight: 800; color: #FE5A40; margin-bottom: 4px;">اتصال مقالات و فروش</div>
+        <div style="font-size: 11px; color: #CBD5E1; line-height: 1.4;">رفع ایرادات پایلوت، سرور مقالات و آغاز مذاکرات فروش</div>
+      </div>
+
+      <div class="bento-card" style="padding: 16px 14px; text-align: center; border-color: rgba(10, 183, 163, 0.35);">
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: #080C14; border: 2px solid #0AB7A3; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #0AB7A3; font-size: 14px;">۵</div>
+        <div style="font-size: 13px; font-weight: 800; color: #0AB7A3; margin-bottom: 4px;">قراردادها و برندینگ</div>
+        <div style="font-size: 11px; color: #CBD5E1; line-height: 1.4;">عقد قرارداد با شرکت‌ها، برندینگ سازمانی و فروش رسمی</div>
+      </div>
+
+      <div class="bento-card" style="padding: 16px 14px; text-align: center; border-color: rgba(10, 183, 163, 0.35);">
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: #080C14; border: 2px solid #0AB7A3; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #0AB7A3; font-size: 14px;">۶</div>
+        <div style="font-size: 13px; font-weight: 800; color: #0AB7A3; margin-bottom: 4px;">مقیاس‌پذیری بزرگ</div>
+        <div style="font-size: 11px; color: #CBD5E1; line-height: 1.4;">مذاکره با مشتریان بیشتر و توسعه زیرساخت در وسعت هلدینگ</div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Vision Bar -->
+    <div class="bento-card" style="padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; border-color: rgba(10, 183, 163, 0.3); background: rgba(10, 183, 163, 0.08);">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span class="badge teal" style="font-size: 12px;">چشم‌انداز سال ۲ و ۳</span>
+        <span style="font-size: 14px; color: #FFFFFF; font-weight: 700;">استقرار در ۵۰ شرکت هلدینگ گلرنگ • درآمد سالانه ۲۶ میلیارد تومان (تحقق کامل SOM)</span>
+      </div>
+      <span class="badge" style="color: #38BDF8; border-color: rgba(56, 189, 248, 0.3);">آمادگی برای جذب سرمایه سری A</span>
     </div>
   </div>
 
   <div class="slide-footer">
-    <div>نکته راهنما: «مسیر شما پس از شش ماه چیست؟ گسترش به شرکت‌های دیگر و جذب سرمایه بعدی را نشان دهید.»</div>
-    <div class="slide-footer-right">
-      <span>شتاب‌دهنده هوش مصنوعی REASON (گلرنگ ونچرز) • پاییز ۱۴۰۵</span>
-    </div>
+    <div>مسیر ۶ ماهه شتاب‌دهی REASON (گلرنگ ونچرز) • پاییز ۱۴۰۵</div>
+    <div>نکته راهنما: «مسیر شما پس از شش ماه چیست؟ گسترش به دیگر شرکت‌ها و ورود به بازارهای بزرگ‌تر را نشان دهید.»</div>
   </div>
 </div>
 
 
+
+<!-- SLIDE 10: CLOSING & DEMO CTA -->
 <div class="slide" id="slide-10">
   <div class="slide-header">
     <div class="header-right">
-      <div class="logo-container">
-        <svg viewBox="540 360 860 960" width="44" height="50" style="vertical-align: middle;">
+      <svg viewBox="540 360 860 960" width="38" height="42" style="vertical-align: middle;">
   <defs>
     <mask id="logo_m" maskUnits="userSpaceOnUse" x="500" y="300" width="960" height="1100">
       <rect x="500" y="300" width="960" height="1100" fill="#fff"/>
@@ -1520,58 +1223,137 @@ body {
   <circle cx="1020" cy="740" r="54" fill="#FE5A40"/>
   <circle cx="910" cy="948" r="54" fill="#FE5A40"/>
 </svg>
-        <div class="logo-text">سِینارو <span>SEYNARO</span></div>
-      </div>
+      <span style="font-size: 20px; font-weight: 900; letter-spacing: 0.5px; color: #FFFFFF;">SEYNARO OS <span style="color: #0AB7A3;">• سینارو</span></span>
     </div>
     <div class="header-left">
-      <div class="badge-tag">پایان ارائه • جمع‌بندی و دمو</div>
-      <div class="slide-num-pill">۱۰ / ۱۰</div>
+      <span class="badge teal">پایان ارائه • جمع‌بندی و دمو</span>
+      <span class="slide-counter">۱۰ / ۱۰</span>
     </div>
   </div>
 
-  <div class="slide-body" style="align-items: center; text-align: center; justify-content: center;">
-    <div class="badge-tag coral" style="font-size: 15px; padding: 6px 20px; margin-bottom: 20px;">آماده آغاز دوره ۶ ماهه شتاب‌دهی REASON</div>
+  <div class="slide-body" style="text-align: center; align-items: center;">
+    <div class="badge coral" style="margin-bottom: 20px; font-size: 14px; padding: 8px 22px;">
+      آماده آغاز دوره ۶ ماهه شتاب‌دهی REASON
+    </div>
 
-    <h1 style="font-size: 54px; font-weight: 900; line-height: 1.3; margin-bottom: 20px; color: #FFFFFF;">
-      آماده‌ایم تداوم عملیات را در <span style="color: #0AB7A3;">هلدینگ گلرنگ</span> تضمین کنیم.
+    <h1 style="font-size: 52px; font-weight: 900; line-height: 1.25; margin-bottom: 20px;">
+      آماده‌ایم تداوم عملیات را در <span class="gradient-teal">هلدینگ گلرنگ</span> تضمین کنیم.
     </h1>
 
-    <p style="font-size: 20px; color: #94A3B8; max-width: 850px; line-height: 1.7; margin-bottom: 36px;">
+    <p style="font-size: 18px; color: #94A3B8; max-width: 820px; line-height: 1.6; margin-bottom: 40px;">
       با همگام‌سازی دموی کارکردی سنارو روی فرآیندهای زنجیره پخش و انبار، به مدیران آرامش خاطر و به پرسنل امنیت شغلی می‌دهیم.
     </p>
 
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; width: 100%; max-width: 1000px; text-align: right; margin-bottom: 36px;">
-      <div class="card-dark" style="border-color: #0AB7A3; padding: 22px;">
-        <div style="font-size: 14px; font-weight: 800; color: #0AB7A3; margin-bottom: 8px;">گام فوری ۰۱</div>
-        <div style="font-size: 18px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">مشاهده دموی زنده</div>
+    <!-- 3 Action Bento Cards -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; width: 100%; max-width: 1050px;">
+      
+      <div class="bento-card" style="text-align: right; border-color: rgba(10, 183, 163, 0.35); background: rgba(10, 183, 163, 0.08);">
+        <div style="font-size: 12px; color: #0AB7A3; font-weight: 800; margin-bottom: 6px;">گام فوری ۰۱</div>
+        <div style="font-size: 20px; font-weight: 900; color: #FFFFFF; margin-bottom: 8px;">مشاهده دموی زنده</div>
         <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">نمایش کارکردی موتور استنتاج Z3 و محیط شبیه‌ساز Shadow Run در جلسه حضوری.</div>
       </div>
 
-      <div class="card-dark" style="border-color: #FE5A40; padding: 22px;">
-        <div style="font-size: 14px; font-weight: 800; color: #FE5A40; margin-bottom: 8px;">گام فوری ۰۲</div>
-        <div style="font-size: 18px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">تنظیم تفاهم‌نامه پایلوت</div>
-        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">عقد توافق پایلوت ۳ ماهه در گل‌پخش اول یا افق کوروش با دسترسی غیرتهاجمی.</div>
+      <div class="bento-card coral-glow" style="text-align: right; border-color: rgba(254, 90, 64, 0.35); background: rgba(254, 90, 64, 0.08);">
+        <div style="font-size: 12px; color: #FE5A40; font-weight: 800; margin-bottom: 6px;">گام فوری ۰۲</div>
+        <div style="font-size: 20px; font-weight: 900; color: #FFFFFF; margin-bottom: 8px;">تنظیم تفاهم‌نامه پایلوت</div>
+        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">عقد توافق پایلوت ۳ ماهه در گلپخش اول یا افق کوروش با دسترسی کاملاً غیرتهاجمی.</div>
       </div>
 
-      <div class="card-dark" style="border-color: #0AB7A3; padding: 22px;">
-        <div style="font-size: 14px; font-weight: 800; color: #0AB7A3; margin-bottom: 8px;">گام فوری ۰۳</div>
-        <div style="font-size: 18px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">استقرار در شتاب‌دهنده</div>
-        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">حضور تمام‌وقت بنیان‌گذار در فضای کار اشتراکی REASON و شروع توسعه.</div>
+      <div class="bento-card" style="text-align: right; border-color: rgba(255, 255, 255, 0.15);">
+        <div style="font-size: 12px; color: #94A3B8; font-weight: 800; margin-bottom: 6px;">گام فوری ۰۳</div>
+        <div style="font-size: 20px; font-weight: 900; color: #FFFFFF; margin-bottom: 8px;">استقرار در شتاب‌دهنده</div>
+        <div style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">حضور تمام‌وقت بنیان‌گذار در فضای کار اشتراکی REASON و شروع توسعه متمرکز.</div>
       </div>
+
     </div>
 
-    <div style="font-size: 18px; font-weight: 800; color: #FFFFFF;">
-      سپاس از توجه شما • سِینارو (SEYNARO OS)
+    <div style="margin-top: 36px; font-size: 16px; font-weight: 900; color: #CBD5E1;">
+      سپاس از توجه شما • <span style="color: #0AB7A3;">سینارو (SEYNARO OS)</span>
     </div>
   </div>
 
   <div class="slide-footer">
+    <div>تداوم کار و جانشین‌پروری عملیاتی</div>
     <div>ارائه به کمیته سرمایه‌گذاری شتاب‌دهنده REASON (گلرنگ ونچرز)</div>
-    <div class="slide-footer-right">
-      <span>تداوم کار و جانشین‌پروری عملیاتی</span>
-    </div>
   </div>
 </div>
 
+
+  </div>
+
+  <!-- Interactive Navigation Controls -->
+  <div class="nav-controls" id="navControls">
+    <button class="nav-btn" onclick="prevSlide()" title="اسلاید قبلی (کلید چپ)">‹</button>
+    <div class="nav-indicator" id="dotContainer"></div>
+    <button class="nav-btn" onclick="nextSlide()" title="اسلاید بعدی (کلید راست یا فضا)">›</button>
+    <button class="nav-btn" onclick="toggleFullscreen()" title="تمام‌صفحه (F)" style="margin-right: 6px; font-size: 12px;">⛶</button>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    const dotContainer = document.getElementById('dotContainer');
+    const progressBar = document.getElementById('progressBar');
+
+    // Create indicator dots
+    slides.forEach((_, idx) => {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (idx === 0 ? ' active' : '');
+      dot.onclick = () => goToSlide(idx);
+      dotContainer.appendChild(dot);
+    });
+
+    function updateDeck() {
+      slides.forEach((slide, idx) => {
+        slide.classList.toggle('active', idx === currentSlide);
+      });
+      document.querySelectorAll('.dot').forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentSlide);
+      });
+      progressBar.style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateDeck();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateDeck();
+      }
+    }
+
+    function goToSlide(idx) {
+      currentSlide = idx;
+      updateDeck();
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen().catch(err => {});
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      }
+    });
+
+    updateDeck();
+  </script>
 </body>
 </html>
