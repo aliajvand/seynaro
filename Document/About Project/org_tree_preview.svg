@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 900" direction="rtl" font-family="Vazirmatn, Tahoma, sans-serif" xmlns:c2pa="http://c2pa.org/manifest">
+<rect width="1500" height="900" fill="#F5F8FD"/>
+<rect x="640" y="36" width="220" height="68" rx="34" fill="#0C1226"/><text x="750" y="62" font-size="22" font-weight="800" fill="#fff" text-anchor="middle" dominant-baseline="middle">سینارو</text><text x="750" y="86" font-size="13" font-weight="500" fill="#9fe" text-anchor="middle" dominant-baseline="middle">ثبت دانش و تداوم کار</text>
+<rect x="1040" y="40" width="260" height="60" rx="16" fill="#DDF3EF" stroke="#0BB8A5" stroke-width="2"/><text x="1170" y="61" font-size="17" font-weight="700" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">دانش منطقی</text><text x="1170" y="82" font-size="13" font-weight="500" fill="#5B6B83" text-anchor="middle" dominant-baseline="middle">شش موتور + یک LLM</text>
+<line x1="1040" y1="70" x2="860" y2="70" stroke="#0BB8A5" stroke-width="3" stroke-dasharray="6 6"/>
+<rect x="200" y="40" width="260" height="60" rx="16" fill="#DDF3EF" stroke="#0BB8A5" stroke-width="2"/><text x="330" y="61" font-size="17" font-weight="700" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">دانش عملی</text><text x="330" y="82" font-size="13" font-weight="500" fill="#5B6B83" text-anchor="middle" dominant-baseline="middle">روزی ۳ دقیقه گفتگو</text>
+<line x1="460" y1="70" x2="640" y2="70" stroke="#0BB8A5" stroke-width="3" stroke-dasharray="6 6"/>
+<path d="M750 104 C 750 150, 1180 150, 1180 198" fill="none" stroke="#0BB8A5" stroke-width="4"/>
+<rect x="1060" y="198" width="240" height="64" rx="32" fill="#0BB8A5"/><text x="1180" y="230" font-size="22" font-weight="800" fill="#fff" text-anchor="middle" dominant-baseline="middle">کارمند</text>
+<line x1="1180" y1="262" x2="1180" y2="290" stroke="#0BB8A5" stroke-opacity=".25" stroke-width="3"/>
+<rect x="1030" y="288" width="300" height="44" rx="22" fill="#fff" stroke="#0BB8A5" stroke-width="2"/>
+<circle cx="1308" cy="310" r="6" fill="#0BB8A5"/><text x="1172" y="310" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">داشبورد کارهای من</text>
+
+<rect x="1030" y="346" width="300" height="44" rx="22" fill="#fff" stroke="#0BB8A5" stroke-width="2"/>
+<circle cx="1308" cy="368" r="6" fill="#0BB8A5"/><text x="1172" y="368" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">فضای شخصی دانش</text>
+
+<rect x="1030" y="404" width="300" height="44" rx="22" fill="#fff" stroke="#0BB8A5" stroke-width="2"/>
+<circle cx="1308" cy="426" r="6" fill="#0BB8A5"/><text x="1172" y="426" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">سه سطح اطلاعات</text>
+
+<rect x="1030" y="462" width="300" height="44" rx="22" fill="#fff" stroke="#0BB8A5" stroke-width="2"/>
+<circle cx="1308" cy="484" r="6" fill="#0BB8A5"/><text x="1172" y="484" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">پاسخ‌گوی شخصی</text>
+
+<rect x="1030" y="520" width="300" height="44" rx="22" fill="#fff" stroke="#0BB8A5" stroke-width="2"/>
+<circle cx="1308" cy="542" r="6" fill="#0BB8A5"/><text x="1172" y="542" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">اشتراک زمان‌دار</text>
+
+<rect x="1030" y="578" width="300" height="44" rx="22" fill="#fff" stroke="#0BB8A5" stroke-width="2"/>
+<circle cx="1308" cy="600" r="6" fill="#0BB8A5"/><text x="1172" y="600" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">تحویل هنگام خروج</text>
+
+<rect x="1030" y="636" width="300" height="44" rx="22" fill="#fff" stroke="#0BB8A5" stroke-width="2"/>
+<circle cx="1308" cy="658" r="6" fill="#0BB8A5"/><text x="1172" y="658" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">گذرنامه مهارتی</text>
+
+<rect x="1030" y="694" width="300" height="44" rx="22" fill="#fff" stroke="#0BB8A5" stroke-width="2"/>
+<circle cx="1308" cy="716" r="6" fill="#0BB8A5"/><text x="1172" y="716" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">دفتر شفافیت دسترسی</text>
+
+<rect x="1030" y="752" width="300" height="44" rx="22" fill="#fff" stroke="#0BB8A5" stroke-width="2"/>
+<circle cx="1308" cy="774" r="6" fill="#0BB8A5"/><text x="1172" y="774" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">رسید کار اضافه</text>
+
+<rect x="1030" y="810" width="300" height="44" rx="22" fill="#fff" stroke="#0BB8A5" stroke-width="2"/>
+<circle cx="1308" cy="832" r="6" fill="#0BB8A5"/><text x="1172" y="832" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">فضای مشترک تیم</text>
+<path d="M750 104 C 750 150, 750 150, 750 198" fill="none" stroke="#0C1226" stroke-width="4"/>
+<rect x="630" y="198" width="240" height="64" rx="32" fill="#0C1226"/><text x="750" y="230" font-size="22" font-weight="800" fill="#fff" text-anchor="middle" dominant-baseline="middle">مدیر واحد</text>
+<line x1="750" y1="262" x2="750" y2="290" stroke="#0C1226" stroke-opacity=".25" stroke-width="3"/>
+<rect x="600" y="288" width="300" height="44" rx="22" fill="#fff" stroke="#0C1226" stroke-width="2"/>
+<circle cx="878" cy="310" r="6" fill="#0C1226"/><text x="742" y="310" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">ظرفیت تیم</text>
+
+<rect x="600" y="346" width="300" height="44" rx="22" fill="#fff" stroke="#0C1226" stroke-width="2"/>
+<circle cx="878" cy="368" r="6" fill="#0C1226"/><text x="742" y="368" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">بار کاری و WBI</text>
+
+<rect x="600" y="404" width="300" height="44" rx="22" fill="#fff" stroke="#0C1226" stroke-width="2"/>
+<circle cx="878" cy="426" r="6" fill="#0C1226"/><text x="742" y="426" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">وابستگی افراد به کار</text>
+
+<rect x="600" y="462" width="300" height="44" rx="22" fill="#fff" stroke="#0C1226" stroke-width="2"/>
+<circle cx="878" cy="484" r="6" fill="#0C1226"/><text x="742" y="484" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">اثر مرخصی و غیبت</text>
+
+<rect x="600" y="520" width="300" height="44" rx="22" fill="#fff" stroke="#0C1226" stroke-width="2"/>
+<circle cx="878" cy="542" r="6" fill="#0C1226"/><text x="742" y="542" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">ریسک توقف عملیات</text>
+
+<rect x="600" y="578" width="300" height="44" rx="22" fill="#fff" stroke="#0C1226" stroke-width="2"/>
+<circle cx="878" cy="600" r="6" fill="#0C1226"/><text x="742" y="600" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">پوشش مهارت جانشین</text>
+
+<rect x="600" y="636" width="300" height="44" rx="22" fill="#fff" stroke="#0C1226" stroke-width="2"/>
+<circle cx="878" cy="658" r="6" fill="#0C1226"/><text x="742" y="658" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">گزارش وضعیت واحد</text>
+
+<rect x="600" y="694" width="300" height="44" rx="22" fill="#fff" stroke="#0C1226" stroke-width="2"/>
+<circle cx="878" cy="716" r="6" fill="#0C1226"/><text x="742" y="716" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">پیش‌نویس گزارش هفتگی</text>
+
+<rect x="600" y="752" width="300" height="44" rx="22" fill="#fff" stroke="#0C1226" stroke-width="2"/>
+<circle cx="878" cy="774" r="6" fill="#0C1226"/><text x="742" y="774" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">دفتر اضافه‌کار</text>
+
+<rect x="600" y="810" width="300" height="44" rx="22" fill="#fff" stroke="#0C1226" stroke-width="2"/>
+<circle cx="878" cy="832" r="6" fill="#0C1226"/><text x="742" y="832" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">روند عملکرد و هشدار افت</text>
+<path d="M750 104 C 750 150, 320 150, 320 198" fill="none" stroke="#FF5B3F" stroke-width="4"/>
+<rect x="200" y="198" width="240" height="64" rx="32" fill="#FF5B3F"/><text x="320" y="230" font-size="22" font-weight="800" fill="#fff" text-anchor="middle" dominant-baseline="middle">مدیرعامل</text>
+<line x1="320" y1="262" x2="320" y2="290" stroke="#FF5B3F" stroke-opacity=".25" stroke-width="3"/>
+<rect x="170" y="288" width="300" height="44" rx="22" fill="#fff" stroke="#FF5B3F" stroke-width="2"/>
+<circle cx="448" cy="310" r="6" fill="#FF5B3F"/><text x="312" y="310" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">سازمان در یک نگاه</text>
+
+<rect x="170" y="346" width="300" height="44" rx="22" fill="#fff" stroke="#FF5B3F" stroke-width="2"/>
+<circle cx="448" cy="368" r="6" fill="#FF5B3F"/><text x="312" y="368" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">نقشه ریسک تمرکز</text>
+
+<rect x="170" y="404" width="300" height="44" rx="22" fill="#fff" stroke="#FF5B3F" stroke-width="2"/>
+<circle cx="448" cy="426" r="6" fill="#FF5B3F"/><text x="312" y="426" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">تعهدات بحرانی و موعدها</text>
+
+<rect x="170" y="462" width="300" height="44" rx="22" fill="#fff" stroke="#FF5B3F" stroke-width="2"/>
+<circle cx="448" cy="484" r="6" fill="#FF5B3F"/><text x="312" y="484" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">ثبت خروجی کارکنان</text>
+
+<rect x="170" y="520" width="300" height="44" rx="22" fill="#fff" stroke="#FF5B3F" stroke-width="2"/>
+<circle cx="448" cy="542" r="6" fill="#FF5B3F"/><text x="312" y="542" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">پرونده‌های باز افراد</text>
+
+<rect x="170" y="578" width="300" height="44" rx="22" fill="#fff" stroke="#FF5B3F" stroke-width="2"/>
+<circle cx="448" cy="600" r="6" fill="#FF5B3F"/><text x="312" y="600" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">تعیین جانشین</text>
+
+<rect x="170" y="636" width="300" height="44" rx="22" fill="#fff" stroke="#FF5B3F" stroke-width="2"/>
+<circle cx="448" cy="658" r="6" fill="#FF5B3F"/><text x="312" y="658" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">بررسی کامل بودن تحویل</text>
+
+<rect x="170" y="694" width="300" height="44" rx="22" fill="#fff" stroke="#FF5B3F" stroke-width="2"/>
+<circle cx="448" cy="716" r="6" fill="#FF5B3F"/><text x="312" y="716" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">گواهی تحویل و سوابق فایل</text>
+
+<rect x="170" y="752" width="300" height="44" rx="22" fill="#fff" stroke="#FF5B3F" stroke-width="2"/>
+<circle cx="448" cy="774" r="6" fill="#FF5B3F"/><text x="312" y="774" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">سود شرکت</text>
+
+<rect x="170" y="810" width="300" height="44" rx="22" fill="#fff" stroke="#FF5B3F" stroke-width="2"/>
+<circle cx="448" cy="832" r="6" fill="#FF5B3F"/><text x="312" y="832" font-size="15" font-weight="600" fill="#0C1226" text-anchor="middle" dominant-baseline="middle">قیمت‌گذاری شفاف</text>
+<text x="750" y="876" font-size="13" font-weight="500" fill="#5B6B83" text-anchor="middle" dominant-baseline="middle">پیش‌نویس از توضیحات صوتی • ساختار نهایی از تصویر دست‌کشیده علی</text>
+<metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTo3ZjFhNjUzNS1hYWY5LTRlYTItODU0NS0yZDEwNTNhYjkxNWIAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaEQ/Tj4WTetDYxVZysyqpYkAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDo0MmNhMTcyZS0zZmFmLTQ1NmEtOWNkYS02MWU0MTE5NDNjODBscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoMzwpVlCzuWcQWWXDfIVwfQAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFgg/ARroS+ELUsMAS66tLRz6r1vjn9qJHJRBV9W2+Aa46SkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaKRua8XtTQGQFyGWVFVlAx0AAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIKRQnrB8zcQx47/a05pUQXa3Nq+3q8fAbaQQeIi+iZhJZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GTAMZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOjdmMWE2NTM1LWFhZjktNGVhMi04NTQ1LTJkMTA1M2FiOTE1Yi9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOmRiYzM3MzJkLWU5ODUtNGE0YS1hNzAxLWJhNTRkOGQyZWIzZXJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCD8BGuhL4QtSwwBLrq0tHPqvW+Of2okclEFX1bb4BrjpKJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFgg2h5eAahkHYYjQbmCuVKZV7E5gqVk+o2iTBcTIu4bZKqiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggNR5GDKxp2xn/xrjLegQkg/EQwyXv4thT74laZjmjMaJ0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQITFy3mD0amArtjMQ2/5qJIFMUywlU4zx7ZIyWjMKjiltrdCL7wL+yAxRAI/OX6/gQ5mXhXHqXc1QU5xx2yMdUM=</c2pa:manifest></metadata></svg>

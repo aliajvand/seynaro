@@ -1,0 +1,282 @@
+{
+  "Estedad": {
+    "family_name": "Estedad",
+    "subfamily": "Regular",
+    "designer": "Amin Abedi",
+    "license": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: ht",
+    "primary_file": "persian/Estedad-400.ttf",
+    "primary_size_bytes": 211532,
+    "glyph_count": 2276,
+    "has_gsub": true,
+    "has_gpos": true,
+    "persian_letters": true,
+    "persian_digits": true,
+    "latin_letters": true,
+    "latin_digits": true,
+    "variable_axes": [
+      {
+        "tag": "wght",
+        "min": 100.0,
+        "default": 400.0,
+        "max": 900.0
+      }
+    ],
+    "existing_files": [
+      [
+        "persian/Estedad-300.ttf",
+        210548
+      ],
+      [
+        "persian/Estedad-400.ttf",
+        211532
+      ],
+      [
+        "persian/Estedad-500.ttf",
+        213520
+      ],
+      [
+        "persian/Estedad-600.ttf",
+        215268
+      ],
+      [
+        "persian/Estedad-700.ttf",
+        216012
+      ],
+      [
+        "persian/Estedad-800.ttf",
+        217004
+      ],
+      [
+        "persian/Estedad[wght].ttf",
+        285060
+      ]
+    ],
+    "missing_files": []
+  },
+  "Vazirmatn": {
+    "family_name": "Vazirmatn",
+    "subfamily": "Regular",
+    "designer": "Saber Rastikerdar",
+    "license": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: ht",
+    "primary_file": "persian/Vazirmatn-400.ttf",
+    "primary_size_bytes": 122752,
+    "glyph_count": 1333,
+    "has_gsub": true,
+    "has_gpos": true,
+    "persian_letters": true,
+    "persian_digits": true,
+    "latin_letters": true,
+    "latin_digits": true,
+    "variable_axes": [
+      {
+        "tag": "wght",
+        "min": 100.0,
+        "default": 400.0,
+        "max": 900.0
+      }
+    ],
+    "existing_files": [
+      [
+        "persian/Vazirmatn-300.ttf",
+        122920
+      ],
+      [
+        "persian/Vazirmatn-400.ttf",
+        122752
+      ],
+      [
+        "persian/Vazirmatn-500.ttf",
+        122656
+      ],
+      [
+        "persian/Vazirmatn-600.ttf",
+        122920
+      ],
+      [
+        "persian/Vazirmatn-700.ttf",
+        123036
+      ],
+      [
+        "persian/Vazirmatn-800.ttf",
+        123324
+      ],
+      [
+        "persian/Vazirmatn[wght].ttf",
+        241328
+      ]
+    ],
+    "missing_files": []
+  },
+  "IBM Plex Sans Arabic": {
+    "family_name": "IBM Plex Sans Arabic",
+    "subfamily": "Regular",
+    "designer": "N/A",
+    "license": "http://scripts.sil.org/OFL",
+    "primary_file": "persian/IBMPlexSansArabic-400.ttf",
+    "primary_size_bytes": 219592,
+    "glyph_count": 1669,
+    "has_gsub": true,
+    "has_gpos": true,
+    "persian_letters": true,
+    "persian_digits": true,
+    "latin_letters": true,
+    "latin_digits": true,
+    "variable_axes": [],
+    "existing_files": [
+      [
+        "persian/IBMPlexSansArabic-300.ttf",
+        222240
+      ],
+      [
+        "persian/IBMPlexSansArabic-400.ttf",
+        219592
+      ],
+      [
+        "persian/IBMPlexSansArabic-500.ttf",
+        224816
+      ],
+      [
+        "persian/IBMPlexSansArabic-600.ttf",
+        227276
+      ],
+      [
+        "persian/IBMPlexSansArabic-700.ttf",
+        229352
+      ]
+    ],
+    "missing_files": []
+  },
+  "Plus Jakarta Sans": {
+    "family_name": "Plus Jakarta Sans",
+    "subfamily": "Regular",
+    "designer": "N/A",
+    "license": "https://scripts.sil.org/OFL",
+    "primary_file": "latin/PlusJakartaSans-400.ttf",
+    "primary_size_bytes": 63336,
+    "glyph_count": 781,
+    "has_gsub": true,
+    "has_gpos": true,
+    "persian_letters": false,
+    "persian_digits": false,
+    "latin_letters": true,
+    "latin_digits": true,
+    "variable_axes": [],
+    "existing_files": [
+      [
+        "latin/PlusJakartaSans-300.ttf",
+        63372
+      ],
+      [
+        "latin/PlusJakartaSans-400.ttf",
+        63336
+      ],
+      [
+        "latin/PlusJakartaSans-500.ttf",
+        63404
+      ],
+      [
+        "latin/PlusJakartaSans-600.ttf",
+        63412
+      ],
+      [
+        "latin/PlusJakartaSans-700.ttf",
+        63336
+      ],
+      [
+        "latin/PlusJakartaSans-800.ttf",
+        63372
+      ]
+    ],
+    "missing_files": [
+      "latin/PlusJakartaSans[wght].ttf"
+    ]
+  },
+  "Inter": {
+    "family_name": "Inter",
+    "subfamily": "Regular",
+    "designer": "N/A",
+    "license": "https://openfontlicense.org",
+    "primary_file": "latin/Inter-400.ttf",
+    "primary_size_bytes": 324820,
+    "glyph_count": 2871,
+    "has_gsub": true,
+    "has_gpos": true,
+    "persian_letters": false,
+    "persian_digits": false,
+    "latin_letters": true,
+    "latin_digits": true,
+    "variable_axes": [],
+    "existing_files": [
+      [
+        "latin/Inter-300.ttf",
+        325748
+      ],
+      [
+        "latin/Inter-400.ttf",
+        324820
+      ],
+      [
+        "latin/Inter-500.ttf",
+        325304
+      ],
+      [
+        "latin/Inter-600.ttf",
+        326048
+      ],
+      [
+        "latin/Inter-700.ttf",
+        326468
+      ],
+      [
+        "latin/Inter-800.ttf",
+        327324
+      ]
+    ],
+    "missing_files": [
+      "latin/Inter[opsz,wght].ttf"
+    ]
+  },
+  "Geist": {
+    "family_name": "Geist",
+    "subfamily": "Regular",
+    "designer": "N/A",
+    "license": "SIL Open Font License",
+    "primary_file": "latin/GeistSans-400.woff2",
+    "primary_size_bytes": 33400,
+    "glyph_count": 683,
+    "has_gsub": true,
+    "has_gpos": true,
+    "persian_letters": false,
+    "persian_digits": false,
+    "latin_letters": true,
+    "latin_digits": true,
+    "variable_axes": [],
+    "existing_files": [
+      [
+        "latin/GeistSans-300.woff2",
+        34104
+      ],
+      [
+        "latin/GeistSans-400.woff2",
+        33400
+      ],
+      [
+        "latin/GeistSans-500.woff2",
+        34716
+      ],
+      [
+        "latin/GeistSans-600.woff2",
+        35292
+      ],
+      [
+        "latin/GeistSans-700.woff2",
+        35484
+      ],
+      [
+        "latin/GeistSans-800.woff2",
+        35536
+      ]
+    ],
+    "missing_files": []
+  }
+}

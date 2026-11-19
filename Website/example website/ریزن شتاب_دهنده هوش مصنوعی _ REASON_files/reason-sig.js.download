@@ -1,0 +1,765 @@
+/* REASON — section signatures (2026-10-04).
+   One vocabulary everywhere: nodes, links, travelling pulses, the typing caret and the dot inside the «A». As the hero
+   condenses into the wordmark, its dot lifts out and drops onto a thread in the page margin that lands on every section;
+   each section then has a moment of its own, and the closing box rebuilds the wordmark and drops the dot into the button.
+   Started by theme.js after ReasonFX.mount. Every piece runs only while on screen; with reduced motion each shows its
+   finished state. Colours come from the section's own CSS variables, so the palettes and the light bands just work. */
+(function () {
+  'use strict';
+
+  /* The admins' wording of a browser message, from «متن‌های سایت» (texts.php); {name} stands for a value. */
+  const T = (text, vars = {}) => Object.keys(vars).reduce((out, k) => out.split('{' + k + '}').join(vars[k]), (window.reasonTexts || {})[text] ?? text);
+  const fx = window.ReasonFX;
+  if (!fx) return;
+  const { clamp, lerp, easeOut, easeInOut } = fx;
+  const DOT_A = { x: 96 - 6, y: 35.25 - 6, r: 3.75 }; // the dot inside the «A», in sampleLogo's frame (viewBox − 6)
+
+  /* ── helpers ── */
+  const css = (el, k, fb) => getComputedStyle(el).getPropertyValue(k).trim() || fb;
+  const colours = (el) => ({
+    fg: css(el, '--fg', '#F4F7F2'), line: css(el, '--line2', 'rgba(244,247,242,.16)'), accent2: css(el, '--accent2', '#B7F34A'),
+    ink: css(el, '--accent-ink', '#B7F34A'), ai: css(el, '--ai', '#B7F34A'), hi: css(el, '--hi', '#B7F34A'), dot: css(el, '--sig-dot', '#B7F34A'),
+  });
+
+  function relative(host) { if (getComputedStyle(host).position === 'static') host.style.position = 'relative'; }
+
+  /** A decorative canvas over `host` (grown by `pad` on each side), in CSS px. */
+  function overlay(host, cls, pad) {
+    pad = Object.assign({ t: 0, r: 0, b: 0, l: 0 }, pad || {});
+    relative(host);
+    const c = document.createElement('canvas');
+    c.className = 'rs-sig-canvas' + (cls ? ' ' + cls : '');
+    c.setAttribute('aria-hidden', 'true');
+    Object.assign(c.style, { position: 'absolute', top: -pad.t + 'px', left: -pad.l + 'px', pointerEvents: 'none' });
+    host.appendChild(c);
+    const x = c.getContext('2d');
+    const o = { c, x, W: 0, H: 0, pad };
+    o.fit = () => {
+      const W = host.clientWidth + pad.l + pad.r, H = host.clientHeight + pad.t + pad.b;
+      if (Math.abs(W - o.W) < 1 && Math.abs(H - o.H) < 1) return false;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      o.W = W; o.H = H; c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+      c.style.width = W + 'px'; c.style.height = H + 'px';
+      x.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return true;
+    };
+    /** A descendant's box in the canvas's px, where it rests once a reveal's slide (still running or not yet run) is over. */
+    o.rel = (el) => {
+      const hr = host.getBoundingClientRect(), r = el.getBoundingClientRect();
+      let dx = 0, dy = 0;
+      for (let n = el; n && n !== host; n = n.parentElement) {
+        if (!n.dataset || n.dataset.reveal == null || n.dataset.reveal === 'line' || !n.style.transform) continue;
+        try { const m = new DOMMatrixReadOnly(getComputedStyle(n).transform); dx += m.m41; dy += m.m42; } catch (e) { /* no slide */ }
+      }
+      const X = r.left - dx - hr.left - host.clientLeft + pad.l, Y = r.top - dy - hr.top - host.clientTop + pad.t;
+      return { x: X, y: Y, w: r.width, h: r.height, cx: X + r.width / 2, cy: Y + r.height / 2 };
+    };
+    o.fit();
+    return o;
+  }
+
+  /** Calls frame(dt, now) every animation frame while `el` is on screen. Returns a stop function. */
+  function whileVisible(el, frame, margin) {
+    let raf = 0, last = 0, on = false;
+    const tick = (now) => {
+      raf = requestAnimationFrame(tick);
+      if (document.hidden) { last = now; return; }
+      const dt = last ? Math.min(50, now - last) : 16; last = now;
+      frame(dt, now);
+    };
+    const io = new IntersectionObserver((es) => {
+      const v = es[es.length - 1].isIntersecting;
+      if (v && !on) { last = 0; raf = requestAnimationFrame(tick); }
+      if (!v && on) cancelAnimationFrame(raf);
+      on = v;
+    }, { rootMargin: margin || '80px 0px' });
+    io.observe(el);
+    return () => { io.disconnect(); cancelAnimationFrame(raf); };
+  }
+
+  /** Lays out again once `el` is on screen and after the cards' reveal (it moves them 28px while measuring). */
+  function settle(el, layout) {
+    onceVisible(el, () => { layout(); setTimeout(layout, 1300); }, 0.01);
+  }
+
+  function onceVisible(el, f, threshold) {
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); f(); } }, { threshold: threshold || 0.3 });
+    io.observe(el);
+  }
+
+  /** n points on the ink of whatever draw(ctx, w, h) paints. */
+  function samplePoints(w, h, draw, n) {
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h));
+    const x = c.getContext('2d');
+    draw(x, c.width, c.height);
+    const d = x.getImageData(0, 0, c.width, c.height).data, step = c.width * c.height > 60000 ? 2 : 1;
+    const pts = [];
+    for (let yy = 0; yy < c.height; yy += step) for (let xx = 0; xx < c.width; xx += step) if (d[(yy * c.width + xx) * 4 + 3] > 110) pts.push({ x: xx, y: yy });
+    for (let i = pts.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [pts[i], pts[j]] = [pts[j], pts[i]]; }
+    if (!pts.length) return [];
+    return Array.from({ length: n }, (_, i) => pts[i % pts.length]);
+  }
+
+  /** Particles fly from p.sx,p.sy to p.tx,p.ty, linking neighbours as they settle. Calls done() at the end. */
+  function fly(o, ps, opt) {
+    const dur = opt.dur || 700, t0 = performance.now();
+    const f = (now) => {
+      const t = now - t0;
+      o.x.clearRect(0, 0, o.W, o.H);
+      const pos = ps.map((p) => { const k = easeOut(clamp((t - (p.dl || 0)) / dur)); return [lerp(p.sx, p.tx, k), lerp(p.sy, p.ty, k), k]; });
+      o.x.strokeStyle = opt.line; o.x.lineWidth = 0.6;
+      for (let i = 0; i < pos.length; i += 2)
+        for (let j = i + 1; j < Math.min(pos.length, i + 10); j++) {
+          const d = Math.hypot(pos[i][0] - pos[j][0], pos[i][1] - pos[j][1]);
+          if (d < 18) { o.x.globalAlpha = (1 - d / 18) * 0.45; o.x.beginPath(); o.x.moveTo(pos[i][0], pos[i][1]); o.x.lineTo(pos[j][0], pos[j][1]); o.x.stroke(); }
+        }
+      o.x.fillStyle = opt.colour;
+      pos.forEach((p) => { o.x.globalAlpha = 0.35 + p[2] * 0.6; o.x.beginPath(); o.x.arc(p[0], p[1], opt.size || 1.2, 0, 7); o.x.fill(); });
+      o.x.globalAlpha = 1;
+      if (opt.onTime) opt.onTime(t);
+      if (t < dur + (opt.tail || 400)) requestAnimationFrame(f); else if (opt.done) opt.done();
+    };
+    requestAnimationFrame(f);
+  }
+
+  /* ── words that stream in, with the hero's caret ── */
+  function splitWords(el) {
+    if (el.__words) return el.__words;
+    const out = [];
+    const walk = (node) => {
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          if (!n.textContent.trim()) return;
+          const frag = document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            const s = document.createElement('span'); s.className = 'rs-w'; s.textContent = part; frag.appendChild(s); out.push(s);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1 && n.tagName === 'BDI') { n.classList.add('rs-w'); out.push(n); } // a Latin name stays whole
+        else if (n.nodeType === 1) walk(n);
+      });
+    };
+    walk(el);
+    return (el.__words = out);
+  }
+
+  function stream(el, lv, opt) {
+    opt = opt || {};
+    const ws = splitWords(el);
+    if (lv === 'off' || !ws.length) { el.classList.remove('rs-streaming'); if (opt.done) opt.done(); return; }
+    el.classList.add('rs-streaming');
+    ws.forEach((w) => w.classList.remove('is-in'));
+    const caret = document.createElement('span'); caret.className = 'rs-caret'; caret.setAttribute('aria-hidden', 'true');
+    const steps = Math.min(ws.length, 46), per = Math.ceil(ws.length / steps), gap = (opt.ms || 1800) / steps;
+    let i = 0;
+    const next = () => {
+      const end = Math.min(ws.length, i + per);
+      for (; i < end; i++) { ws[i].classList.add('is-in'); if (opt.each) opt.each(ws[i]); }
+      ws[i - 1].after(caret);
+      if (i < ws.length) { setTimeout(next, gap); return; }
+      caret.classList.add('is-done');
+      setTimeout(() => { caret.remove(); el.classList.remove('rs-streaming'); }, 2400);
+      if (opt.done) opt.done();
+    };
+    next();
+  }
+
+  /* ── 0. the thread: the wordmark's dot drops into the page margin and lands on every section ── */
+  function thread(root, o) {
+    const hero = root.querySelector('[data-hero]'), canvas = root.querySelector('[data-hero-canvas]');
+    const secs = [...root.querySelectorAll('main > section')].filter((s) => s !== hero);
+    if (!hero || !secs.length) return null;
+    const el = document.createElement('div');
+    el.className = 'rs-thread'; el.setAttribute('aria-hidden', 'true'); el.hidden = true;
+    el.innerHTML = '<span class="rs-thread__line"></span><span class="rs-thread__fill"></span><span class="rs-thread__dot"></span>';
+    const marks = secs.map((s) => {
+      const m = document.createElement('span');
+      m.className = 'rs-thread__mark'; // a node per section; the sections' own badges carry the numbers
+      el.appendChild(m);
+      return { s, m, y: 0, lit: false };
+    });
+    const foot = document.querySelector('.rs-footer');
+    root.appendChild(el);
+    const dot = el.querySelector('.rs-thread__dot');
+    const heroP = fx.progressOf(hero);
+    let on = false, railX = 0, k = 0, frame = 0;
+
+    const layout = () => {
+      const wrap = root.querySelector('main .rs-wrap');
+      const r = wrap && wrap.getBoundingClientRect();
+      const start = r ? r.left + parseFloat(getComputedStyle(wrap).paddingLeft) : 0;
+      on = o.lv !== 'off' && window.innerWidth >= 1100 && start >= 64;
+      el.hidden = !on;
+      railX = Math.round(start / 2);
+      el.style.setProperty('--x', railX + 'px');
+      // Where each section really sits: a stacked one may be pinned somewhere else right now (theme.js, stack()).
+      const top = (s) => (window.ReasonStack ? window.ReasonStack.top(s) : s.getBoundingClientRect().top + window.scrollY);
+      marks.forEach((mk) => { mk.y = top(mk.s) + Math.min(150, mk.s.offsetHeight * 0.25); });
+      update();
+    };
+    const land = () => { dot.classList.remove('is-land'); void dot.offsetWidth; dot.classList.add('is-land'); };
+    const update = () => {
+      frame = 0;
+      if (!on) { k = 0; return; }
+      const vh = window.innerHeight, railY = Math.round(vh * 0.42);
+      // The hero's own bottom: while the sections stack it stays pinned under the intro for a while.
+      const hb = window.ReasonStack ? window.ReasonStack.top(hero) - window.scrollY + hero.offsetHeight : hero.getBoundingClientRect().bottom;
+      const eng = o.engine && o.engine(), d = eng && eng.dot && eng.dot();
+      let ax = railX, ay = railY, ar = 5;
+      if (d && canvas) { const cr = canvas.getBoundingClientRect(), sc = cr.width / (canvas.offsetWidth || cr.width); ax = cr.left + d.x * sc; ay = cr.top + d.y * sc; ar = d.r * sc; }
+      // The dot leaves the formed wordmark as the next section comes up over the hero (2026-10-17: after the lock, not
+      // during it); scrolling back puts it home.
+      const cover = hero.classList.contains('is-buried') ? 1 : parseFloat(hero.style.getPropertyValue('--cover')) || 0;
+      k = hb <= 0 ? 1 : d ? (heroP() < 0.98 ? 0 : clamp(cover / 0.45)) : (hb < vh * 0.5 ? 1 : 0);
+      const e = easeInOut(k);
+      dot.style.transform = `translate3d(${lerp(ax, railX, e)}px, ${lerp(ay, railY, e)}px, 0)`;
+      dot.style.setProperty('--r', lerp(ar, 5, e).toFixed(2) + 'px');
+      dot.style.opacity = k > 0 ? '1' : '0';
+      el.style.setProperty('--k', clamp((k - 0.55) / 0.45).toFixed(3));
+      el.style.setProperty('--y', railY + 'px');
+      el.classList.toggle('is-done', !!foot && foot.getBoundingClientRect().top < railY + 40); // it rests before the footer
+      const sy0 = window.scrollY;
+      marks.forEach((mk) => {
+        const sy = mk.y - sy0;
+        mk.m.style.transform = `translate3d(${railX}px, ${sy}px, 0)`;
+        mk.m.style.visibility = sy > -40 && sy < vh + 40 && k >= 1 ? 'visible' : 'hidden';
+        const lit = k >= 1 && sy <= railY;
+        if (lit !== mk.lit) { mk.lit = lit; mk.m.classList.toggle('is-lit', lit); if (lit) land(); }
+      });
+    };
+    window.addEventListener('scroll', () => { if (!frame) frame = requestAnimationFrame(update); }, { passive: true });
+    let rt = 0;
+    const relayout = () => { clearTimeout(rt); rt = setTimeout(layout, 120); };
+    window.addEventListener('resize', relayout);
+    new ResizeObserver(relayout).observe(document.body);
+    layout();
+    return { detach: () => (on ? k : 0) };
+  }
+
+  /* ── 1. intro: the paragraph streams in like an answer; its key phrases light up ── */
+  function intro(root, o) {
+    root.querySelectorAll('[data-sig-stream]').forEach((p) => {
+      const hls = [...p.querySelectorAll('.rs-hl')];
+      if (o.lv === 'off') { hls.forEach((h) => h.classList.add('is-on')); return; }
+      splitWords(p); p.classList.add('rs-streaming');
+      onceVisible(p, () => stream(p, o.lv, {
+        ms: 2200,
+        each: (w) => { const h = w.closest('.rs-hl'); if (h && !h.classList.contains('is-on')) setTimeout(() => h.classList.add('is-on'), 260); },
+      }), 0.25);
+    });
+  }
+
+  /* ── 2. path: a pulse heads the line; each numeral assembles from dots as the line reaches it ── */
+  function path(root, o) {
+    root.querySelectorAll('[data-pin]').forEach((sec) => {
+      const box = sec.querySelector('.rs-track__line'), fill = sec.querySelector('[data-line]');
+      const stages = [...sec.querySelectorAll('[data-stage]')];
+      if (!box || !fill || !stages.length || o.lv === 'off' || innerWidth < 900) return; // phones: no dot numerals (2026-10-17)
+      const head = document.createElement('i'); head.className = 'rs-track__head'; head.setAttribute('aria-hidden', 'true');
+      box.appendChild(head);
+      stages.forEach((s) => s.classList.add('rs-sig-num'));
+      let frame = 0;
+      const upd = () => {
+        frame = 0;
+        const m = /scaleX\(([\d.]+)\)/.exec(fill.style.transform || ''), p = m ? +m[1] : 0;
+        box.style.setProperty('--fill', p.toFixed(4));
+        head.style.opacity = p > 0.003 ? '1' : '0';
+        stages.forEach((s) => { if (s.__on && !s.__built) { s.__built = 1; buildNumeral(s); } });
+      };
+      window.addEventListener('scroll', () => { if (!frame) frame = requestAnimationFrame(upd); }, { passive: true });
+      setTimeout(upd, 350);
+    });
+  }
+
+  function buildNumeral(stage) {
+    const num = stage.querySelector('.rs-stage__num'), dotEl = stage.querySelector('[data-stage-dot]');
+    if (!num) return;
+    const done = () => num.classList.add('is-built');
+    const r = num.getBoundingClientRect();
+    if (!r.width || !r.height) { done(); return; }
+    const cs = getComputedStyle(num), font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    const pts = samplePoints(r.width, r.height, (x, w, h) => {
+      x.font = font; x.textAlign = 'right'; x.lineWidth = 2; x.strokeStyle = '#fff';
+      const m = x.measureText(num.textContent), fa = m.fontBoundingBoxAscent || m.actualBoundingBoxAscent, fd = m.fontBoundingBoxDescent || m.actualBoundingBoxDescent;
+      x.strokeText(num.textContent, w - 1, (h - (fa + fd)) / 2 + fa);
+    }, 110);
+    if (!pts.length) { done(); return; }
+    const o = overlay(stage, 'rs-stage__fx', { t: 80, r: 40, b: 30, l: 40 });
+    const nb = o.rel(num), db = dotEl ? o.rel(dotEl) : { cx: nb.x + nb.w, cy: nb.y - 30 };
+    const col = colours(stage);
+    const ps = pts.map((p) => {
+      const a = Math.random() * Math.PI * 2, rr = Math.random() * 12;
+      return { sx: db.cx + Math.cos(a) * rr, sy: db.cy + Math.sin(a) * rr, tx: nb.x + p.x, ty: nb.y + p.y, dl: Math.random() * 260 };
+    });
+    let shown = false;
+    fly(o, ps, {
+      dur: 760, colour: col.fg, line: col.ai, // dark dots: the numeral itself is filled lime (no olive, 2026-10-17)
+      onTime: (t) => { if (!shown && t > 820) { shown = true; done(); } o.c.style.opacity = String(1 - clamp((t - 860) / 300)); },
+      done: () => { done(); o.c.remove(); },
+    });
+  }
+
+  /* ── 3. need: a neural bridge from «نیازهای صنعت» to «راهکارهای هوش مصنوعی», the business areas riding across ── */
+  function need(root, o) {
+    const duo = root.querySelector('.rs-need .rs-pair');
+    if (!duo) return;
+    const [A, B] = duo.querySelectorAll('.rs-pair__side'); // A: the needs (right), B: the solutions (left)
+    if (!A || !B) return;
+    const o2 = overlay(duo, 'rs-need__bridge');
+    const col = () => colours(duo);
+    let strands = [], pulses = [], spawn = 0, chips = [], wide = false, gap = [0, 0], c = col(), bg = css(duo, '--bg', '#0B1020');
+    let areas = [];
+    try { areas = JSON.parse(duo.getAttribute('data-areas') || '[]'); } catch (e) {}
+    const layout = () => {
+      o2.fit(); c = col(); bg = css(duo, '--bg', '#0B1020');
+      const a = o2.rel(A), b = o2.rel(B);
+      wide = a.x > b.x + b.w + 30; // side by side, with a gap to bridge
+      strands = [];
+      if (!wide) return;
+      const x0 = a.x - 16, x1 = b.x + b.w + 16, n = 7;
+      gap = [b.x + b.w + 6, a.x - 6]; // a chip stays between the cards' text
+      const ys0 = Array.from({ length: n }, (_, i) => lerp(a.y + a.h * 0.32, a.y + a.h * 0.86, i / (n - 1)));
+      const ys1 = ys0.map((y) => y).sort(() => Math.random() - 0.5);
+      for (let i = 0; i < n; i++) strands.push({ x0, y0: ys0[i], x1, y1: ys1[i], m: (x0 + x1) / 2 });
+    };
+    const at = (s, t) => { // cubic: horizontal tangents at both ends
+      const u = 1 - t, x = u * u * u * s.x0 + 3 * u * u * t * s.m + 3 * u * t * t * s.m + t * t * t * s.x1;
+      const y = u * u * u * s.y0 + 3 * u * u * t * s.y0 + 3 * u * t * t * s.y1 + t * t * t * s.y1;
+      return [x, y];
+    };
+    const tAtX = (s, X) => { // x falls from x0 to x1 along a strand
+      let lo = 0, hi = 1;
+      for (let i = 0; i < 18; i++) { const mid = (lo + hi) / 2; if (at(s, mid)[0] > X) lo = mid; else hi = mid; }
+      return (lo + hi) / 2;
+    };
+    const draw = (dt) => {
+      const x = o2.x;
+      x.clearRect(0, 0, o2.W, o2.H);
+      if (!wide) return;
+      x.lineWidth = 1; x.strokeStyle = c.accent2;
+      strands.forEach((s) => {
+        x.globalAlpha = 0.26; x.beginPath(); x.moveTo(s.x0, s.y0); x.bezierCurveTo(s.m, s.y0, s.m, s.y1, s.x1, s.y1); x.stroke();
+        x.globalAlpha = 0.8; x.fillStyle = c.accent2;
+        x.beginPath(); x.arc(s.x0, s.y0, 2.2, 0, 7); x.fill(); x.beginPath(); x.arc(s.x1, s.y1, 2.2, 0, 7); x.fill();
+      });
+      if (o.lv === 'off') { x.globalAlpha = 1; return; }
+      spawn -= dt;
+      if (spawn <= 0) { spawn = 240 + Math.random() * 260; pulses.push({ k: (Math.random() * strands.length) | 0, t: 0, v: 0.0009 + Math.random() * 0.0006 }); }
+      x.fillStyle = c.hi;
+      for (let i = pulses.length - 1; i >= 0; i--) {
+        const p = pulses[i], s = strands[p.k]; p.t += p.v * dt;
+        if (p.t >= 1 || !s) { pulses.splice(i, 1); continue; }
+        for (let tail = 0; tail < 6; tail++) {
+          const [px, py] = at(s, Math.max(0, p.t - tail * 0.018));
+          x.globalAlpha = (1 - tail / 6) * 0.9; x.beginPath(); x.arc(px, py, 2.4 - tail * 0.3, 0, 7); x.fill();
+        }
+      }
+      // the business area of the moment crosses the bridge as a chip
+      x.font = `600 13px ${getComputedStyle(duo).fontFamily}`; x.direction = 'rtl'; x.textAlign = 'center'; x.textBaseline = 'middle';
+      for (let i = chips.length - 1; i >= 0; i--) {
+        const ch = chips[i], s = strands[(strands.length / 2) | 0]; ch.t += dt / 1500;
+        if (ch.t >= 1 || !s) { chips.splice(i, 1); continue; }
+        const w = x.measureText(ch.text).width + 20, room = gap[1] - gap[0] - w;
+        const u = room > 0 ? lerp(tAtX(s, gap[1] - w / 2), tAtX(s, gap[0] + w / 2), easeInOut(ch.t)) : 0.5;
+        const [px, py] = at(s, u);
+        x.globalAlpha = Math.min(1, ch.t * 6, (1 - ch.t) * 6);
+        x.fillStyle = bg; x.strokeStyle = c.hi; x.lineWidth = 1;
+        x.beginPath(); x.roundRect ? x.roundRect(px - w / 2, py - 13, w, 26, 13) : x.rect(px - w / 2, py - 13, w, 26); x.fill(); x.stroke();
+        x.fillStyle = c.hi; x.fillText(ch.text, px, py + 1);
+      }
+      x.globalAlpha = 1;
+    };
+    layout();
+    window.addEventListener('resize', () => { o2.W = 0; layout(); draw(0); });
+    settle(duo, () => { o2.W = 0; layout(); if (o.lv === 'off') draw(0); });
+    if (o.lv === 'off') { draw(0); return; }
+    let next = 0;
+    setInterval(() => { // the ten business areas take turns crossing (data-areas, reason_area_names())
+      if (!wide || document.hidden || !areas.length) return;
+      chips.push({ t: 0, text: areas[next++ % areas.length] });
+    }, 2600);
+    whileVisible(duo, (dt) => draw(dt));
+  }
+
+  function reformIcon(box) {
+    const svg = box.querySelector('svg');
+    if (!svg || box.__busy) return;
+    const br = box.getBoundingClientRect(), sr = svg.getBoundingClientRect();
+    if (!br.width) return;
+    box.__busy = 1;
+    const clone = svg.cloneNode(true);
+    clone.setAttribute('width', sr.width); clone.setAttribute('height', sr.height); clone.setAttribute('color', '#fff');
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    const img = new Image();
+    img.onload = () => {
+      const pts = samplePoints(sr.width, sr.height, (x) => x.drawImage(img, 0, 0, sr.width, sr.height), 80);
+      if (!pts.length) { box.__busy = 0; return; }
+      const o = overlay(box, 'rs-vs__fx', { t: 70, r: 70, b: 70, l: 70 });
+      const ib = o.rel(svg), cx = o.W / 2, cy = o.H / 2, col = colours(box);
+      const ps = pts.map((p) => {
+        const a = Math.random() * Math.PI * 2, rr = br.width * (0.55 + Math.random() * 0.45);
+        return { sx: cx + Math.cos(a) * rr, sy: cy + Math.sin(a) * rr, tx: ib.x + p.x, ty: ib.y + p.y, dl: Math.random() * 200 };
+      });
+      svg.style.transition = 'none'; svg.style.opacity = '0';
+      let shown = false;
+      fly(o, ps, {
+        dur: 620, colour: col.ink, line: col.ai, size: 1.1,
+        onTime: (t) => { if (!shown && t > 600) { shown = true; svg.style.transition = 'opacity 320ms'; svg.style.opacity = '1'; } o.c.style.opacity = String(1 - clamp((t - 660) / 260)); },
+        done: () => { svg.style.opacity = '1'; o.c.remove(); box.__busy = 0; },
+      });
+    };
+    img.onerror = () => { box.__busy = 0; };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(clone));
+  }
+
+  /* ── 6. audience: the areas light up one by one and charge the «درخواست پذیرش» button ── */
+  function audience(root, o) {
+    const box = root.querySelector('.rs-aud');
+    if (!box || o.lv === 'off') return;
+    const lis = [...box.querySelectorAll('.rs-aud__areas li')], btn = box.querySelector('.rs-aud__copy .rs-btn');
+    let timers = [], loop = 0;
+    const clear = () => { timers.forEach(clearTimeout); timers = []; };
+    const run = () => {
+      clear();
+      lis.forEach((li, i) => timers.push(setTimeout(() => li.classList.add('is-lit'), 170 * i)));
+      timers.push(setTimeout(() => btn && btn.classList.add('is-charged'), 170 * lis.length + 80));
+      timers.push(setTimeout(() => { lis.forEach((li) => li.classList.remove('is-lit')); if (btn) btn.classList.remove('is-charged'); }, 170 * lis.length + 2600));
+    };
+    void loop; onceVisible(box, run, 0.45); // once (2026-10-17: every moment plays once)
+  }
+
+  /* ── 8. FAQ: an opened answer types itself in, like a chat reply ── */
+  function faq(root, o) {
+    if (o.lv === 'off') return;
+    root.querySelectorAll('.rs-faq__item').forEach((d) => {
+      const a = d.querySelector('.rs-faq__a'), s = d.querySelector('summary');
+      if (!a || !s) return;
+      let asked = 0;
+      s.addEventListener('click', () => { asked = performance.now(); });
+      d.addEventListener('toggle', () => { if (d.open && performance.now() - asked < 900) stream(a, o.lv, { ms: 700 }); });
+    });
+  }
+
+  /* ── 9. partners: the logos hang off one network, a REASON dot at its hub ── */
+  function partners(root, o) {
+    const list = root.querySelector('ul.rs-partners__list');
+    if (!list) return;
+    const tiles = [...list.querySelectorAll('.rs-partner__logo')];
+    if (tiles.length < 2) return;
+    const PAD = 84, ov = overlay(list, 'rs-partners__net', { t: PAD }); // the REASON logo sits just above this pad
+    let ends = [], hub = null, pulses = [], spawn = 600, c = colours(list);
+    const layout = () => {
+      ov.fit(); c = colours(list);
+      const bs = tiles.map((t) => ov.rel(t));
+      const row = bs.every((b) => Math.abs(b.y - bs[0].y) < 4);
+      hub = row ? { x: ov.W / 2, y: 6 } : null; // just under the logo above the list (.rs-partners__hub)
+      ends = row ? bs.map((b) => ({ x: b.cx, y: b.y })) : [];
+    };
+    const at = (e, t) => { const u = 1 - t, mx = e.x, my = hub.y + 4; return [u * u * hub.x + 2 * u * t * mx + t * t * e.x, u * u * hub.y + 2 * u * t * my + t * t * e.y]; };
+    const draw = (dt) => {
+      const x = ov.x;
+      x.clearRect(0, 0, ov.W, ov.H);
+      if (!hub) return;
+      x.lineWidth = 1; x.strokeStyle = c.accent2; x.globalAlpha = 0.4;
+      ends.forEach((e) => { x.beginPath(); x.moveTo(hub.x, hub.y); x.quadraticCurveTo(e.x, hub.y + 4, e.x, e.y); x.stroke(); });
+      x.globalAlpha = 0.9; x.fillStyle = c.accent2;
+      ends.forEach((e) => { x.beginPath(); x.arc(e.x, e.y, 2.6, 0, 7); x.fill(); });
+      const t = performance.now() / 1000;
+      x.fillStyle = c.dot; x.globalAlpha = 0.18 + 0.1 * Math.sin(t * 2); x.beginPath(); x.arc(hub.x, hub.y, 13, 0, 7); x.fill();
+      x.globalAlpha = 1; x.beginPath(); x.arc(hub.x, hub.y, 5.5, 0, 7); x.fill();
+      if (o.lv !== 'off') {
+        spawn -= dt;
+        if (spawn <= 0) { spawn = 900; pulses.push({ e: ends[(Math.random() * ends.length) | 0], t: 0, out: Math.random() < 0.6 }); }
+        x.fillStyle = c.hi;
+        for (let i = pulses.length - 1; i >= 0; i--) {
+          const p = pulses[i]; p.t += dt / 900;
+          if (p.t >= 1) { pulses.splice(i, 1); continue; }
+          const [px, py] = at(p.e, p.out ? p.t : 1 - p.t);
+          x.globalAlpha = 0.25; x.beginPath(); x.arc(px, py, 6, 0, 7); x.fill();
+          x.globalAlpha = 1; x.beginPath(); x.arc(px, py, 2.2, 0, 7); x.fill();
+        }
+      }
+      x.globalAlpha = 1;
+    };
+    layout();
+    window.addEventListener('resize', () => { ov.W = 0; layout(); draw(0); });
+    settle(list, () => { ov.W = 0; layout(); draw(0); });
+    if (o.lv === 'off') { draw(0); return; }
+    whileVisible(list, (dt) => draw(dt), '120px 0px');
+  }
+
+  /* ── The journey's moments (2026-10-17): one per section, in the hero's language (dots, lime light, pulses), each
+     once and in about a second, never in the way of reading. Reduced motion: none of them; the page as it is. ── */
+  const wide = () => window.innerWidth >= 900;
+  const FA = '۰۱۲۳۴۵۶۷۸۹';
+  const toN = (t) => Number(String(t).replace(/[۰-۹]/g, (d) => FA.indexOf(d)).replace('٫', '.'));
+  /** Counts a number shown in Persian digits up from zero (٪ and ٫ kept). */
+  function countUp(el, ms) {
+    const txt = el.textContent.trim();
+    if (!/^[۰-۹]+([٫][۰-۹]+)?٪?$/.test(txt)) return;
+    const pct = txt.endsWith('٪'), dec = (txt.split('٫')[1] || '').replace('٪', '').length, end = toN(txt.replace('٪', ''));
+    const t0 = performance.now();
+    const f = (now) => {
+      const k = easeOut(clamp((now - t0) / ms)), v = end * k;
+      el.textContent = fx.fa(dec ? v.toFixed(dec).replace('.', '٫') : String(Math.round(v))) + (pct ? '٪' : '');
+      if (k < 1) requestAnimationFrame(f); else el.textContent = txt;
+    };
+    requestAnimationFrame(f);
+  }
+  /** Adds `cls` to each element in turn, `gap` ms apart, and takes it off again after `hold` ms (0 = keep). */
+  function inTurn(els, cls, gap, hold, each) {
+    els.forEach((e, i) => setTimeout(() => {
+      e.classList.add(cls); if (each) each(e, i);
+      if (hold) setTimeout(() => e.classList.remove(cls), hold);
+    }, i * gap));
+  }
+
+  /* «در یک نگاه»: the tiles ignite one by one, as the letters did; numbers count up and their lime marker sweeps in. */
+  function glance(root, o) {
+    // the home page's facts, and the Program page's (2026-10-17: the same moment on every page that has them)
+    [['ul.rs-glance', '.rs-glance__value > bdi'], ['ul.rs-facts', '.rs-fact__num > bdi']].forEach(([sel, num]) => {
+      const list = root.querySelector(sel);
+      if (!list || o.lv === 'off') return;
+      list.classList.add('rs-sig-glance');
+      onceVisible(list, () => inTurn([...list.children], 'is-lit', 130, 900, (li) => {
+        li.classList.add('is-hl');
+        const v = li.querySelector(num); if (v) countUp(v, 900);
+      }), 0.3);
+    });
+  }
+
+  /* Any group of cards (2026-10-17, the inner pages): they light in turn as they come into view, their icon re-forming
+     from dots — the About page's two steps and its team, the Apply page's conditions, the Program page's stages. */
+  function ignite(root, o, group, item, icon) {
+    if (o.lv === 'off') return;
+    root.querySelectorAll(group).forEach((g) => {
+      const items = [...g.querySelectorAll(item)];
+      if (!items.length) return;
+      onceVisible(g, () => inTurn(items, 'is-lit', 200, 1000, (el) => { const ic = icon && el.querySelector(icon); if (ic && wide()) reformIcon(ic); }), 0.3);
+    });
+  }
+
+  /* «راهنمای پیچ‌دک»: the screening session's clock draws its two halves — ten minutes to present, then ten for
+     questions — when it comes into view. Without this script it stays drawn. */
+  function pitchTimer(root, o) {
+    const el = root.querySelector('[data-pd-timer]');
+    if (!el || o.lv === 'off') return;
+    el.classList.add('is-armed');
+    onceVisible(el, () => el.classList.add('is-run'), 0.5);
+  }
+
+  /* «هوش مصنوعی، در دل صنعت»: the chosen area's icon re-forms from dots and its sample solutions tick in, one by one. */
+  function areas(root, o) {
+    const box = root.querySelector('#ai .rs-areas[data-areas]'); // not the bridge's areas in «نقطه آغاز»
+    if (!box || o.lv === 'off') return;
+    const run = (panel) => {
+      if (!panel || panel.hidden) return;
+      panel.classList.remove('is-run'); void panel.offsetWidth; panel.classList.add('is-run');
+      const ic = panel.querySelector('.rs-sol__icon'); if (ic && wide()) reformIcon(ic);
+    };
+    let seen = false;
+    onceVisible(box, () => { seen = true; run(box.querySelector('[data-area-panel]:not([hidden])')); }, 0.35);
+    box.querySelectorAll('[data-area-panel]').forEach((p) => new MutationObserver(() => { if (seen && !p.hidden) run(p); }).observe(p, { attributes: true, attributeFilter: ['hidden'] }));
+  }
+
+  /* «جریانی برای رشد»: a charge runs through the four cards; each icon tile re-forms from dots as it arrives. */
+  function flowCards(root, o) {
+    const list = root.querySelector('ol.rs-flow__list');
+    if (!list || o.lv === 'off') return;
+    const cards = [...list.querySelectorAll('.rs-flow__card')];
+    onceVisible(list, () => inTurn(cards, 'is-lit', 260, 1000, (c) => { const ic = c.querySelector('.rs-glance__icon'); if (ic && wide()) reformIcon(ic); }), 0.3);
+  }
+
+  /* «چرا REASON؟»: as each card comes into view (sideways too), its picture is scanned like a labelling tool and the
+     score in its tag counts up. */
+  function whyCards(root, o) {
+    const cards = [...root.querySelectorAll('#why .rs-course')];
+    if (!cards.length || o.lv === 'off') return;
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      const m = e.target.querySelector('.rs-media'); if (m) m.classList.add('is-scan');
+      const b = e.target.querySelector('.rs-media__tag b'); if (b) countUp(b, 1000);
+    }), { threshold: 0.6 });
+    cards.forEach((c) => io.observe(c));
+  }
+
+  /* «شرایط پذیرش»: each condition's numeral fills with lime once read; all of them read, a line offers the next step. */
+  function conditionCards(root, o) {
+    const list = root.querySelector('ol.rs-condcards');
+    if (!list) return;
+    const cards = [...list.children];
+    const apply = root.querySelector('.rs-hero .rs-btn--accent, a.rs-btn--accent');
+    const ready = document.createElement('p');
+    ready.className = 'rs-ready'; ready.setAttribute('role', 'status'); ready.hidden = true;
+    // «هر چهار ویژگی»: the count follows the conditions set in the Customizer (four since 2026-10-21)
+    const count = ['', T('این'), T('هر دو'), T('هر سه'), T('هر چهار'), T('هر پنج'), T('هر شش')][cards.length] || T('همهٔ');
+    ready.innerHTML = '<i aria-hidden="true"></i><span>' + T('راهکار شما {count} ویژگی را دارد؟ آماده‌ی ثبت درخواست هستید.', { count }) + '</span>'
+      + (apply ? '<a href="' + apply.getAttribute('href') + '">' + T('درخواست پذیرش') + ' <span aria-hidden="true"><svg class="rs-ico" width="20" height="20" aria-hidden="true" focusable="false"><use href="#rs-i-next"/></svg></span></a>' : '');
+    list.insertAdjacentElement('afterend', ready);
+    const show = () => { ready.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => ready.classList.add('is-on'))); };
+    if (o.lv === 'off') { cards.forEach((c) => c.classList.add('is-seen')); show(); return; }
+    let n = 0, chain = 0;
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      chain = Math.max(chain, performance.now()) + 280; // in turn even when the row comes into view at once
+      setTimeout(() => { e.target.classList.add('is-seen'); if (++n === cards.length) setTimeout(show, 400); }, chain - performance.now());
+    }), { threshold: 0.6 });
+    cards.forEach((c) => io.observe(c));
+  }
+
+  /* «فرایند پذیرش»: the stops light along the line, one after another. */
+  function processMap(root, o) {
+    if (o.lv === 'off') return;
+    root.querySelectorAll('ol.rs-map').forEach((list) => onceVisible(list, () => inTurn([...list.querySelectorAll('.rs-map__node')], 'is-on', 220, 0, (n) => {
+      const ic = n.parentElement && n.parentElement.querySelector('.rs-map__icon'); if (ic && wide()) reformIcon(ic);
+    }), 0.35));
+  }
+
+  /* The finale (2026-10-17): the hero's bookend in the last section — the field forms REASON once more (light trails,
+     a lime flash, a ring, sparks, the letters igniting), the lime dot of the «A» drops into «درخواست پذیرش», which
+     charges, and comes home. Then it stays alive while on screen: a beam sweeps the letters, the dot breathes, the
+     cursor wakes the dots. Phones: fewer dots, no cursor. Reduced motion: the formed word, still. */
+  function finale(root, o) {
+    const stage = root.querySelector('[data-finale]');
+    const host = stage && stage.closest('[data-finale-host]');
+    const btn = host && host.querySelector('.rs-btn');
+    if (!host || !btn) return;
+    const ov = overlay(host, 'rs-finale');
+    const lime = css(host, '--lime', '#B7F34A'), fg = css(host, '--fg', '#F4F7F2');
+    const phone = window.innerWidth < 900;
+    const n = phone ? 200 : 460;
+    const L = fx.sampleLogo(600, n), U = L.pts.map((p) => ({ u: p.x / L.w, v: p.y / L.h }));
+    const u0 = (96 - 6) / 222, v0 = (35.25 - 6) / 36;
+    const mouse = { x: -1e4, y: -1e4 };
+    let G = null, ps = null;
+    const layout = () => {
+      ov.W = 0; ov.fit();
+      const sb = ov.rel(stage), bb = ov.rel(btn), lw = Math.min(sb.w * 0.9, 820), h = lw * 36 / 222;
+      const ox = sb.x + (sb.w - lw) / 2, oy = sb.cy - h / 2;
+      G = { ox, oy, lw, h, cx: ox + lw / 2, cy: oy + h / 2, dot: { x: ox + u0 * lw, y: oy + v0 * h, r: 3.75 * lw / 222 * 1.1 }, btn: { x: bb.cx, y: bb.cy } };
+      ps = U.map((q) => ({ tx: ox + q.u * lw, ty: oy + q.v * h, sx: Math.random() * ov.W, sy: Math.random() * ov.H, dl: Math.random() * 380, d: Math.hypot((q.u - u0) * 222, (q.v - v0) * 36) < 6, ig: q.u * 420, g: 0 }));
+    };
+    const spr = () => fx.glowSprite(lime);
+    /* t: ms since it started (Infinity once settled); now: for the idle loop's beam and breath. */
+    const draw = (t, now) => {
+      const x = ov.x, S = spr(), settled = t === Infinity;
+      x.clearRect(0, 0, ov.W, ov.H);
+      const lockT = t - 1150, dropK = settled ? 0 : clamp((t - 1750) / 700), dropE = easeInOut(dropK), back = settled ? 1 : clamp((t - 2900) / 500);
+      let sweepX = -1e5;
+      if (settled && o.lv !== 'off') { const c = now % 3600; if (c < 1500) sweepX = G.ox - 90 + (G.lw + 180) * easeInOut(c / 1500); }
+      const beam = (px) => Math.max(0, 1 - Math.abs(px - sweepX) / 80);
+      x.globalCompositeOperation = 'lighter';
+      ps.forEach((p) => {
+        const k = settled ? 1 : easeOut(clamp((t - p.dl) / 1050));
+        p.x = lerp(p.sx, p.tx, k); p.y = lerp(p.sy, p.ty, k);
+        if (!settled && lockT >= p.ig && !p.lit) { p.lit = true; p.g = 1; }
+        if (settled && !phone) { const dm = Math.hypot(p.x - mouse.x, p.y - mouse.y); if (dm < 110) p.g = Math.max(p.g, 1 - dm / 110); }
+        p.g *= 0.95;
+        if (p.d) return;
+        const b = beam(p.x), a = k * 0.32 + p.g * 0.6 + b * 0.8;
+        if (a < 0.02) return;
+        const r = 5 + 12 * b + 8 * p.g; // tight: true lime, not an olive haze x.globalAlpha = Math.min(1, a); x.drawImage(S, p.x - r, p.y - r, r * 2, r * 2);
+      });
+      if (!settled && lockT > 0 && lockT < 1400) {
+        const ft = lockT / 600;
+        if (ft < 1) { const fr = G.lw * (0.5 + ft * 0.35); x.globalAlpha = (1 - ft) * 0.6; x.drawImage(S, G.cx - fr, G.cy - fr * 0.45, fr * 2, fr * 0.9); }
+        x.globalCompositeOperation = 'source-over'; x.strokeStyle = lime;
+        [[0, 3, 0.9], [170, 1.6, 0.55]].forEach(([dl, lw, al]) => {
+          const rt = (lockT - dl) / 1250; if (rt <= 0 || rt >= 1) return;
+          const rr = 24 + Math.max(ov.W, ov.H) * 0.7 * easeOut(rt);
+          x.globalAlpha = (1 - rt) * al * 0.35; x.lineWidth = lw * 6 * (1 - rt * 0.5); x.beginPath(); x.ellipse(G.cx, G.cy, rr, rr * 0.4, 0, 0, 7); x.stroke();
+          x.globalAlpha = (1 - rt) * al; x.lineWidth = lw * (1 - rt * 0.6); x.beginPath(); x.ellipse(G.cx, G.cy, rr, rr * 0.4, 0, 0, 7); x.stroke();
+        });
+        x.globalCompositeOperation = 'lighter';
+      }
+      if (!settled && G.sparks) G.sparks.forEach((sp) => {
+        const a = clamp(1 - (t - sp.t0) / sp.life); if (a <= 0) return;
+        sp.x += sp.vx; sp.y += sp.vy; sp.vx *= 0.955; sp.vy = sp.vy * 0.955 + 0.03;
+        const r = 2 + 8 * a; x.globalAlpha = a; x.drawImage(S, sp.x - r, sp.y - r, r * 2, r * 2);
+      });
+      x.globalCompositeOperation = 'source-over';
+      if (!settled && t < 1300) {
+        x.strokeStyle = fg; x.lineWidth = 1.2; x.lineCap = 'round';
+        ps.forEach((p) => { const k = clamp((t - p.dl) / 1050); if (k <= 0 || k >= 1) return; const e0 = Math.max(0, easeOut(k) - 0.09); x.globalAlpha = 0.45 * (1 - k); x.beginPath(); x.moveTo(lerp(p.sx, p.tx, e0), lerp(p.sy, p.ty, e0)); x.lineTo(p.x, p.y); x.stroke(); });
+      }
+      x.fillStyle = fg;
+      ps.forEach((p) => { if (p.d) return; const b = beam(p.x); x.globalAlpha = settled ? 1 : 0.45 + 0.55 * clamp((t - p.dl) / 1050); x.beginPath(); x.arc(p.x, p.y, 1.75 + p.g * 0.9 + b * 1, 0, 7); x.fill(); });
+      // the lime dot: formed in the «A», dropped into the button, home again — then breathing
+      const home = G.dot, to = G.btn;
+      if (settled || (t > 900 && dropK === 0) || back > 0) {
+        const a = settled ? 1 : back > 0 ? back : clamp((t - 900) / 300), pulse = settled ? 1 + 0.18 * Math.sin(now / 380) : 1;
+        x.globalCompositeOperation = 'lighter'; const r = home.r * 7 * pulse; x.globalAlpha = a * 0.9; x.drawImage(S, home.x - r, home.y - r, r * 2, r * 2);
+        x.globalCompositeOperation = 'source-over'; x.globalAlpha = a; x.fillStyle = lime; x.beginPath(); x.arc(home.x, home.y, home.r, 0, 7); x.fill();
+      }
+      if (dropK > 0 && dropK < 1) {
+        const px = lerp(home.x, to.x, dropE), py = lerp(home.y, to.y, dropE) - Math.sin(dropE * Math.PI) * 60, r = lerp(home.r, home.r * 1.3, dropE);
+        x.globalCompositeOperation = 'lighter'; x.globalAlpha = 0.95; x.drawImage(S, px - r * 6, py - r * 6, r * 12, r * 12);
+        x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1; x.fillStyle = lime; x.beginPath(); x.arc(px, py, r, 0, 7); x.fill();
+      }
+      const ct = t - 2450;
+      if (!settled && ct > 0 && ct < 900) {
+        const k = ct / 900; x.strokeStyle = lime; x.globalAlpha = (1 - k) * 0.85; x.lineWidth = 2;
+        x.beginPath(); x.ellipse(to.x, to.y, 40 + 100 * easeOut(k), 18 + 44 * easeOut(k), 0, 0, 7); x.stroke();
+      }
+      x.globalAlpha = 1;
+    };
+    layout();
+    let phase = 'waiting';
+    window.addEventListener('resize', () => { if (phase === 'playing') return; layout(); if (phase === 'settled' || o.lv === 'off') draw(Infinity, performance.now()); });
+    if (o.lv === 'off') { draw(Infinity, 0); return; }
+    if (!phone) host.addEventListener('pointermove', (e) => { const r = ov.c.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; }, { passive: true });
+    host.addEventListener('pointerleave', () => { mouse.x = mouse.y = -1e4; });
+    onceVisible(host, () => {
+      phase = 'playing';
+      const t0 = performance.now();
+      let charged = false, burst = false;
+      const f = (now) => {
+        const t = now - t0;
+        if (!burst && t > 1150) {
+          burst = true; G.sparks = [];
+          for (let i = 0; i < (phone ? 70 : 130); i++) { const p = ps[(Math.random() * ps.length) | 0], dx = p.tx - G.cx, dy = p.ty - G.cy, d = Math.hypot(dx, dy) || 1, sp = 1.5 + Math.random() * 5; G.sparks.push({ x: p.tx, y: p.ty, vx: dx / d * sp, vy: dy / d * sp * 0.6 - 0.8, life: 800 + Math.random() * 800, t0: t }); }
+        }
+        draw(t, now);
+        if (!charged && t > 2450) { charged = true; btn.classList.remove('is-charged'); void btn.offsetWidth; btn.classList.add('is-charged'); }
+        if (t < 3500) { requestAnimationFrame(f); return; }
+        phase = 'settled';
+        whileVisible(host, (dt, nw) => draw(Infinity, nw), '0px'); // alive while on screen, idle off it
+      };
+      requestAnimationFrame(f);
+    }, 0.45);
+  }
+
+  /* ── 11. footer: the wordmark assembles like the header's ── */
+  function footer(root, o) {
+    const el = document.querySelector('.rs-footer__logo');
+    if (!el || o.lv === 'off') return;
+    relative(el);
+    const svg = el.querySelector('svg');
+    if (svg) svg.style.opacity = '0';
+    onceVisible(el, () => fx.logoAssemble(el, o.lv), 0.6);
+  }
+
+  /* 2026-10-17 «keep the hero's excitement to the bottom of the page»: the journey is back — the dot leaves the formed
+     wordmark for the margin thread (desktop) and every section has its moment, ending in the finale in the sign-up box. */
+  function mount(root, o) {
+    const th = thread(root, o);
+    intro(root, o); path(root, o); need(root, o); glance(root, o); areas(root, o); flowCards(root, o); whyCards(root, o);
+    audience(root, o); conditionCards(root, o); processMap(root, o); faq(root, o); partners(root, o); finale(root, o); footer(root, o);
+    ignite(root, o, '.rs-about__steps', '.rs-about__step', '.rs-flowcards__icon');
+    ignite(root, o, '.rs-team__grid', 'li.rs-member');
+    ignite(root, o, 'ol.rs-conds', 'li.rs-cond');
+    root.querySelectorAll('.rs-stagex').forEach((st) => ignite(root, o, '#' + st.id, '.rs-stagex__side', '.rs-stagex__icon'));
+    ignite(root, o, 'ol.rs-pd-when__steps', '.rs-pd-when__step');
+    ignite(root, o, 'ol.rs-pd-deck', '.rs-pd-slide', '.rs-pd-slide__icon');
+    ignite(root, o, 'ul.rs-pd-checks', 'li.rs-pd-check');
+    pitchTimer(root, o);
+    return { detach: () => (th ? th.detach() : 0) };
+  }
+
+  window.ReasonSig = { mount, stream, splitWords };
+})();

@@ -1,0 +1,1845 @@
+/*
+Theme Name: REASON
+Theme URI: https://reasonaccelerator.com/
+Description: Site theme for REASON, the AI acceleration program of Golrang Group. RTL / Persian.
+Version: 1.0.0
+Requires PHP: 8.1
+Text Domain: reason
+*/
+
+/* ── Fonts (bundled: Google Fonts is slow or blocked for many visitors in Iran) ── */
+/* Rooyin Pro, the identity font (variable, weights 400–1000). Licensed from Fontiran (full + web); ss02 turns Latin
+   digits into Persian ones. IRANSans X stays behind it for the few signs Rooyin lacks (← → ↓ · ☰ ─); the browser
+   only fetches it when one of those is on the page. */
+@font-face { font-family: 'Rooyin'; font-style: normal; font-weight: 400 1000; font-display: swap; src: url('assets/fonts/rooyin-var.woff2') format('woff2'); }
+@font-face { font-family: 'IRANSansX'; font-style: normal; font-weight: 100 1000; font-display: swap; src: url('assets/fonts/iransansx-var.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('assets/fonts/jetbrains-mono-400.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('assets/fonts/jetbrains-mono-500.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 600; font-display: swap; src: url('assets/fonts/jetbrains-mono-600.woff2') format('woff2'); }
+
+/* ── Tokens: dark theme, brand blue (the dot in the REASON logo) ──
+   --accent  #3843D7  brand blue: fills, buttons, bars
+   --accent2 #5B66F0  lifted blue: glows, lines and marks drawn on the dark background
+   --accent-ink #8B93FF  blue text on the dark background (contrast 6.9:1) */
+:root {
+	--bg: #0B1020; --surf: #0B1020; --surf2: #0B1020; --fg: #F4F7F2; --muted: #98A2B3;
+	--line: rgba(237,239,243,0.08); --line2: rgba(237,239,243,0.16);
+	--glass: rgba(10,13,19,0.62); --glass2: rgba(14,18,26,0.78); --logo-ink: #FFFFFF;
+	--accent: #3843D7; --accent2: #5B66F0; --accent-ink: #8B93FF; --on-accent: #FFFFFF;
+	--grain-o: 0; /* corner radii: «Corners» at the end */
+	--pad: 40px; --header-h: 72px;
+	--wrap: 1120px; /* the content width, narrowed from 1320px (2026-10-14, after کوره): text and boxes sit closer together */
+	--mono: Rooyin, IRANSansX, sans-serif; /* every label in Rooyin (2026-10-19); it was JetBrains Mono */
+	/* Type scale, modelled on fanapcampus.ir/aiorbit: Persian reads best at moderate sizes, bold (700–800)
+	   rather than black headings, and a line height near 2 so dots and descenders never collide. */
+	/* Sizes after کوره (2026-10-14): 16px body, 14px small text and list items, 16px card titles, large section titles
+	   for contrast. */
+	--fs-xs: 13px; --fs-sm: 14px; --fs-base: 16px; --fs-md: 17px; --fs-lg: 18px;
+	--fs-h3: 16px; --fs-h2: clamp(30px, 3vw, 40px); --fs-h1: clamp(34px, 4.6vw, 64px);
+	--lh-text: 1.9; --lh-head: 1.5;
+}
+@media (max-width: 639px) { :root { --pad: 20px; } }
+
+html, body { margin: 0; background: var(--bg); }
+*, *::before, *::after { box-sizing: border-box; }
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent2); outline-offset: 3px; }
+::selection { background: var(--accent); color: var(--on-accent); }
+input::placeholder, textarea::placeholder { color: var(--muted); }
+img { max-width: 100%; height: auto; }
+bdi { unicode-bidi: isolate; }
+
+.rs-root { position: relative; min-height: 100vh; background: var(--bg); color: var(--fg); font-family: Rooyin, IRANSansX, Tahoma, sans-serif; font-feature-settings: 'ss02'; font-size: var(--fs-base); line-height: var(--lh-text); overflow-x: clip; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+.rs-mono { font-family: var(--mono); }
+/* Form controls take the page's font: browsers give them their own (the steps' «مرحله بعد» was in Arial, 2026-10-18).
+   No specificity, so every class rule still sets their size and weight. */
+:where(.rs-root) :where(button, input, select, textarea) { font: inherit; }
+/* Persian digits (ss02) everywhere except where Latin digits are the point: e-mail, URLs, code, the mono labels. */
+.rs-mono, code, pre, [dir="ltr"], [lang="en"], input[type="email"], input[type="url"] { font-feature-settings: normal; }
+.rs-wrap { max-width: var(--wrap); margin: 0 auto; padding-inline: var(--pad); }
+
+/* Skip link */
+.rs-skip { position: absolute; right: 16px; top: -60px; z-index: 100; background: var(--accent); color: var(--on-accent); padding: 8px 14px; border-radius: var(--rb); }
+.rs-skip:focus { top: 12px; color: var(--on-accent); }
+
+/* Background texture */
+.rs-grain { position: fixed; inset: 0; pointer-events: none; z-index: 60; opacity: var(--grain-o); mix-blend-mode: overlay; }
+
+/* ── Announcement bar ── */
+
+/* ── Header ── */
+.rs-header { position: sticky; top: 0; z-index: 50; background: var(--glass-head, var(--glass)); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); border-bottom: 1px solid var(--line); }
+.admin-bar .rs-header { top: 32px; }
+@media (max-width: 782px) { .admin-bar .rs-header { top: 46px; } }
+@media (max-width: 600px) { .admin-bar .rs-header { top: 0; } }
+.rs-header__in { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--pad); height: var(--header-h); display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.rs-brand { display: flex; align-items: center; gap: 14px; flex: none; }
+.rs-brand:hover { color: inherit; }
+.rs-brand__logo { --accent: var(--accent2); position: relative; display: inline-flex; }
+.rs-brand__logo svg { display: block; }
+.rs-nav { white-space: nowrap; display: flex; align-items: center; gap: 28px; font-size: var(--fs-sm); font-weight: 500; color: var(--muted); }
+.rs-nav a:hover, .rs-nav a[aria-current="page"] { color: var(--fg); }
+.rs-header__actions { display: flex; align-items: center; gap: 10px; }
+.rs-menu-btn { display: none; background: transparent; border: 1px solid var(--line2); color: var(--fg); border-radius: var(--rb); width: 44px; height: 44px; font: inherit; cursor: pointer; }
+.rs-mnav { display: flex; flex-direction: column; padding: 8px var(--pad) 20px; gap: 4px; font-size: var(--fs-base); font-weight: 500; border-top: 1px solid var(--line); }
+.rs-mnav[hidden] { display: none; }
+.rs-mnav a { padding: 10px 0; }
+@media (max-width: 1119px) {
+	.rs-nav { display: none; }
+	.rs-menu-btn { display: inline-grid; }
+}
+@media (min-width: 1120px) { .rs-mnav { display: none !important; } }
+
+
+/* ── Buttons ── */
+.rs-btn { white-space: nowrap; display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; min-height: 44px; border: 0; border-radius: var(--rb); font-weight: 600; line-height: 1.5; transition: box-shadow 300ms, border-color 300ms, background-color 300ms; }
+.rs-btn--accent { background: var(--cta); color: var(--on-cta); box-shadow: 0 0 0 0 transparent; }
+.rs-btn--accent:hover { color: var(--on-cta); box-shadow: 0 0 32px color-mix(in oklab, var(--cta-glow) 55%, transparent); }
+.rs-btn--sm { font-size: var(--fs-sm); padding: 10px 18px; min-height: 44px; }
+.rs-btn--lg { font-size: var(--fs-base); padding: 14px 26px; gap: 12px; }
+.rs-btn--lg.rs-btn--accent:hover { box-shadow: 0 0 44px color-mix(in oklab, var(--cta-glow) 60%, transparent); }
+.rs-btn--ghost { border: 1px solid var(--line2); color: var(--fg); font-weight: 500; font-size: var(--fs-base); padding: 14px 24px; background: var(--glass); backdrop-filter: blur(8px); }
+.rs-btn--ghost:hover { border-color: var(--fg); color: var(--fg); }
+.rs-btn--dark { align-self: flex-start; background: var(--cta-box-btn); color: var(--on-cta-box-btn); padding: 13px 22px; }
+.rs-btn--dark:hover { color: var(--on-cta-box-btn); box-shadow: 0 0 0 1px var(--cta-box-btn), 0 10px 30px rgba(0,0,0,.35); }
+@media (max-width: 420px) { .rs-header .rs-btn--sm { padding: 10px 12px; font-size: 14px; } }
+
+/* ── Hero ──
+   Desktop (≥900px, motion allowed): the hero is 175vh tall and its stage sticks for the scroll,
+   so the neural field condenses into the wordmark as you scroll. Narrow screens: a normal block. */
+.rs-hero { position: relative; height: auto; }
+.rs-hero__stage { position: relative; top: 0; height: auto; min-height: 0; overflow: hidden; }
+.rs-hero__canvas { --accent: var(--ai); position: absolute; inset: 0; width: 100%; height: 100%; opacity: 1; transition: opacity 600ms; }
+.rs-hero__fade-side { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to left, var(--bg) 0%, color-mix(in oklab, var(--bg) 72%, transparent) 36%, transparent 62%); }
+.rs-hero__fade-bottom { position: absolute; left: 0; right: 0; bottom: 0; height: 220px; pointer-events: none; background: linear-gradient(to top, var(--bg), transparent); }
+.rs-hero__glow { position: absolute; width: 70vw; height: 70vw; left: -18vw; top: -26vw; border-radius: 50%; pointer-events: none; background: radial-gradient(closest-side, color-mix(in oklab, var(--ai) 18%, transparent), transparent); }
+.rs-hero__content { position: relative; max-width: var(--wrap); margin: 0 auto; min-height: 100%; padding: 56px var(--pad); display: flex; align-items: center; gap: 56px; flex-wrap: wrap; }
+@media (min-width: 900px) {
+	.rs-hero { height: 175vh; }
+	.rs-hero__stage { position: sticky; height: 100vh; min-height: 700px; }
+	.rs-hero__content { padding-block: 0; }
+}
+@media (min-width: 900px) and (prefers-reduced-motion: reduce) {
+	.rs-hero { height: auto; }
+	.rs-hero__stage { position: relative; height: auto; min-height: 100vh; }
+	.rs-hero__content { padding-block: 96px; }
+}
+.rs-hero__copy { flex: 1 1 560px; max-width: 780px; display: flex; flex-direction: column; gap: 28px; }
+.rs-h1 { margin: 0; font-weight: 800; font-size: var(--fs-h1); line-height: 1.45; text-wrap: balance; }
+.rs-lead { margin: 0; font-size: var(--fs-md); line-height: var(--lh-text); color: var(--muted); max-width: 640px; text-wrap: pretty; }
+.rs-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* Countdown — framed left to right (2026-11-07, the client): the label at the left, then days → seconds like a clock;
+   the label's own text stays RTL inside. */
+.rs-cd { direction: ltr; display: flex; max-width: 100%; align-items: stretch; align-self: flex-start; background: var(--glass); border: 1px solid var(--line2); border-radius: var(--r); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.rs-cd__label { direction: rtl; padding: 12px 18px; display: flex; flex-direction: column; justify-content: center; gap: 2px; border-right: 1px solid var(--line); }
+.rs-cd__label b { font-size: 14px; font-weight: 700; line-height: 1.5; white-space: nowrap; }
+.rs-cd__label span { font-size: var(--fs-xs); color: var(--muted); line-height: 1.5; }
+.rs-cd__units { display: flex; }
+.rs-cd__unit { padding: 10px 16px; text-align: center; min-width: 70px; }
+.rs-cd__unit + .rs-cd__unit { border-left: 1px solid var(--line); }
+.rs-cd__num { font-size: 30px; font-weight: 800; line-height: 1.3; }
+.rs-cd__unit small { display: block; font-size: var(--fs-xs); color: var(--muted); line-height: 1.5; }
+@media (max-width: 520px) {
+	.rs-cd { flex-direction: column; align-self: stretch; }
+	.rs-cd__label { border-right: 0; border-bottom: 1px solid var(--line); flex-direction: row; justify-content: space-between; align-items: center; }
+	.rs-cd__units { justify-content: space-between; }
+	.rs-cd__unit { flex: 1; min-width: 0; padding: 10px 6px; }
+	.rs-cd__num { font-size: 26px; }
+}
+.rs-cd__num--accent { color: var(--accent-ink); }
+.rs-sponsor { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--muted); }
+.rs-sponsor::before { content: ""; width: 28px; height: 1px; background: var(--line2); flex: none; }
+.rs-sponsor strong { color: var(--fg); font-weight: 700; }
+
+/* ── Section heads ── */
+.rs-section { position: relative; padding: 128px 0 96px; }
+@media (max-width: 899px) { .rs-section { padding: 88px 0 64px; } }
+.rs-shead { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; margin-bottom: 48px; }
+.rs-shead__main { display: flex; flex-direction: column; gap: 14px; max-width: 720px; }
+.rs-eyebrow { margin: 0; font-size: var(--fs-sm); font-weight: 600; color: var(--accent-ink); }
+.rs-h2 { margin: 0; font-weight: 700; font-size: var(--fs-h2); line-height: var(--lh-head); }
+.rs-h2 em { font-style: normal; color: var(--hi); }
+.rs-shead p { margin: 0; max-width: 460px; color: var(--muted); font-size: var(--fs-base); line-height: var(--lh-text); }
+
+/* ── Bento ── */
+.rs-bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.rs-bento .rs-span2 { grid-column: span 2; }
+.rs-bento .rs-rspan2 { grid-row: span 2; }
+@media (max-width: 899px) { .rs-bento { grid-template-columns: minmax(0, 1fr); } .rs-bento .rs-span2, .rs-bento .rs-rspan2 { grid-column: auto; grid-row: auto; } }
+.rs-card { border-radius: var(--r); border: 1px solid var(--line2); background: var(--surf); }
+.rs-card__in { position: relative; height: 100%; background: var(--surf); border-radius: var(--r-in); padding: 30px; overflow: hidden; display: flex; flex-direction: column; gap: 12px; min-height: 270px; }
+.rs-card__spot { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--accent) 11%, transparent), transparent 60%); opacity: var(--spot, 0); transition: opacity 400ms; }
+.rs-card__tag { font-family: var(--mono); font-size: var(--fs-xs); color: var(--muted); }
+.rs-card h3 { margin: 0; font-size: var(--fs-h3); font-weight: 700; line-height: var(--lh-head); }
+.rs-card p { margin: 0; color: var(--muted); font-size: var(--fs-base); line-height: var(--lh-text); }
+@media (max-width: 559px) { .rs-card__in { padding: 22px; } }
+
+/* ── Intro: the one-line position + the two framing paragraphs ── */
+.rs-intro { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 64px; align-items: start; }
+@media (max-width: 899px) { .rs-intro { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
+.rs-statement { margin: 0; font-weight: 800; font-size: clamp(26px, 2.8vw, 38px); line-height: 1.7; text-wrap: balance; }
+.rs-statement em { font-style: normal; color: var(--hi); }
+.rs-intro__text p { margin: 0 0 1.2em; color: var(--muted); font-size: var(--fs-md); line-height: var(--lh-text); }
+.rs-intro__text p:first-child { color: var(--fg); }
+.rs-intro__text p:last-child { margin-bottom: 0; }
+
+/* ── Card pairs and the four-step growth flow ── */
+.rs-flow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 899px) { .rs-flow { grid-template-columns: minmax(0, 1fr); } }
+.rs-card__num { font-size: var(--fs-sm); font-weight: 700; color: var(--accent-ink); }
+.rs-card p + p { margin-top: 4px; }
+.rs-chips { margin-top: auto; padding-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+.rs-chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line2); border-radius: var(--rp); padding: 6px 14px; font-size: 14px; }
+.rs-chip__mark { width: 7px; height: 7px; border-radius: 50%; background: var(--line2); }
+
+/* ── Intro paragraph, centred statement, card taglines ── */
+.rs-section--tight { padding: 88px 0 24px; }
+@media (max-width: 899px) { .rs-section--tight { padding: 56px 0 8px; } }
+.rs-intro-lead { margin: 0; max-width: 680px; font-size: var(--fs-md); line-height: 2.1; color: color-mix(in oklab, var(--fg) 86%, var(--muted)); text-wrap: pretty; }
+.rs-statement--center { text-align: center; margin: 0 auto 48px; max-width: 900px; }
+.rs-card p.rs-card__tagline { color: var(--accent-ink); font-weight: 600; font-size: var(--fs-md); }
+
+/* ── The four steps: horizontal slider. The section is pinned while the track slides sideways (reason-fx.js [data-pin]). ── */
+.rs-pin { position: relative; height: 190vh; } /* 2026-10-17: 260vh and 300vh made the four steps two to three screens of scroll */
+@media (max-width: 899px) { .rs-pin { height: 220vh; } }
+.rs-pin__view { position: sticky; top: 0; height: 100vh; min-height: 620px; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 56px; padding-top: var(--header-h); }
+@media (max-width: 899px) { .rs-pin__view { min-height: 560px; gap: 36px; } }
+.rs-pin__head { width: 100%; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+.rs-pin__head .rs-h2 { max-width: 760px; }
+.rs-pin__pct { display: flex; align-items: center; gap: 10px; font-size: var(--fs-sm); color: var(--muted); }
+.rs-pin__pct [data-pct] { color: var(--fg); min-width: 44px; }
+.rs-pin__rail { padding: 0 var(--pad); }
+.rs-track { position: relative; display: flex; gap: clamp(40px, 6vw, 110px); width: max-content; padding-top: 52px; will-change: transform; }
+.rs-track__line { position: absolute; top: 11px; right: 0; left: 0; height: 2px; background: var(--line2); }
+.rs-track__line span { position: absolute; inset: 0; background: var(--ai); box-shadow: 0 0 14px var(--ai); transform: scaleX(0); transform-origin: right center; }
+.rs-stage { position: relative; width: clamp(250px, 30vw, 440px); opacity: 0.45; display: flex; flex-direction: column; gap: 10px; }
+.rs-stage__dot { position: absolute; top: -48px; right: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); border: 2px solid var(--ai); }
+.rs-stage__num { font-family: inherit; font-size: clamp(72px, 9vw, 140px); font-weight: 600; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px var(--accent-ink); direction: ltr; text-align: right; }
+.rs-stage__en { font-family: var(--mono); font-size: var(--fs-sm); color: var(--accent-ink); text-align: right; }
+.rs-stage__title { margin: 0; font-size: clamp(22px, 2.4vw, 32px); font-weight: 700; line-height: var(--lh-head); }
+.rs-program__road { margin: 0 0 24px; }
+
+/* ── Growth flow: vertical slider. Pinned (theme.js adds .is-pinned on wide screens with motion): the background
+   stays still and the stages slide up one at a time. Otherwise: a plain list divided by rules, no cards. ── */
+.rs-vs { position: relative; padding: 128px 0 96px; }
+@media (max-width: 899px) { .rs-vs { padding: 88px 0 64px; } }
+.rs-vs__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; align-items: start; }
+@media (max-width: 899px) { .rs-vs__grid { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
+.rs-vs__side { display: flex; flex-direction: column; gap: 28px; align-items: flex-start; }
+ol.rs-vs__rail { display: none; list-style: none; margin: 0; padding: 0; }
+.rs-vs__slide { display: flex; flex-direction: column; gap: 12px; padding: 28px 0; border-top: 1px solid var(--line2); }
+.rs-vs__slide:last-child { border-bottom: 1px solid var(--line2); }
+.rs-vs__num { font-family: var(--mono); font-size: 48px; font-weight: 600; line-height: 1; color: transparent; -webkit-text-stroke: 1px var(--accent-ink); direction: ltr; text-align: right; }
+.rs-vs__slide h3 { margin: 0; font-size: clamp(22px, 2.2vw, 30px); font-weight: 700; line-height: var(--lh-head); }
+.rs-vs__slide p { margin: 0; max-width: 620px; color: var(--muted); font-size: var(--fs-md); line-height: var(--lh-text); }
+.rs-vs__slide .rs-chips { margin-top: 8px; padding-top: 0; }
+
+.rs-vs.is-pinned { height: calc(var(--n) * 45vh + 100vh); padding: 0; } /* 2026-10-17: 75vh a stage was four screens */
+.rs-vs.is-pinned .rs-vs__view { position: sticky; top: 0; height: 100vh; min-height: 640px; display: flex; align-items: center; padding-top: var(--header-h); overflow: hidden; background: radial-gradient(55vw 55vw at 12% 55%, color-mix(in oklab, var(--accent2) 13%, transparent), transparent 70%); }
+.rs-vs.is-pinned .rs-vs__grid { width: 100%; align-items: center; }
+.rs-vs.is-pinned ol.rs-vs__rail { display: flex; flex-direction: column; gap: 2px; position: relative; padding-inline-start: 26px; }
+.rs-vs.is-pinned ol.rs-vs__rail::before, .rs-vs.is-pinned ol.rs-vs__rail::after { content: ""; position: absolute; top: 20px; bottom: 20px; right: 5px; width: 2px; background: var(--line2); }
+.rs-vs.is-pinned ol.rs-vs__rail::after { background: var(--ai); box-shadow: 0 0 12px var(--ai); transform-origin: top center; transform: scaleY(var(--p, 0)); }
+.rs-vs__rail li { position: relative; display: flex; align-items: baseline; gap: 12px; padding: 9px 0; margin: 0; color: var(--muted); font-size: var(--fs-base); line-height: 1.7; transition: color 300ms; }
+.rs-vs__rail li::before { content: ""; position: absolute; right: -26px; top: 50%; width: 12px; height: 12px; margin-top: -6px; border-radius: 50%; background: var(--bg); border: 2px solid var(--line2); z-index: 1; transition: background 300ms, border-color 300ms, box-shadow 300ms; }
+.rs-vs__rail li span { font-family: var(--mono); font-size: var(--fs-xs); color: var(--accent-ink); }
+.rs-vs__rail li.is-on { color: var(--fg); }
+.rs-vs__rail li.is-on::before { background: var(--accent); border-color: var(--accent2); }
+.rs-vs__rail li.is-cur { font-weight: 700; }
+.rs-vs__rail li.is-cur::before { box-shadow: 0 0 0 6px color-mix(in oklab, var(--accent) 22%, transparent); }
+.rs-vs.is-pinned .rs-vs__stack { display: grid; }
+.rs-vs.is-pinned .rs-vs__slide { grid-area: 1 / 1; border: 0; padding: 0; opacity: 0; transform: translateY(56px); pointer-events: none; transition: opacity 500ms, transform 700ms cubic-bezier(.2, .7, .2, 1); }
+.rs-vs.is-pinned .rs-vs__slide.is-past { transform: translateY(-56px); }
+.rs-vs.is-pinned .rs-vs__slide.is-active { opacity: 1; transform: none; pointer-events: auto; }
+.rs-vs.is-pinned .rs-vs__num { font-size: clamp(96px, 11vw, 180px); margin-bottom: 8px; }
+.rs-vs.is-pinned .rs-vs__slide h3 { font-size: clamp(26px, 2.8vw, 40px); }
+.rs-vs.is-pinned .rs-vs__slide p { font-size: clamp(18px, 1.4vw, 21px); }
+
+/* Program page: the flow as numbered blocks */
+
+/* ── «اینجا برای شماست» ── */
+.rs-aud { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 48px; align-items: center; background: var(--surf); border: 1px solid var(--line2); border-radius: var(--r); padding: 44px; }
+@media (max-width: 899px) { .rs-aud { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 26px 22px; } }
+.rs-aud__copy { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+.rs-aud__ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+.rs-field__deck { margin-top: -4px; }
+/* «دانلود قالب پیچ‌دک» (reason_deck_html()): until a file is set in the Customizer the button is there but quiet. */
+.rs-deck svg { flex: none; }
+.rs-deck.is-soon { opacity: .6; cursor: default; pointer-events: none; }
+.rs-deck small { font-size: var(--fs-xs); font-weight: 500; border: 1px solid currentColor; border-radius: var(--rs); padding: 0 6px; }
+.rs-aud__copy p { margin: 0; color: var(--muted); font-size: var(--fs-md); line-height: var(--lh-text); }
+
+/* ── Floating section menu (home page) ── */
+.rs-snav { position: fixed; z-index: 55; bottom: 20px; left: 50%; max-width: calc(100vw - 24px); transform: translate(-50%, 16px); opacity: 0; visibility: hidden; transition: opacity 300ms, transform 300ms, visibility 0s 300ms; }
+.rs-snav.is-on { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition: opacity 300ms, transform 300ms; }
+.rs-snav__in { display: flex; align-items: center; gap: 4px; padding: 6px; border-radius: var(--rp); background: var(--glass2); border: 1px solid var(--line2); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); box-shadow: 0 12px 40px rgba(0,0,0,.45); overflow-x: auto; scrollbar-width: none; }
+.rs-snav__in::-webkit-scrollbar { display: none; }
+.rs-snav a { flex: none; white-space: nowrap; padding: 8px 14px; border-radius: var(--rp); font-size: var(--fs-sm); font-weight: 500; line-height: 1.5; color: var(--muted); transition: background-color 200ms, color 200ms; }
+.rs-snav a:hover { color: var(--fg); }
+.rs-snav a[aria-current] { background: var(--surf2); color: var(--fg); }
+.rs-snav .rs-snav__cta { background: var(--cta); color: var(--on-cta); font-weight: 600; margin-inline-start: 4px; }
+.rs-snav .rs-snav__cta:hover { color: var(--on-cta); }
+@media (max-width: 639px) { .rs-snav { bottom: 12px; } .rs-snav a { padding: 7px 12px; } }
+@media (prefers-reduced-motion: reduce) { .rs-snav, .rs-snav.is-on { transition: none; transform: translate(-50%, 0); } }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+main [id], .rs-section[id] { scroll-margin-top: calc(var(--header-h) + 16px); }
+
+/* ── Closing call to action ── */
+.rs-cta { position: relative; z-index: 2; padding: 0 0 120px; }
+.rs-cta__box { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; background: var(--cta-box); color: var(--on-cta-box); border-radius: var(--r); padding: 40px; }
+.rs-cta__box h2 { margin: 0; font-size: var(--fs-h2); font-weight: 800; line-height: var(--lh-head); }
+.rs-cta__box p { margin: 6px 0 0; font-size: var(--fs-base); line-height: var(--lh-text); opacity: .9; }
+@media (max-width: 639px) { .rs-cta__box { padding: 28px 22px; } }
+
+/* ── Footer ── */
+.rs-footer { position: relative; z-index: 2; border-top: 1px solid var(--line); }
+.rs-footer__in { max-width: var(--wrap); margin: 0 auto; padding: 64px var(--pad) 44px; display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(auto-fit, minmax(190px, 1fr)); gap: 40px 56px; font-size: var(--fs-sm); color: var(--muted); }
+@media (max-width: 899px) { .rs-footer__in { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-top: 48px; } .rs-footer__brand { grid-column: 1 / -1; } }
+@media (max-width: 559px) { .rs-footer__in { grid-template-columns: minmax(0, 1fr); } }
+.rs-footer__logo { display: inline-flex; }
+.rs-footer__logo:hover { color: inherit; }
+.rs-footer__brand p { margin: 0; max-width: 380px; line-height: var(--lh-text); }
+p.rs-footer__tagline { margin: 18px 0 4px; color: var(--fg); font-size: var(--fs-md); font-weight: 700; line-height: var(--lh-head); }
+.rs-footer__col h2 { margin: 0 0 14px; color: var(--fg); font-size: var(--fs-sm); font-weight: 700; line-height: var(--lh-head); }
+.rs-footer__col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.rs-footer__col a:hover { color: var(--fg); }
+p.rs-footer__note { margin: 0 0 16px; line-height: var(--lh-text); }
+ul.rs-footer__social { flex-direction: row; flex-wrap: wrap; gap: 10px; }
+.rs-footer__social a { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line2); transition: color 200ms, border-color 200ms; }
+.rs-footer__social a:hover { color: var(--accent-ink); border-color: color-mix(in oklab, var(--accent2) 55%, transparent); }
+.rs-footer__social svg { width: 20px; height: 20px; }
+.rs-footer__bar { max-width: var(--wrap); margin: 0 auto; padding: 20px var(--pad) 28px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+body.home .rs-footer__bar { padding-bottom: 96px; }
+
+/* ── Inner pages (magazine, about, apply…) ── */
+.rs-page { position: relative; z-index: 2; padding: 96px 0 120px; }
+@media (max-width: 899px) { .rs-page { padding: 56px 0 88px; } }
+.rs-page__head { display: flex; flex-direction: column; gap: 14px; max-width: 860px; margin-bottom: 48px; }
+.rs-page__title { margin: 0; font-weight: 800; font-size: clamp(28px, 3vw, 40px); line-height: var(--lh-head); }
+.rs-page__meta { color: var(--muted); font-size: var(--fs-sm); }
+.rs-prose { max-width: 820px; font-size: var(--fs-md); line-height: var(--lh-text); color: color-mix(in oklab, var(--fg) 88%, var(--muted)); }
+.rs-prose > * { margin-block: 0 1.1em; }
+.rs-prose h2 { font-size: var(--fs-h2); font-weight: 700; line-height: var(--lh-head); color: var(--fg); margin-top: 1.8em; }
+.rs-prose h3 { font-size: var(--fs-lg); font-weight: 700; line-height: var(--lh-head); color: var(--fg); margin-top: 1.6em; }
+.rs-prose a { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 4px; }
+/* The confirmation's buttons stay buttons inside the page's text (its «صفحه اصلی» was lime on lime, 2026-10-18). */
+.rs-done a.rs-btn { text-decoration: none; }
+.rs-done a.rs-btn--accent { color: var(--on-cta); }
+.rs-done a.rs-btn--ghost { color: var(--fg); }
+.rs-prose strong { color: var(--fg); }
+.rs-prose ul, .rs-prose ol { padding-inline-start: 1.3em; }
+.rs-prose li { margin-bottom: .4em; }
+.rs-prose li::marker { color: var(--accent-ink); }
+.rs-prose blockquote { margin-inline: 0; padding: 18px 22px; border-inline-start: 3px solid var(--accent2); background: var(--surf); border-radius: var(--r-quote); }
+.rs-prose code, .rs-prose .rs-mono { font-family: var(--mono); font-size: .85em; }
+.rs-prose figure { margin-inline: 0; }
+.rs-prose .wp-block-image img, .rs-prose img { border-radius: var(--r); }
+.rs-prose hr { border: 0; height: 1px; background: var(--line2); margin-block: 2.4em; }
+.rs-path { font-family: var(--mono); font-size: 14px; color: var(--accent-ink); direction: ltr; unicode-bidi: isolate; }
+.rs-note { border: 1px solid var(--line2); background: var(--surf); border-radius: var(--r); padding: 22px 24px; color: var(--muted); }
+
+/* Magazine list */
+.rs-posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+.rs-post { display: flex; flex-direction: column; gap: 10px; background: var(--surf); border: 1px solid var(--line2); border-radius: var(--r); padding: 26px; transition: border-color 300ms; }
+.rs-post:hover { border-color: var(--accent2); color: inherit; }
+.rs-post h2 { margin: 0; font-size: var(--fs-lg); font-weight: 700; line-height: var(--lh-head); }
+.rs-post p { margin: 0; color: var(--muted); font-size: var(--fs-base); line-height: var(--lh-text); }
+.rs-post__meta { font-family: var(--mono); font-size: var(--fs-xs); color: var(--accent-ink); }
+.rs-post__thumb { margin: -26px -26px 6px; border-radius: var(--r-top); overflow: hidden; aspect-ratio: 16 / 9; background: var(--surf2); }
+.rs-post__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rs-pagination { margin-top: 40px; display: flex; gap: 8px; flex-wrap: wrap; }
+.rs-pagination .page-numbers { display: inline-flex; min-width: 44px; height: 44px; align-items: center; justify-content: center; padding: 0 12px; border: 1px solid var(--line2); border-radius: var(--rb); color: var(--muted); }
+.rs-pagination .page-numbers.current, .rs-pagination a.page-numbers:hover { border-color: var(--accent2); color: var(--fg); }
+
+/* ── Entry conditions ── */
+ol.rs-conds { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; counter-reset: cond; }
+@media (max-width: 767px) { ol.rs-conds { grid-template-columns: minmax(0, 1fr); } }
+li.rs-cond { margin: 0; counter-increment: cond; display: flex; align-items: flex-start; gap: 14px; background: var(--surf); border: 1px solid var(--line2); border-radius: var(--r); padding: 18px 20px; font-size: var(--fs-base); line-height: var(--lh-text); }
+.rs-cond__mark { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; margin-top: 1px; background: color-mix(in oklab, var(--accent) 22%, transparent); border: 1px solid color-mix(in oklab, var(--accent2) 55%, transparent); color: var(--accent-ink); font-size: var(--fs-sm); font-weight: 700; line-height: 1; }
+.rs-cond__mark::before { content: counter(cond, persian); }
+
+/* ── FAQ ── */
+.rs-faq { display: flex; flex-direction: column; gap: 10px; max-width: 980px; }
+.rs-faq__item { background: var(--surf); border: 1px solid var(--line2); border-radius: var(--r); transition: border-color 200ms; }
+.rs-faq__item[open] { border-color: color-mix(in oklab, var(--accent2) 55%, transparent); }
+.rs-faq__item summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; font-size: var(--fs-base); font-weight: 700; line-height: 1.8; }
+.rs-faq__item summary::-webkit-details-marker { display: none; }
+.rs-faq__item summary:hover { color: var(--accent-ink); }
+.rs-faq__icon { flex: none; position: relative; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line2); }
+/* Iconsax «Add»: its upright stroke turns flat when the answer opens, and leaves «Minus». */
+.rs-faq__icon svg { position: absolute; inset: 0; margin: auto; width: 20px; height: 20px; }
+.rs-faq__v { transform-origin: 12px 12px; transition: transform 200ms; }
+.rs-faq__item[open] .rs-faq__v { transform: rotate(90deg); }
+.rs-faq__a { padding: 0 22px 18px; color: var(--muted); font-size: var(--fs-sm); line-height: var(--lh-text); }
+.rs-faq__a p { margin: 0 0 .6em; }
+.rs-faq__a p:last-child { margin-bottom: 0; }
+
+/* Apply page: conditions above the form, FAQ below it */
+.rs-apply__h, .rs-prose .rs-apply__h { margin: 0 0 20px; font-size: var(--fs-h2); font-weight: 700; line-height: var(--lh-head); color: var(--fg); }
+.rs-apply-conds { max-width: 980px; margin: 8px 0 56px; }
+.rs-apply-conds ol.rs-conds { grid-template-columns: minmax(0, 1fr); }
+/* «فرم پذیرش»: a hairline and room between the conditions and the form (2026-10-21). */
+.rs-apply__h--form { padding-top: 40px; border-top: 1px solid var(--line2); margin-bottom: 28px; }
+
+/* Apply form */
+.rs-form { max-width: 820px; display: flex; flex-direction: column; gap: 28px; }
+.rs-fgroup { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 16px; padding: 24px; background: color-mix(in oklab, var(--surf) 60%, transparent); border: 1px solid var(--line); border-radius: var(--r); }
+.rs-fgroup__title { grid-column: 1 / -1; margin: 0 0 2px; font-size: var(--fs-md); font-weight: 700; line-height: var(--lh-head); color: var(--fg); }
+.rs-form .rs-field--wide { grid-column: 1 / -1; }
+@media (max-width: 639px) { .rs-fgroup { grid-template-columns: minmax(0, 1fr); padding: 18px; } }
+.rs-field input[type="file"] { padding: 9px 10px; cursor: pointer; color: var(--muted); font-size: var(--fs-sm); }
+.rs-field input[type="file"]::file-selector-button { font: inherit; font-weight: 600; color: var(--fg); background: var(--surf2); border: 1px solid var(--line2); border-radius: var(--rc); padding: 6px 14px; margin-inline-end: 12px; cursor: pointer; }
+.rs-field input[type="file"]::file-selector-button:hover { border-color: var(--accent2); }
+.rs-field__hint { color: var(--muted); font-size: var(--fs-xs); line-height: 1.8; }
+.rs-field { display: flex; flex-direction: column; gap: 8px; }
+.rs-field label { font-size: var(--fs-base); font-weight: 500; line-height: 1.75; }
+.rs-field label small { color: var(--muted); font-weight: 400; }
+.rs-field input, .rs-field select, .rs-field textarea { font: inherit; font-size: 16px; color: var(--fg); background: var(--surf); border: 1px solid var(--line2); border-radius: var(--rb); padding: 12px 14px; outline: none; width: 100%; transition: border-color 200ms, box-shadow 200ms; }
+.rs-field textarea { min-height: 150px; resize: vertical; line-height: var(--lh-text); }
+.rs-field select { appearance: none; /* the chevron: Iconsax ArrowDown2, a mid grey that reads on dark and light (two 5px gradient triangles rendered as a smudge) */
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M19.92 8.95l-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95' stroke='%2398A2B3' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+	background-position: 14px 50%; background-size: 16px 16px; background-repeat: no-repeat; padding-left: 40px; }
+.rs-field input:focus, .rs-field select:focus, .rs-field textarea:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent2) 30%, transparent); }
+.rs-field input[dir="ltr"] { text-align: left; }
+.rs-hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
+.rs-form__foot { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
+.rs-form__foot button { border: 0; cursor: pointer; font-family: inherit; }
+.rs-form__foot p { margin: 0; color: var(--muted); font-size: var(--fs-sm); }
+.rs-alert { max-width: 820px; border-radius: var(--r); padding: 18px 22px; margin-bottom: 28px; border: 1px solid var(--line2); background: var(--surf); }
+.rs-alert--ok { border-color: color-mix(in oklab, var(--ok) 60%, transparent); }
+.rs-alert--ok b { color: var(--ok); }
+.rs-alert--err { border-color: var(--err); }
+.rs-alert ul { margin: 8px 0 0; padding-inline-start: 1.2em; }
+.rs-alert > p { margin: 0 0 8px; }
+/* The reminder's opt-out question (2026-10-18): delete, or go on with the application. */
+.rs-alert__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+.rs-alert__actions button { cursor: pointer; font-family: inherit; }
+
+/* 404 */
+.rs-404 { font-family: inherit; font-feature-settings: 'ss02'; font-size: clamp(90px, 16vw, 200px); line-height: 1; font-weight: 600; color: var(--accent-ink); }
+
+/* WordPress bits */
+.screen-reader-text { border: 0; clip: rect(1px,1px,1px,1px); clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute !important; width: 1px; word-wrap: normal !important; }
+.alignwide { max-width: 1100px; }
+.aligncenter { margin-inline: auto; display: block; }
+
+/* «نقطه آغاز…»: the two columns without cards, an accent rule on top */
+
+
+/* ── Section heads with a lead line under the title ── */
+.rs-shead__lead { margin: 0; max-width: 680px; color: var(--muted); font-size: var(--fs-md); line-height: var(--lh-text); }
+
+/* ── Entry conditions: tabs over a stack of panels ── */
+.rs-ment { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 56px; align-items: center; }
+@media (max-width: 899px) { .rs-ment { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
+.rs-ment__list { display: flex; flex-direction: column; gap: 4px; }
+.rs-ment__list [data-tab] { display: flex; align-items: baseline; gap: 12px; text-align: right; font: inherit; font-size: var(--fs-base); font-weight: 500; line-height: 1.7; color: var(--muted); background: none; border: 0; border-inline-start: 2px solid var(--line2); padding: 10px 16px; cursor: pointer; transition: color 200ms, border-color 200ms, background-color 200ms; }
+.rs-ment__list [data-tab] span { font-family: inherit; font-size: var(--fs-xs); color: var(--accent-ink); }
+.rs-ment__list [data-tab]:hover { color: var(--fg); }
+.rs-ment__list [data-tab][aria-selected="true"] { color: var(--fg); font-weight: 700; border-color: var(--accent2); background: linear-gradient(to left, color-mix(in oklab, var(--accent) 14%, transparent), transparent); }
+@media (max-width: 899px) { .rs-ment__list { flex-direction: row; overflow-x: auto; scrollbar-width: none; } .rs-ment__list [data-tab] { flex: none; border-inline-start: 0; border-bottom: 2px solid var(--line2); } }
+.rs-ment__stage { position: relative; display: grid; min-height: 300px; }
+/* The entry conditions walked through by scroll (theme.js tabs(), [data-tabs-scroll]): on wide screens with motion the
+   section is pinned for one stretch of scroll per condition, the view held under the header. */
+.rs-conds-scroll.is-pinned { height: calc(var(--n, 3) * 70vh + 100vh); padding-block: 0; }
+.rs-conds-scroll.is-pinned > [data-tabs-view] { position: sticky; top: var(--header-h); min-height: calc(100vh - var(--header-h)); display: flex; flex-direction: column; justify-content: center; padding-block: 48px; }
+.rs-ment__panel { grid-area: 1 / 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding: 36px; border-radius: var(--r); border: 1px solid var(--line2); background: var(--surf); opacity: 0; transition: opacity 400ms; }
+.rs-ment__panel:not([inert]) { opacity: 1; }
+.rs-ment__panel[inert] > * { visibility: hidden; }
+.rs-ment__num { font-family: inherit; font-size: clamp(56px, 6vw, 90px); font-weight: 600; line-height: 1; color: transparent; -webkit-text-stroke: 1px var(--accent-ink); direction: ltr; text-align: right; margin-bottom: auto; }
+.rs-ment__panel h3 { margin: 0; font-size: clamp(22px, 2.2vw, 30px); font-weight: 700; line-height: var(--lh-head); }
+.rs-ment__panel p { margin: 0; max-width: 560px; color: color-mix(in oklab, var(--fg) 80%, var(--muted)); font-size: var(--fs-md); line-height: var(--lh-text); }
+@media (max-width: 559px) { .rs-ment__panel { padding: 24px; } }
+@media (prefers-reduced-motion: reduce) { .rs-ment__panel { transition: none; } }
+
+/* ── Form: the team / individual choice ── */
+.rs-field__label { font-size: var(--fs-base); font-weight: 500; line-height: 1.75; }
+.rs-choices { display: flex; gap: 10px; flex-wrap: wrap; }
+.rs-choice { position: relative; cursor: pointer; }
+.rs-choice input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.rs-choice span { display: inline-flex; align-items: center; gap: 10px; min-width: 120px; padding: 11px 20px; border: 1px solid var(--line2); border-radius: var(--rb); background: var(--surf); font-weight: 500; transition: border-color 200ms, background-color 200ms; }
+.rs-choice span::before { content: ""; width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line2); transition: border-color 200ms, box-shadow 200ms; }
+.rs-choice input:checked + span { border-color: var(--accent2); background: color-mix(in oklab, var(--accent) 16%, var(--surf)); }
+.rs-choice input:checked + span::before { border-color: var(--accent2); box-shadow: inset 0 0 0 3px var(--surf), inset 0 0 0 8px var(--accent2); }
+.rs-choice input:focus-visible + span { outline: 2px solid var(--accent2); outline-offset: 3px; }
+.rs-request .rs-form { max-width: 980px; }
+
+/* ── Colours and section backgrounds ──
+   One direction since 2026-10-12: <html data-palette="midnight" data-bg="mixed"> (header.php). Sections carry
+   data-band="mixed:light" or "mixed:band" (reason_band() in functions.php) and take that tone's colours; dark sections
+   carry none. The hero always stays dark.
+
+   The roles every colour fills (the base values below are the old blue; Midnight sets them all):
+   --accent, --on-accent   fills: the announcement bar, active dots, selection
+   --accent2               lines, glows and focus rings on dark;  --accent-ink: accent text on dark
+   --cta, --on-cta         «درخواست پذیرش» buttons;  --cta-box…: the closing sign-up box and its button
+   --grad                  the second colour of gradients (mentoring cards)
+   --hi                    highlights: the coloured half of a statement, the cycling business areas
+   --ai                    data and AI graphics: the hero network and glow, the step line, the growth rail
+   --c1 … --c6             the palette's six colours
+   --…-l                   the same roles on light backgrounds, dark enough for 4.5:1 text
+   --deep…, --light, --soft, --band…   the section tones */
+:root {
+	--logo-dot: var(--accent);
+	--cta: var(--accent); --on-cta: var(--on-accent); --cta-glow: var(--accent2);
+	--cta-box: var(--accent); --on-cta-box: var(--on-accent); --cta-box-btn: var(--bg); --on-cta-box-btn: var(--fg);
+	--grad: var(--accent); --hi: var(--accent-ink); --ai: var(--accent2); --ok: var(--accent-ink); --err: #FF6B6B;
+	--shadow: rgba(0,0,0,.35); --art-a: var(--surf2); --art-b: var(--bg);
+	--deep: #0A0F2B; --deep-surf: #10173A; --deep-surf2: #172047;
+	--light: #EEF0F6; --soft: #DCDFFA;
+	--band: #3843D7; --band-img: none; --on-band: #FFFFFF; --band-muted: #E3E5FB; --band-ink: #C9CDFF;
+	--accent-l: #3843D7; --accent2-l: #5B66F0; --ink-l: #3843D7; --hi-l: #3843D7; --ai-l: #5B66F0; --cta-l: #3843D7; --on-cta-l: #FFFFFF;
+}
+
+/* Palette «Midnight Intelligence» (the brand direction of 2026-10-06, «Reason Color»): Midnight #0B1020 the page, the
+   hero and the sign-up (55%); [2026-10-17: Deep Navy #111A33 is no longer a background; 2026-10-18, Golrang: only the palette's
+   colours — every dark section is Midnight, neighbours parted by a hairline] (20%); Off White #F4F7F2 the reading
+   sections (15%); Acid Lime #B7F34A only for signals and actions — buttons, the logo's dot, numbers, focus — never a
+   background; Cool Gray #98A2B3 secondary text. On light sections lime turns dark (#0B1020) and the grey is Midnight at 72%: the
+   brief's #557F18 and #667080 a shade darker, for 4.5:1 on Soft Light #E9EEE7 too. Graphics stay quiet: grey nodes and
+   lines. The footer is Midnight too, under its lime line. Its section rhythm is the «روایت» background mode (REASON_BANDS). */
+:root[data-palette="midnight"] {
+	/* 2026-10-17: no Deep Navy (#111A33) backgrounds any more — surfaces are neutral charcoal tints of Midnight, the second
+	   dark tone a near-black. */
+	--bg: #0B1020; --surf: #0B1020; --surf2: #0B1020; --fg: #F4F7F2; --muted: #98A2B3; --logo-ink: #F4F7F2;
+	--line: rgba(244,247,242,.08); --line2: rgba(244,247,242,.14);
+	--glass: rgba(11,16,32,.62); --glass2: rgba(19,22,30,.86); --glass-solid: rgba(11,16,32,.985); /* over Off White pages a thinner header turns slate grey */
+	--accent: #B7F34A; --on-accent: #0B1020; --accent2: #B7F34A; --accent-ink: #B7F34A;
+	--cta: #B7F34A; --on-cta: #0B1020; --cta-glow: #B7F34A;
+	--cta-box: radial-gradient(120% 160% at 100% 0%, rgba(183,243,74,.14), transparent 55%), #0B1020; --on-cta-box: #F4F7F2;
+	--cta-box-btn: #B7F34A; --on-cta-box-btn: #0B1020;
+	--grad: #0B1020; --hi: #B7F34A; --ai: #98A2B3; --ok: #B7F34A;
+	--c1: #0B1020; --c2: #0B1020; --c3: #B7F34A; --c4: #F4F7F2; --c5: #98A2B3; --c6: #0B1020;
+	--deep: #0B1020; --deep-surf: #0B1020; --deep-surf2: #0B1020;
+	--light: #F4F7F2; --soft: #E9EEE7; --soft-img: radial-gradient(circle at 80% 20%, rgba(183,243,74,.14), transparent 28%);
+	--band: #0B1020; --band-img: none; --on-band: #F4F7F2; --band-muted: #98A2B3; --band-ink: #B7F34A;
+	--l-surf2: #E9EEE7; --l-fg: #0B1020; --l-muted: rgba(11, 16, 32, .72); --l-line: rgba(11,16,32,.10); --l-line2: rgba(11,16,32,.18);
+	--accent-l: #0B1020; --accent2-l: #0B1020; --ink-l: #0B1020; --hi-l: #0B1020; --ai-l: rgba(11, 16, 32, .72); --cta-l: #0B1020; --on-cta-l: #B7F34A;
+	--shadow: rgba(0,0,0,.45);
+	--lime: #B7F34A; --lime-ink: #0B1020; /* acid lime as a fill, the same on every background (2026-10-14) */
+}
+:root[data-palette="midnight"] .rs-footer { background: #0B1020; }
+/* «چرا REASON» cards: navy on midnight with a faint lime glow, instead of a hue per card (minimal graphics, per the brief). */
+
+/* With light sections below it, the sticky header needs a solid dark so it doesn't turn grey over them. */
+:root[data-bg="mixed"] { --glass-head: var(--glass-solid, rgba(11, 16, 32, .92)); }
+
+/* Tone «deep»: the black, tinted with the palette. */
+:root[data-bg="mixed"] [data-band~="mixed:deep"] {
+	--bg: var(--deep); --surf: var(--deep-surf); --surf2: var(--deep-surf2);
+}
+
+/* Tones «light» (grey) and «soft» (a light tint of the palette): dark text, white cards, the palette's -l colours. */
+:root[data-bg="mixed"] :is([data-band~="mixed:light"], [data-band~="mixed:soft"]) {
+	--bg: var(--light); --surf: #FFFFFF; --surf2: var(--l-surf2, #E9EEE7); --fg: var(--l-fg, #0B1020); --muted: var(--l-muted, rgba(11, 16, 32, .72));
+	--line: var(--l-line, rgba(11,14,20,.09)); --line2: var(--l-line2, rgba(11,14,20,.18)); --glass: rgba(255,255,255,.7); --glass2: rgba(255,255,255,.86);
+	--accent: var(--accent-l); --on-accent: #FFFFFF; --accent2: var(--accent2-l); --accent-ink: var(--ink-l);
+	--hi: var(--hi-l); --ai: var(--ai-l); --ok: var(--ink-l); --cta: var(--cta-l); --on-cta: var(--on-cta-l); --cta-glow: var(--cta-l);
+	--shadow: rgba(24,28,48,.14);
+}
+:root[data-bg="mixed"] [data-band~="mixed:soft"] {
+	--bg: var(--soft); --tone-img: var(--soft-img, none);
+}
+
+/* Tone «band»: a full-colour band with white text. */
+:root[data-bg="mixed"] [data-band~="mixed:band"] {
+	--bg: var(--band); --tone-img: var(--band-img); --surf: rgba(255,255,255,.08); --surf2: rgba(255,255,255,.14);
+	--fg: var(--on-band); --muted: var(--band-muted); --line: rgba(255,255,255,.14); --line2: rgba(255,255,255,.34);
+	--glass: rgba(255,255,255,.12); --accent-ink: var(--on-band); --accent2: var(--band-ink); --hi: var(--band-ink); --ai: var(--band-ink);
+	--shadow: rgba(0,0,0,.25);
+}
+
+/* Every section with a tone in this mode paints it. */
+:root[data-bg="mixed"] [data-band*="mixed:"] {
+	color: var(--fg);
+	background: var(--tone-img, none), var(--bg);
+}
+
+/* ── Content v3 (Sep 30) ── */
+
+/* Intro: a title above the paragraph */
+
+/* Growth flow: icons instead of numbers */
+.rs-vs__icon { display: inline-grid; place-items: center; align-self: flex-start; width: 64px; height: 64px; border-radius: 50%; color: var(--accent-ink); background: color-mix(in oklab, var(--accent) 16%, transparent); border: 1px solid color-mix(in oklab, var(--accent2) 45%, transparent); }
+.rs-vs.is-pinned .rs-vs__icon { width: 104px; height: 104px; margin-bottom: 12px; }
+.rs-vs.is-pinned .rs-vs__icon svg { width: 48px; height: 48px; }
+.rs-vs__rail li .rs-vs__mico { display: inline-grid; place-items: center; color: var(--accent-ink); }
+.rs-vs__rail li .rs-vs__mico svg { width: 20px; height: 20px; }
+
+/* Program page: the four stages as cards linking down to the details */
+
+/* Entry conditions on the apply page: title and description */
+li.rs-cond b { display: block; color: var(--fg); font-weight: 700; margin-bottom: 4px; }
+li.rs-cond b + span { display: block; color: var(--muted); }
+
+/* FAQ: wider and centred, on the home page and the apply page */
+.rs-faq { width: 100%; max-width: 820px; margin-inline: 0; }
+.rs-faq__item summary { padding: 22px 28px; }
+.rs-faq__a { padding: 0 28px 22px; }
+
+/* About: «تیم REASON» */
+.rs-team { margin-top: 96px; }
+.rs-team__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 32px; }
+.rs-team__head .rs-h2 { margin: 0; }
+ul.rs-team__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 20px; }
+@media (max-width: 899px) { ul.rs-team__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+li.rs-member { margin: 0; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; }
+.rs-member__photo { display: grid; place-items: center; width: 132px; height: 132px; border-radius: 50%; margin-bottom: 10px; color: color-mix(in oklab, var(--accent-ink) 70%, var(--muted)); background: radial-gradient(circle at 30% 25%, color-mix(in oklab, var(--accent) 35%, var(--surf2)), var(--surf) 70%); border: 1px solid var(--line2); }
+.rs-member__photo svg { width: 56px; height: 56px; }
+.rs-member b { font-size: var(--fs-lg); font-weight: 700; line-height: var(--lh-head); }
+.rs-member span:not(.rs-member__photo) { color: var(--muted); font-size: var(--fs-sm); }
+
+/* About: team photos and LinkedIn */
+.rs-member__photo--img { overflow: hidden; padding: 0; background: var(--surf2); }
+.rs-member__photo--img img { display: block; width: 100%; height: 100%; object-fit: cover; }
+a.rs-member__link { display: inline-grid; place-items: center; width: 36px; height: 36px; margin-top: 4px; border-radius: 50%; color: var(--muted); border: 1px solid var(--line2); transition: color 200ms, border-color 200ms; }
+a.rs-member__link:hover { color: var(--accent-ink); border-color: color-mix(in oklab, var(--accent2) 55%, transparent); }
+a.rs-member__link svg { width: 18px; height: 18px; }
+
+/* Home: «چرا REASON؟» — a horizontal carousel (the workshops' design before Oct 3): native scroll with snap, arrows step one card. */
+.rs-carousel__nav { display: flex; gap: 10px; }
+.rs-round { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line2); background: var(--surf); color: var(--fg); font: inherit; font-size: 18px; cursor: pointer; transition: border-color 200ms, opacity 200ms; }
+.rs-round:hover:not(:disabled) { border-color: var(--accent2); }
+.rs-round:disabled { opacity: .35; cursor: default; }
+.rs-carousel { --edge: max(var(--pad), calc((100vw - var(--wrap)) / 2 + var(--pad))); display: grid; grid-auto-flow: column; grid-auto-columns: clamp(260px, 28vw, 360px); gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--edge); padding: 4px var(--edge) 18px; scrollbar-width: none; overscroll-behavior-x: contain; }
+.rs-carousel::-webkit-scrollbar { display: none; }
+.rs-carousel:focus-visible { outline-offset: -2px; }
+.rs-course { scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; }
+.rs-course .rs-media { aspect-ratio: 4 / 3; height: auto; margin-bottom: 10px; }
+.rs-course h3 { margin: 0; font-size: var(--fs-lg); font-weight: 800; line-height: var(--lh-head); }
+.rs-course p { margin: 0; color: var(--muted); font-size: var(--fs-sm); line-height: var(--lh-text); }
+
+/* Home: «شرکای تجاری». The logos are drawn for a light background, so each sits on a light tile. */
+.rs-partners { padding-top: 32px; }
+/* The partners: centred under REASON, the three joined to its dot by lines (reason-sig.js partners()). The lines are
+   drawn only while every tile sits on one row; on phones the tiles stack and go without them. */
+.rs-partners__head { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; margin-bottom: 40px; }
+.rs-partners__hub { display: flex; justify-content: center; color: var(--fg); margin-bottom: 84px; }
+.rs-partners__hub svg { width: clamp(130px, 14vw, 168px); height: auto; }
+@media (max-width: 639px) { .rs-partners__hub { margin-bottom: 28px; } }
+ul.rs-partners__list { list-style: none; margin: 0 auto; padding: 0; max-width: 1120px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; } /* four partners since 2026-10-22: one row, two by two on smaller screens */
+@media (max-width: 899px) { ul.rs-partners__list { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 640px; } }
+ul.rs-partners__list > li { margin: 0; }
+.rs-partner { display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--muted); font-size: var(--fs-sm); font-weight: 600; text-align: center; }
+a.rs-partner:hover { color: var(--fg); }
+.rs-partner__logo { display: grid; place-items: center; width: 100%; height: 132px; padding: 22px 28px; border-radius: var(--r); background: #FFFFFF; border: 1px solid var(--line2); transition: transform 200ms, box-shadow 200ms; }
+a.rs-partner:hover .rs-partner__logo { transform: translateY(-2px); box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent2) 45%, transparent); }
+.rs-partner__logo img { display: block; max-width: 100%; max-height: 88px; width: auto; height: auto; object-fit: contain; }
+/* 2026-11-11: the programme team's lockups, all horizontal now — no taller allowance. */
+@media (max-width: 639px) { ul.rs-partners__list { gap: 10px; } .rs-partner__logo { height: 112px; padding: 16px; } .rs-partner__logo img { max-height: 72px; } }
+@media (prefers-reduced-motion: reduce) { .rs-partner__logo { transition: none; } a.rs-partner:hover .rs-partner__logo { transform: none; } }
+
+/* «پوشش خبری» (2026-10-28): the outlets' logos on white tiles like the partners', smaller, not linked; four in a row,
+   two by two on phones. */
+.rs-press__lead { margin: 0; color: var(--muted); }
+/* A row of five (2026-11-07, Zoomit added); a short last row sits centred. Each tile links to its article (rel="nofollow"). */
+ul.rs-press__list { list-style: none; margin: 0 auto; padding: 0; max-width: 1160px; display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+ul.rs-press__list > li.rs-press__logo { margin: 0; flex: 0 1 calc((100% - 4 * 16px) / 5); display: grid; place-items: center; height: 108px; padding: 20px 26px; border-radius: var(--r); background: #FFFFFF; border: 1px solid var(--line2); transition: border-color 160ms ease; }
+ul.rs-press__list > li.rs-press__logo:has(> a) { padding: 0; }
+ul.rs-press__list > li.rs-press__logo:has(> a:hover, > a:focus-visible) { border-color: var(--accent); }
+a.rs-press__link { display: grid; place-items: center; width: 100%; height: 100%; padding: 20px 26px; box-sizing: border-box; }
+a.rs-press__link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.rs-press__logo img { display: block; max-width: 100%; max-height: 56px; width: auto; height: auto; object-fit: contain; }
+.rs-press__logo img[src*="hooshio"] { width: 150px; } /* a small, wide mark: drawn at the others' weight */
+@media (max-width: 899px) { ul.rs-press__list { max-width: 720px; } ul.rs-press__list > li.rs-press__logo { flex-basis: calc((100% - 2 * 16px) / 3); } }
+@media (max-width: 639px) { ul.rs-press__list { gap: 10px; } ul.rs-press__list > li.rs-press__logo { flex-basis: calc((100% - 10px) / 2); height: 88px; padding: 14px 16px; } a.rs-press__link { padding: 14px 16px; } .rs-press__logo img { max-height: 46px; } .rs-press__logo img[src*="hooshio"] { width: 118px; } }
+
+/* Footer: the privacy page link */
+a.rs-footer__link { color: var(--muted); text-decoration: underline; text-underline-offset: 4px; }
+a.rs-footer__link:hover { color: var(--fg); }
+
+/* About: one treatment for every team photo, so different backdrops still read as a set; colour on hover. */
+.rs-member__photo--img img { filter: grayscale(1) contrast(1.05); transition: filter 300ms; }
+li.rs-member:hover .rs-member__photo--img img, li.rs-member:focus-within .rs-member__photo--img img { filter: none; }
+@media (prefers-reduced-motion: reduce) { .rs-member__photo--img img { transition: none; } }
+
+/* ── About (درباره ما) ── */
+.rs-about__hero { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; align-items: center; margin-bottom: 72px; }
+@media (max-width: 899px) { .rs-about__hero { grid-template-columns: minmax(0, 1fr); gap: 32px; margin-bottom: 48px; } }
+.rs-about__intro { display: flex; flex-direction: column; gap: 16px; }
+.rs-about__intro .rs-page__title { font-size: clamp(32px, 3.6vw, 48px); }
+p.rs-about__lead { margin: 0; color: var(--fg); font-size: clamp(19px, 1.7vw, 24px); font-weight: 500; line-height: 2; text-wrap: pretty; }
+.rs-about__lead strong { color: var(--accent-ink); font-weight: 800; }
+
+/* The card beside the opening: the wordmark, the program, and Golrang Ventures on a light tile (its logo is drawn for light). */
+.rs-about__badge { --logo-ink: var(--fg); position: relative; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 64px 36px 44px; border-radius: var(--r); border: 1px solid var(--line2); background: radial-gradient(120% 90% at 50% 0%, color-mix(in oklab, var(--accent) 26%, var(--surf)), var(--surf) 72%); text-align: center; overflow: hidden; }
+.rs-about__badge-logo svg { display: block; width: min(280px, 80%); height: auto; margin-inline: auto; }
+.rs-about__badge-logo { width: 100%; }
+.rs-about__badge-line { color: var(--muted); font-size: var(--fs-base); }
+a.rs-about__badge-gv { margin-top: 16px; display: inline-flex; align-items: center; gap: 14px; padding: 12px 20px; border-radius: var(--rb); background: #FFFFFF; color: rgba(11, 16, 32, .72); font-size: var(--fs-sm); font-weight: 600; box-shadow: 0 0 0 1px rgba(11,14,20,.06); transition: box-shadow 200ms; }
+a.rs-about__badge-gv:hover { color: #0B1020; box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent2) 45%, transparent); }
+a.rs-about__badge-gv img { display: block; width: auto; height: 48px; }
+
+/* The next paragraphs side by side */
+.rs-about__approach { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 56px; padding-top: 36px; border-top: 1px solid var(--line2); }
+@media (max-width: 899px) { .rs-about__approach { grid-template-columns: minmax(0, 1fr); } }
+.rs-about__approach p { margin: 0; color: color-mix(in oklab, var(--fg) 82%, var(--muted)); font-size: var(--fs-md); line-height: var(--lh-text); }
+
+p.rs-about__statement { margin: 112px auto 48px; }
+@media (max-width: 899px) { p.rs-about__statement { margin-top: 72px; } }
+
+/* The two steps as cards */
+.rs-about__steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 899px) { .rs-about__steps { grid-template-columns: minmax(0, 1fr); } }
+.rs-about__step .rs-card__in { min-height: 0; padding: 36px; gap: 14px; }
+@media (max-width: 559px) { .rs-about__step .rs-card__in { padding: 24px; } }
+.rs-about__step-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.rs-about__step-label { padding: 3px 12px; border-radius: var(--rp); border: 1px solid color-mix(in oklab, var(--accent2) 45%, transparent); color: var(--accent-ink); font-size: var(--fs-xs); font-weight: 700; }
+.rs-about__step h2 { margin: 0; font-size: var(--fs-h2); font-weight: 800; line-height: var(--lh-head); }
+.rs-about__step-body p { margin: 0 0 .8em; color: var(--muted); font-size: var(--fs-base); line-height: var(--lh-text); }
+.rs-about__step-body p:last-child { margin-bottom: 0; }
+ul.rs-about__tags, ul.rs-about__roles { list-style: none; margin: auto 0 0; padding: 18px 0 0; border-top: 1px solid var(--line); }
+ul.rs-about__tags { display: flex; flex-wrap: wrap; gap: 8px; }
+ul.rs-about__tags li { margin: 0; padding: 4px 12px; border-radius: var(--rp); border: 1px solid var(--line2); color: var(--fg); font-size: 13px; line-height: 1.8; }
+ul.rs-about__roles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+ul.rs-about__roles li { margin: 0; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: var(--rb); background: color-mix(in oklab, var(--accent) 12%, transparent); color: var(--fg); font-size: var(--fs-sm); font-weight: 600; }
+ul.rs-about__roles li span { display: inline-grid; place-items: center; color: var(--accent-ink); }
+ul.rs-about__roles svg { width: 22px; height: 22px; }
+
+/* «تیم REASON» as cards */
+.rs-about .rs-team { margin-top: 112px; padding-block: var(--sec-y); }
+.rs-about.rs-page { padding-bottom: 0; }
+@media (max-width: 899px) { .rs-about .rs-team { margin-top: 72px; } }
+
+/* «درباره ما»: mission, purpose and vision (2026-10-15), each heading beside its text, rows split by hairlines */
+.rs-about__mvv { margin-top: 72px; border-top: 1px solid var(--line2); }
+.rs-about__mvv-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 16px 56px; align-items: start; padding: 32px 0; border-bottom: 1px solid var(--line2); }
+.rs-about__mvv-title { display: flex; align-items: center; gap: 14px; margin: 0; font-size: clamp(20px, 1.9vw, 24px); font-weight: 800; line-height: var(--lh-head); }
+.rs-about__mvv-title .rs-flowcards__icon { flex: none; width: 48px; height: 48px; }
+.rs-about__mvv-en { color: var(--muted); font-size: .8em; font-weight: 600; white-space: nowrap; } /* «| Our Vision» stays on the heading's line */
+.rs-about__mvv-row p { margin: 0; color: color-mix(in oklab, var(--fg) 82%, var(--muted)); font-size: var(--fs-md); line-height: var(--lh-text); }
+@media (max-width: 899px) { .rs-about__mvv { margin-top: 56px; } .rs-about__mvv-row { grid-template-columns: minmax(0, 1fr); padding: 26px 0; } }
+
+/* «تماس با ما» (2026-10-15): the details on the right, the form beside them; stacked on phones */
+.rs-contact__lead p { margin: 0; max-width: 680px; color: var(--muted); font-size: var(--fs-md); line-height: var(--lh-text); }
+.rs-contact__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px; align-items: start; }
+.rs-contact__h { margin: 0 0 20px; font-size: clamp(20px, 1.9vw, 24px); font-weight: 800; line-height: var(--lh-head); }
+.rs-contact__info { padding: 28px; border-radius: var(--r); border: 1px solid var(--line2); background: color-mix(in oklab, var(--surf) 60%, transparent); }
+ul.rs-contact__list { list-style: none; margin: 0 0 24px; padding: 0; display: flex; flex-direction: column; gap: 18px; }
+ul.rs-contact__list li { margin: 0; display: flex; align-items: center; gap: 14px; line-height: var(--lh-text); }
+ul.rs-contact__list small { display: block; color: var(--muted); font-size: var(--fs-xs); }
+ul.rs-contact__list a { font-weight: 600; }
+.rs-contact__icon { flex: none; display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--accent-ink); background: color-mix(in oklab, var(--accent) 16%, transparent); }
+.rs-contact__icon svg { width: 22px; height: 22px; }
+.rs-contact__gv { padding-top: 20px; border-top: 1px solid var(--line); }
+.rs-contact__gv p { margin: 0 0 14px; color: var(--muted); font-size: var(--fs-sm); line-height: var(--lh-text); }
+.rs-contact__gv ul { list-style: none; margin: 0; padding: 0; display: flex; }
+.rs-contact .rs-form, .rs-contact .rs-alert { max-width: none; }
+@media (max-width: 899px) { .rs-contact__grid { grid-template-columns: minmax(0, 1fr); } .rs-contact__info { padding: 22px; } }
+ul.rs-team__grid { gap: 16px; }
+li.rs-member { padding: 32px 20px 26px; border-radius: var(--r); border: 1px solid var(--line2); background: var(--surf); transition: border-color 200ms, transform 200ms; }
+
+/* ── Signatures (2026-10-04): assets/js/reason-sig.js ──
+   One vocabulary: nodes, links, travelling pulses, the caret and the dot inside the «A» (--sig-dot, the palette's call-to-
+   action colour). Everything here is decorative (aria-hidden, no pointer events) and stays put with reduced motion. */
+:root { --sig-dot: var(--cta); }
+.rs-sig-canvas { pointer-events: none; }
+
+/* The thread: the wordmark's dot drops onto a line in the page margin; each section's mark lights as it reaches the dot. */
+.rs-thread { position: fixed; inset: 0; z-index: 40; pointer-events: none; }
+.rs-thread[hidden] { display: none; }
+.rs-thread__line { position: absolute; top: 0; bottom: 0; left: var(--x); width: 1px; opacity: var(--k, 0); background: linear-gradient(to bottom, transparent, var(--line2) 14%, var(--line2) 86%, transparent); }
+.rs-thread__fill { position: absolute; top: 0; left: calc(var(--x) - .5px); width: 2px; height: var(--y, 42vh); opacity: var(--k, 0); background: linear-gradient(to bottom, transparent, color-mix(in oklab, var(--sig-dot) 75%, transparent)); }
+.rs-thread__dot { position: absolute; top: 0; left: 0; width: calc(var(--r, 5px) * 2); height: calc(var(--r, 5px) * 2); margin: calc(var(--r, 5px) * -1) 0 0 calc(var(--r, 5px) * -1); border-radius: 50%; background: var(--sig-dot); box-shadow: 0 0 0 4px color-mix(in oklab, var(--sig-dot) 18%, transparent), 0 0 18px var(--sig-dot); opacity: 0; transition: opacity 200ms; will-change: transform; }
+.rs-thread__dot::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 1.5px solid var(--sig-dot); opacity: 0; }
+.rs-thread__dot.is-land::after { animation: rs-land 720ms cubic-bezier(.22, 1, .36, 1); }
+.rs-thread__mark { position: absolute; top: 0; left: 0; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; border: 1.5px solid var(--line2); background: var(--bg); transition: background-color 300ms, border-color 300ms; }
+.rs-thread__mark b { position: absolute; right: 17px; top: 50%; transform: translateY(-50%); font: 600 11px/1 var(--mono); letter-spacing: .04em; color: var(--muted); white-space: nowrap; transition: color 300ms; }
+.rs-thread__mark.is-lit { background: var(--sig-dot); border-color: var(--sig-dot); }
+.rs-thread__mark.is-lit b { color: var(--fg); }
+@keyframes rs-land { from { transform: scale(1); opacity: .9; } to { transform: scale(4.4); opacity: 0; } }
+
+/* Streaming text and its caret (intro, FAQ answers); highlighted phrases sweep in. */
+.rs-streaming .rs-w { opacity: 0; filter: blur(6px); transition: opacity 360ms cubic-bezier(.22, 1, .36, 1), filter 360ms; }
+.rs-streaming .rs-w.is-in { opacity: 1; filter: none; }
+.rs-caret { display: inline-block; width: 2px; height: 1.05em; margin-inline-start: 3px; vertical-align: -.15em; background: var(--hi); animation: rs-blink 1s steps(1) infinite; }
+.rs-caret.is-done { animation: rs-blink 1s steps(1) 2, rs-out 400ms 2s forwards; }
+@keyframes rs-blink { 50% { opacity: 0; } }
+@keyframes rs-out { to { opacity: 0; } }
+mark.rs-hl { color: inherit; background: linear-gradient(color-mix(in oklab, var(--hi) 30%, transparent), color-mix(in oklab, var(--hi) 30%, transparent)) no-repeat right 90% / 0% .42em; transition: background-size 900ms cubic-bezier(.22, 1, .36, 1); }
+mark.rs-hl.is-on { background-size: 100% .42em; }
+
+/* Path: a charge heads the line; the numerals wait for their dots. */
+.rs-track__line .rs-track__head { position: absolute; top: 50%; right: calc(var(--fill, 0) * 100%); width: 12px; height: 12px; margin: -6px -6px 0 0; border-radius: 50%; background: var(--sig-dot); box-shadow: 0 0 0 5px color-mix(in oklab, var(--sig-dot) 20%, transparent), 0 0 22px var(--sig-dot); opacity: 0; transition: opacity 300ms; }
+.rs-stage.rs-sig-num .rs-stage__num { opacity: 0; }
+.rs-stage.rs-sig-num .rs-stage__num.is-built { opacity: 1; transition: opacity 380ms; }
+
+/* Need: room for the bridge between the two cards. */
+
+/* Flow: the charge heading the rail. */
+.rs-vs__rail li.rs-vs__head { display: none; }
+.rs-vs.is-pinned .rs-vs__rail li.rs-vs__head { display: block; position: absolute; right: 0; top: calc(20px + (100% - 40px) * var(--p, 0)); width: 12px; height: 12px; margin: -6px 0 0; padding: 0; border-radius: 50%; background: var(--sig-dot); box-shadow: 0 0 0 5px color-mix(in oklab, var(--sig-dot) 20%, transparent), 0 0 20px var(--sig-dot); z-index: 2; }
+.rs-vs__rail li.rs-vs__head::before { content: none; }
+
+/* Why REASON: wires between the icons; a hovered card draws its icon and pings its neighbours. */
+.rs-why__wires { z-index: 2; }
+ul.rs-why.rs-sig-draw .rs-flowcards__icon svg * { stroke-dasharray: 1; stroke-dashoffset: 0; }
+ul.rs-why.rs-sig-draw .rs-card:hover .rs-flowcards__icon svg * { animation: rs-draw 900ms cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes rs-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes rs-ping { 0% { color: var(--hi); box-shadow: 0 0 0 0 color-mix(in oklab, var(--hi) 55%, transparent); } 100% { box-shadow: 0 0 0 16px transparent; } }
+
+/* Audience: the areas light up in turn and charge the button. */
+.rs-btn.is-charged { animation: rs-charge 1.4s cubic-bezier(.22, 1, .36, 1); }
+@keyframes rs-charge { 0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--cta-glow) 75%, transparent); } 55% { box-shadow: 0 0 0 16px transparent, 0 0 44px color-mix(in oklab, var(--cta-glow) 55%, transparent); } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+/* Conditions: a node per condition read; all three and the dot says you're ready. */
+.rs-ment__list [data-tab] .rs-node { flex: none; align-self: center; width: 8px; height: 8px; margin-inline-start: auto; border-radius: 50%; border: 1.5px solid var(--line2); transition: background-color 300ms, border-color 300ms, box-shadow 300ms; }
+.rs-ment__list [data-tab].is-seen .rs-node { background: var(--hi); border-color: var(--hi); box-shadow: 0 0 10px color-mix(in oklab, var(--hi) 60%, transparent); }
+.rs-ready { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; margin: 28px 0 0; font-size: var(--fs-base); font-weight: 600; line-height: 1.8; opacity: 0; transform: translateY(10px); transition: opacity 500ms, transform 500ms; }
+.rs-ready.is-on { opacity: 1; transform: none; }
+.rs-ready i { flex: none; width: 12px; height: 12px; border-radius: 50%; background: var(--sig-dot); box-shadow: 0 0 0 5px color-mix(in oklab, var(--sig-dot) 20%, transparent), 0 0 18px var(--sig-dot); animation: rs-breathe 2.4s ease-in-out infinite; }
+.rs-ready a { color: var(--accent-ink); font-weight: 700; }
+.rs-ready a:hover { color: var(--fg); }
+@keyframes rs-breathe { 50% { box-shadow: 0 0 0 9px color-mix(in oklab, var(--sig-dot) 8%, transparent), 0 0 26px var(--sig-dot); } }
+
+/* Partners: room above the logos for the network's hub. */
+
+@media (prefers-reduced-motion: reduce) {
+	.rs-thread { display: none; }
+	.rs-caret, .rs-ready i, .rs-btn.is-charged, .rs-flowcards__icon.is-ping, ul.rs-why.rs-sig-draw .rs-card:hover .rs-flowcards__icon svg * { animation: none; }
+}
+
+/* ── Stacked sections (home, 2026-10-06; since 2026-10-10 the hero only) ──
+   The hero is the one sheet (.is-sheet): it sticks once read to its end, the first section slides up over it with its
+   own background, a full-width hairline and a soft shadow, and the hero sinks back (scale, set by theme.js stack()) and
+   dims (--cover); fully covered it gets .is-buried and stops sticking. Every other section scrolls as usual, above the
+   hero. Off with reduced motion (theme.js never adds .is-stacked). */
+.rs-stack-mark { display: block; height: 0; }
+main.is-stacked > section { position: relative; z-index: 2; background: var(--tone-img, none), var(--bg); }
+main.is-stacked > section.is-sheet { position: sticky; z-index: 1; transform-origin: 50% var(--origin, 50%); }
+main.is-stacked > section.is-cover { box-shadow: 0 -1px 0 var(--line2), 0 -30px 60px -24px rgba(0, 0, 0, .6); }
+main.is-stacked > section.is-sheet::after { content: ""; position: absolute; inset: 0; z-index: 30; background: #0B1020; opacity: calc(var(--cover, 0) * .6); pointer-events: none; }
+main.is-stacked > section.is-covered { will-change: transform; }
+main.is-stacked > section.is-sheet.is-buried { position: relative; }
+
+/* ── Section rhythm and hairlines (home, 2026-10-06) ──
+   After aihouse.vc: one even rhythm — the same space above and below every content section — and one full-width
+   hairline between sections, never vertical lines. Stacked (theme.js), the line is each sheet's top edge (above) and a
+   content sheet fills the screen below the header with its content in the middle, so the next sheet never slides over
+   a section before it has been read (the intro, 415px, was half covered while still on screen). The pinned scenes
+   (.rs-pin, .rs-vs.is-pinned) keep their scroll-driven heights. Since only the hero stacks (2026-10-10), each section
+   draws the line itself and keeps its natural height. */
+:root { --sec-y: clamp(72px, 8vw, 120px); }
+.rs-section, .rs-section--tight, .rs-vs:not(.is-pinned), .rs-cta { padding-block: var(--sec-y); }
+main > section + section, main > section + .rs-stack-mark + section { border-top: 1px solid var(--line2); }
+
+/* ── The name in running text (functions.php reason_wordmark(), 2026-10-17) ──
+   In Rooyin since 2026-10-19, like every word on the site (it was Lexend Exa); a weight lighter than bold headings, as
+   the logo is. */
+.rs-word { font-family: Rooyin, IRANSansX, sans-serif; letter-spacing: .02em; white-space: nowrap; font-feature-settings: normal; }
+:is(h1, h2, h3, .rs-h1, .rs-h2, b, strong) .rs-word { font-weight: 600; }
+.rs-wordp { white-space: nowrap; } /* the name and the «،» or «؟» after it (functions.php reason_brand_words()) */
+
+/* ── Fixes from the 2026-10-06 audit ──
+   Phones: footer, contact and announcement links get a finger-sized target (they were 21px tall). The «شرایط پذیرش»
+   tabs scroll sideways on phones with no scrollbar: their far (left) edge fades, so the cut-off tab reads as more. */
+@media (max-width: 639px) {
+	.rs-footer__in li a, a.rs-footer__link { display: inline-block; padding-block: 8px; }
+	/* not the round icons: that made them inline blocks, the icon off centre (2026-10-19) */
+	.rs-footer__in .rs-footer__social a { display: inline-grid; place-items: center; width: 44px; height: 44px; padding: 0; }
+	.rs-footer__in li { line-height: 1.6; }
+}
+@media (max-width: 899px) {
+	.rs-ment__list { -webkit-mask-image: linear-gradient(to left, transparent, #000 40px); mask-image: linear-gradient(to left, transparent, #000 40px); padding-inline-end: 28px; }
+}
+/* The application form's «انتخاب فایل» (functions.php, theme.js filePickers()): one field like the others, a Persian
+   button and the file's name; the real input covers it, transparent, so a click or a key still opens the picker. */
+.rs-file { position: relative; display: flex; align-items: center; gap: 12px; min-height: 50px; padding: 8px 10px; background: var(--surf); border: 1px solid var(--line2); border-radius: var(--rb); transition: border-color 200ms, box-shadow 200ms; }
+.rs-file:hover .rs-file__btn { border-color: var(--accent2); }
+.rs-file:focus-within { border-color: var(--accent2); box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent2) 30%, transparent); }
+.rs-field .rs-file input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; padding: 0; border: 0; }
+.rs-file__btn { flex: none; font-size: var(--fs-sm); font-weight: 600; color: var(--fg); background: var(--surf2); border: 1px solid var(--line2); border-radius: var(--rc); padding: 6px 14px; transition: border-color 200ms; }
+.rs-file__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-sm); color: var(--muted); }
+.rs-file__name.is-set { color: var(--fg); }
+
+/* ── Corners (2026-10-06): three shapes, one switch ──
+   «cut» (the default) comes from the logo: the R and the S end in a slanted cut — 3.375 across for 5.25 down, the
+   same angle in both — while E and Λ are square and only the R's bowl, the O and the dot are round. So a box has one
+   cut corner at the logo's angle, top-right, where reading starts (as the R's cut opens the word), its other corners
+   square; only real circles (dots, avatars, nodes: 50%) stay round. CSS draws it with corner-shape: bevel (borders and
+   shadows follow the cut); a browser without it shows the square shape instead.
+   Tokens: --r boxes, --r-in a card's inner layer, --r-top a card's picture, --r-quote a quotation, --rb buttons and
+   fields, --rc small buttons, --rp chips and pills, --rs tags. */
+:root, :root[data-shape="cut"] {
+	--corner: bevel;
+	--r: 0 14px 0 0 / 0 22px 0 0; --r-in: 0 13.4px 0 0 / 0 20.8px 0 0; --r-top: var(--r); --r-quote: 0 9px 0 0 / 0 14px 0 0;
+	--rb: 0 9px 0 0 / 0 14px 0 0; --rc: 0 6px 0 0 / 0 9px 0 0; --rp: 0 6px 0 0 / 0 9px 0 0; --rs: 0 4px 0 0 / 0 6px 0 0;
+}
+/* Safari has no corner-shape (2026-10-21: every cut showed round on Golrang's iPhones — this fallback set :root, which
+   :root[data-shape="cut"] above outranks). There the radii shrink to a thousandth, square on screen, and carry each
+   box's cut to theme.js corners(), which draws it with clip-path. Without JavaScript the boxes are square. */
+@supports not (corner-shape: bevel) {
+	:root, :root[data-shape="cut"] {
+		--r: 0 .014px 0 0 / 0 .022px 0 0; --r-in: 0 .0134px 0 0 / 0 .0208px 0 0; --r-top: var(--r); --r-quote: 0 .009px 0 0 / 0 .014px 0 0;
+		--rb: 0 .009px 0 0 / 0 .014px 0 0; --rc: 0 .006px 0 0 / 0 .009px 0 0; --rp: 0 .006px 0 0 / 0 .009px 0 0; --rs: 0 .004px 0 0 / 0 .006px 0 0;
+	}
+}
+.rs-skip,
+.rs-menu-btn,
+.rs-btn,
+.rs-cd,
+.rs-card,
+.rs-card__in,
+.rs-chip,
+.rs-aud,
+.rs-snav__in,
+.rs-snav a,
+.rs-cta__box,
+.rs-prose blockquote,
+.rs-prose .wp-block-image img,
+.rs-prose img,
+.rs-note,
+.rs-post,
+.rs-post__thumb,
+.rs-pagination .page-numbers,
+li.rs-cond,
+.rs-faq__item,
+.rs-fgroup,
+.rs-field input[type="file"]::file-selector-button,
+.rs-field input,
+.rs-field select,
+.rs-field textarea,
+.rs-alert,
+.rs-ment__panel,
+.rs-choice span,
+.rs-media,
+.rs-partner__logo,
+.rs-about__badge,
+a.rs-about__badge-gv,
+.rs-about__step-label,
+ul.rs-about__tags li,
+ul.rs-about__roles li,
+li.rs-member,
+.rs-file,
+.rs-file__btn,
+/* 2026-10-17: the boxes added since, which kept a rounded corner instead of the cut (found by scanning every page). Any
+   new box drawn with --r, --rb, --rp or --rs belongs in this list; real circles (border-radius: 50%) never do. */
+.rs-glance__item,
+.rs-glance__icon,
+.rs-sol,
+.rs-sol__icon,
+ul.rs-sol__list li,
+.rs-eyebrow,
+.rs-program__kicker,
+.rs-map__icon,
+.rs-map__date,
+.rs-stagex__icon,
+.rs-routes__icon,
+ul.rs-routes li,
+li.rs-fact,
+.rs-contact__info,
+.rs-course,
+/* the newsletter's field and replies (2026-10-19) */
+.rs-news__form input[type="email"],
+.rs-news__reply,
+/* the confirmation after a form is sent, and its tracking code (2026-10-18) */
+.rs-done,
+.rs-done__ref,
+/* the pitch-deck guide (2026-10-17) and the apply form's guide box and terms */
+ul.rs-pd-stats li,
+.rs-pd-fan__slide,
+.rs-pd-when__n,
+.rs-pd-slide__screen,
+.rs-pd-slide__icon,
+.rs-pd-slide__key,
+.rs-pd-slide__note,
+.rs-pd-slide__note b,
+.rs-pd-check__tick,
+.rs-deckguide,
+.rs-deckguide__list li,
+.rs-deckguide__icon {
+	corner-shape: var(--corner, round);
+}
+
+/* ── Media ─────────────────────────────────────────────────────────────────
+   Every image and video on the home page sits in one frame, reason_media(): corner ticks like a labelling tool, a class
+   tag with a score, an optional caption. Loops in assets/media are cut from Scale AI's site; media() in theme.js plays
+   them only while on screen and leaves the poster with reduced motion or data saver. */
+.rs-media { position: relative; margin: 0; height: 100%; min-height: 0; overflow: hidden; border-radius: var(--r); background: var(--surf); isolation: isolate; }
+.rs-media > picture { display: contents; } /* functions.php reason_media(): a still's WebP and JPEG */
+.rs-media > video, .rs-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.02); transition: transform 1200ms cubic-bezier(.2, .7, .2, 1); }
+.rs-media:hover > video, .rs-media:hover img { transform: scale(1.06); }
+/* The media are drawn on Midnight (2026-10-18), so the shade is Midnight on every band: a light band's colour washed them out. */
+.rs-media::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to bottom, rgba(11, 16, 32, .45), transparent 22%); }
+.rs-media__corners { position: absolute; inset: 14px; z-index: 1; pointer-events: none; --c: color-mix(in oklab, var(--ai) 85%, white);
+	background: linear-gradient(var(--c), var(--c)) 0 0 / 18px 1.5px, linear-gradient(var(--c), var(--c)) 0 0 / 1.5px 18px,
+		linear-gradient(var(--c), var(--c)) 100% 0 / 18px 1.5px, linear-gradient(var(--c), var(--c)) 100% 0 / 1.5px 18px,
+		linear-gradient(var(--c), var(--c)) 0 100% / 18px 1.5px, linear-gradient(var(--c), var(--c)) 0 100% / 1.5px 18px,
+		linear-gradient(var(--c), var(--c)) 100% 100% / 18px 1.5px, linear-gradient(var(--c), var(--c)) 100% 100% / 1.5px 18px;
+	background-repeat: no-repeat; opacity: .75; transition: inset 500ms cubic-bezier(.2, .7, .2, 1), opacity 500ms; }
+.rs-media:hover .rs-media__corners { inset: 22px; opacity: 1; }
+.rs-media__tag { position: absolute; top: 24px; left: 24px; z-index: 2; display: inline-flex; align-items: center; gap: 7px; padding: 3px 9px; font-size: var(--fs-xs); font-weight: 600; line-height: 1.6; color: var(--fg); background: color-mix(in oklab, var(--bg) 62%, transparent); border: 1px solid color-mix(in oklab, var(--ai) 55%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.rs-media__tag i { width: 6px; height: 6px; border-radius: 50%; background: var(--ai); box-shadow: 0 0 10px var(--ai); animation: rs-media-blink 1.6s steps(2, jump-none) infinite; }
+.rs-media__tag b { font-weight: 600; color: var(--ai); }
+.rs-media__cap { position: absolute; right: 24px; left: 24px; bottom: 22px; z-index: 2; color: var(--fg); font-size: var(--fs-lg, 1.125rem); font-weight: 700; line-height: 1.4; }
+@keyframes rs-media-blink { 50% { opacity: .25; } }
+@media (max-width: 559px) { .rs-media__tag { top: 20px; left: 20px; } }
+@media (prefers-reduced-motion: reduce) { .rs-media__tag i { animation: none; } .rs-media > video, .rs-media img, .rs-media__corners { transition: none; } }
+
+/* The icon in a circle on the About page's two steps. */
+.rs-flowcards__icon { display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; color: var(--accent-ink); background: color-mix(in oklab, var(--accent) 16%, transparent); }
+.rs-flowcards__icon.is-ping { animation: rs-ping 760ms cubic-bezier(.22, 1, .36, 1); }
+
+/* ── «در یک نگاه» (front-page.php #glance, 2026-10-14) ──
+   The programme's facts as tiles: an icon, the label, the value (numbers large in lime, dates in text size) and a note. */
+ul.rs-glance { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 899px) { ul.rs-glance { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.rs-glance__item { margin: 0; display: flex; flex-direction: column; gap: 6px; padding: 22px 22px 20px; border-radius: var(--r); border: 1px solid var(--line2); background: var(--surf); transition: transform 400ms cubic-bezier(.2, .7, .2, 1), border-color 300ms, box-shadow 300ms; }
+.rs-glance__item:hover { transform: translateY(-4px); border-color: var(--lime); box-shadow: 0 14px 34px -18px color-mix(in oklab, var(--lime) 55%, transparent); }
+.rs-glance__icon { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 6px; border-radius: var(--rb); background: color-mix(in oklab, var(--lime) 14%, transparent); color: var(--lime); transition: transform 350ms cubic-bezier(.2, .7, .2, 1); }
+.rs-glance__item:hover .rs-glance__icon { transform: rotate(-8deg); }
+.rs-glance__icon svg { width: 22px; height: 22px; }
+.rs-glance__label { color: var(--muted); font-size: var(--fs-sm); font-weight: 600; }
+.rs-glance__value { color: var(--lime); font-size: clamp(32px, 3.2vw, 44px); font-weight: 800; line-height: 1.15; }
+.rs-glance__value small { color: var(--fg); font-size: var(--fs-md); font-weight: 700; }
+.rs-glance__item--text .rs-glance__value { color: var(--fg); font-size: clamp(20px, 1.8vw, 24px); line-height: 1.5; }
+.rs-glance__note { color: var(--muted); font-size: var(--fs-sm); line-height: 1.8; }
+@media (prefers-reduced-motion: reduce) { .rs-glance__item, .rs-glance__icon { transition: none; } .rs-glance__item:hover, .rs-glance__item:hover .rs-glance__icon { transform: none; } }
+
+/* «فرایند پذیرش» (#process): the program page's stage map (.rs-map), one stop per step, dates as lime pills. */
+ol.rs-map.rs-map--process { grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr)); }
+@media (max-width: 899px) { ol.rs-map.rs-map--process { grid-template-columns: minmax(0, 1fr); } }
+.rs-map__date { align-self: flex-start; margin-top: 16px; padding: 2px 12px; border-radius: var(--rp); background: var(--lime); color: var(--lime-ink); font-size: var(--fs-sm); font-weight: 700; }
+.rs-map--process .rs-map__title { margin-top: 4px; }
+.rs-map__stop:not(:has(.rs-map__date)) .rs-map__title { margin-top: 18px; }
+@media (max-width: 899px) { .rs-map__date { margin-top: 0; } .rs-map__stop:not(:has(.rs-map__date)) .rs-map__title { margin-top: 0; } }
+
+/* Phones: the floating section bar becomes one wide «درخواست پذیرش» button, the most visible thing on the screen. */
+@media (max-width: 639px) {
+	.rs-snav { left: 12px; right: 12px; max-width: none; transform: translateY(16px); }
+	.rs-snav.is-on { transform: none; }
+	.rs-snav__in { padding: 5px; }
+	.rs-snav a:not(.rs-snav__cta) { display: none; }
+	.rs-snav .rs-snav__cta { flex: 1; margin: 0; padding: 13px 18px; text-align: center; font-size: var(--fs-base); font-weight: 700; box-shadow: 0 0 28px color-mix(in oklab, var(--lime) 35%, transparent); }
+}
+@media (max-width: 639px) and (prefers-reduced-motion: reduce) { .rs-snav, .rs-snav.is-on { transform: none; } }
+
+/* ── Solutions by area (front-page.php #ai, 2026-10-14) ──
+   The panel beside the areas: a large number, the area's icon on a lime tile, the title, three example solutions,
+   and the way to apply. A faint grid of nodes in the corner stands in for the footage it replaced. */
+.rs-sol { position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; gap: 14px; min-height: 100%; padding: clamp(26px, 3vw, 40px); border-radius: var(--r); border: 1px solid var(--line2); background: var(--surf); animation: rs-areas-in 500ms ease-out; }
+.rs-sol::before { content: ''; position: absolute; z-index: -1; inset: -1px -1px auto auto; width: 62%; height: 70%; background-image: radial-gradient(circle, color-mix(in oklab, var(--lime) 55%, transparent) 1.2px, transparent 1.6px); background-size: 22px 22px; -webkit-mask-image: radial-gradient(circle at 0% 0%, #000, transparent 70%); mask-image: radial-gradient(circle at 0% 0%, #000, transparent 70%); opacity: .5; }
+.rs-sol__num { position: absolute; top: clamp(20px, 2.4vw, 32px); left: clamp(24px, 3vw, 40px); color: color-mix(in oklab, var(--fg) 14%, transparent); font-size: clamp(64px, 7vw, 104px); font-weight: 800; line-height: 1; }
+.rs-sol__icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: var(--rb); background: var(--lime); color: var(--lime-ink); box-shadow: 0 0 32px color-mix(in oklab, var(--lime) 30%, transparent); transition: transform 400ms cubic-bezier(.2, .7, .2, 1); }
+.rs-sol__icon svg { width: 30px; height: 30px; }
+.rs-sol:hover .rs-sol__icon { transform: rotate(-6deg) scale(1.06); }
+.rs-sol__title { margin: 6px 0 0; font-size: clamp(24px, 2.4vw, 32px); font-weight: 800; line-height: var(--lh-head); }
+.rs-sol__k { margin: 0; color: var(--muted); font-size: var(--fs-sm); font-weight: 600; }
+ul.rs-sol__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+ul.rs-sol__list li { display: flex; align-items: center; gap: 14px; margin: 0; padding: 14px 16px; border-radius: var(--rb); border: 1px solid var(--line2); background: color-mix(in oklab, var(--bg) 40%, transparent); font-size: var(--fs-md); font-weight: 600; transition: border-color 250ms, background-color 250ms, transform 300ms cubic-bezier(.2, .7, .2, 1); }
+ul.rs-sol__list li:hover { border-color: var(--lime); background: color-mix(in oklab, var(--lime) 8%, transparent); transform: translateX(-4px); }
+.rs-sol__tick { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: color-mix(in oklab, var(--lime) 16%, transparent); color: var(--lime); font-size: var(--fs-sm); font-weight: 800; }
+.rs-sol__cta { margin-top: auto; padding-top: 8px; align-self: flex-start; font-weight: 700; border-bottom: 2px solid var(--lime); transition: color 200ms; }
+.rs-sol__cta:hover { color: var(--lime); }
+@media (prefers-reduced-motion: reduce) { .rs-sol, .rs-sol__icon, ul.rs-sol__list li { animation: none; transition: none; } .rs-sol:hover .rs-sol__icon, ul.rs-sol__list li:hover { transform: none; } }
+
+/* ── Hover (2026-10-14): every button and card answers the pointer ──
+   Buttons never move (the CTA must stay put): a light sweeps across, the arrow slides, the colour fills. Cards lift a
+   little, their border turns lime and their icon turns. Off with reduced motion, except colour. */
+.rs-btn { position: relative; overflow: hidden; isolation: isolate; transition: box-shadow 300ms, border-color 300ms, background-color 300ms, color 300ms; }
+.rs-btn > span[aria-hidden="true"] { display: inline-block; transition: transform 350ms cubic-bezier(.2, .7, .2, 1); }
+.rs-btn:hover > span[aria-hidden="true"] { transform: translateX(-5px); }
+.rs-btn--accent::after, .rs-btn--dark::after { content: ''; position: absolute; z-index: -1; top: 0; bottom: 0; right: -60%; width: 45%; background: linear-gradient(to left, transparent, rgba(255, 255, 255, .55), transparent); transform: skewX(-20deg); transition: right 600ms cubic-bezier(.2, .7, .2, 1); }
+.rs-btn--accent:hover::after, .rs-btn--dark:hover::after { right: 120%; }
+.rs-btn--ghost:hover { border-color: var(--lime); background: color-mix(in oklab, var(--lime) 12%, var(--glass)); color: var(--fg); }
+.rs-btn--ghost:hover svg { color: var(--lime); }
+.rs-round { transition: border-color 200ms, background-color 200ms, color 200ms, opacity 200ms; }
+.rs-round:hover:not(:disabled) { border-color: var(--lime); background: var(--lime); color: var(--lime-ink); }
+:is(.rs-card, .rs-fact, ul.rs-routes li, .rs-course, .rs-partner__logo, li.rs-member, .rs-map__link) { transition: transform 400ms cubic-bezier(.2, .7, .2, 1), border-color 300ms, box-shadow 300ms; }
+:is(.rs-card, .rs-fact, ul.rs-routes li, li.rs-member):hover { transform: translateY(-4px); border-color: var(--lime); box-shadow: 0 14px 34px -18px color-mix(in oklab, var(--lime) 55%, transparent); }
+.rs-course:hover { transform: translateY(-4px); }
+.rs-course:hover .rs-media img, .rs-course:hover .rs-media > video { transform: scale(1.06); }
+.rs-map__link:hover { transform: translateY(-4px); }
+.rs-map__link:hover .rs-map__node { box-shadow: 0 0 0 6px var(--bg), 0 0 0 9px var(--lime); }
+:is(.rs-fact, ul.rs-routes li):hover :is(.rs-routes__icon) { transform: rotate(-8deg); }
+.rs-routes__icon, .rs-map__icon { transition: transform 350ms cubic-bezier(.2, .7, .2, 1), background-color 300ms, color 300ms; }
+.rs-map__link:hover .rs-map__icon { background: var(--lime); color: var(--lime-ink); border-color: var(--lime); transform: rotate(-6deg); }
+.rs-faq__item:hover { border-color: color-mix(in oklab, var(--lime) 60%, var(--line2)); }
+.rs-ment__list [data-tab], .rs-areas__list [data-area] { transition: color 200ms, padding 300ms cubic-bezier(.2, .7, .2, 1); }
+.rs-areas__list [data-area]:hover, .rs-ment__list [data-tab]:hover { padding-inline-start: 8px; }
+@media (prefers-reduced-motion: reduce) {
+	.rs-btn::after, .rs-btn > span[aria-hidden="true"], :is(.rs-card, .rs-fact, ul.rs-routes li, .rs-course, li.rs-member, .rs-map__link) { transition: none; }
+	.rs-btn:hover > span[aria-hidden="true"], :is(.rs-card, .rs-fact, ul.rs-routes li, .rs-course, li.rs-member, .rs-map__link):hover { transform: none; }
+}
+
+/* Acid lime on Off White sections: as a fill with navy text, never as thin green text (2026-10-14). */
+:root[data-bg="mixed"] [data-band~="mixed:light"] .rs-eyebrow { align-self: flex-start; display: inline-block; padding: 2px 12px; border-radius: var(--rp); background: var(--lime); color: var(--lime-ink); }
+:root[data-bg="mixed"] [data-band~="mixed:light"] .rs-shead__main .rs-eyebrow { width: fit-content; }
+:root[data-bg="mixed"] [data-band~="mixed:light"] a:not(.rs-btn):hover { color: var(--fg); }
+
+/* ── «برنامه شتاب‌دهی» (page-program.php, 2026-10-13): Midnight and Deep Navy with acid lime ──
+   The head (title, lead, actions, the programme in four numbers), the four stages on one line, each stage in full
+   beside its number and icon, the routes after the programme. Lime is a fill or a large number, never small text. */
+.rs-program.rs-page { padding: 0; }
+.rs-program__head { position: relative; overflow: hidden; padding: clamp(72px, 9vw, 128px) 0 clamp(56px, 7vw, 96px); }
+.rs-program__head::before { content: ''; position: absolute; inset: -30% -10% auto auto; width: 70vw; height: 70vw; pointer-events: none; background: radial-gradient(closest-side, color-mix(in oklab, var(--hi) 14%, transparent), transparent); }
+.rs-program__head .rs-wrap { position: relative; display: flex; flex-direction: column; gap: 22px; }
+.rs-program__kicker { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 6px 14px; border-radius: var(--rp); background: var(--hi); color: var(--on-accent); font-size: var(--fs-sm); font-weight: 700; }
+.rs-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: rs-dot-blink 1.6s steps(2, jump-none) infinite; }
+@keyframes rs-dot-blink { 50% { opacity: .3; } }
+.rs-program__title { margin: 0; max-width: 900px; font-size: clamp(36px, 5vw, 64px); font-weight: 800; line-height: 1.35; }
+.rs-program__lead { margin: 0; max-width: 720px; color: color-mix(in oklab, var(--fg) 82%, var(--muted)); font-size: clamp(17px, 1.4vw, 20px); line-height: 2; }
+ul.rs-facts { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.rs-fact { margin: 0; display: flex; flex-direction: column; gap: 6px; padding: 22px 24px; border-radius: var(--r); border: 1px solid var(--line2); background: color-mix(in oklab, var(--surf) 80%, transparent); }
+.rs-fact__num { color: var(--hi); font-size: clamp(34px, 3.6vw, 48px); font-weight: 800; line-height: 1.1; }
+.rs-fact__num small { color: var(--fg); font-size: var(--fs-md); font-weight: 700; }
+.rs-fact__label { color: var(--muted); font-size: var(--fs-sm); line-height: 1.8; }
+@media (max-width: 899px) { ul.rs-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.rs-program__map { padding-block: var(--sec-y); }
+ol.rs-map { list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+ol.rs-map::before { content: ''; position: absolute; top: 22px; right: 22px; left: 22px; height: 2px; background: linear-gradient(to left, var(--lime), color-mix(in oklab, var(--lime) 30%, var(--line2))); }
+.rs-map__stop { margin: 0; }
+.rs-map__link { position: relative; height: 100%; display: flex; flex-direction: column; gap: 12px; color: inherit; }
+.rs-map__node { position: relative; z-index: 1; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--lime); color: var(--lime-ink); font-weight: 800; box-shadow: 0 0 0 6px var(--bg); transition: box-shadow 300ms; }
+.rs-map__icon { display: grid; place-items: center; width: 48px; height: 48px; margin-top: 18px; border-radius: var(--rb); border: 1px solid var(--line2); color: var(--fg); }
+.rs-map__icon svg { width: 24px; height: 24px; }
+.rs-map__title { font-size: var(--fs-lg); font-weight: 800; line-height: var(--lh-head); }
+.rs-map__text { color: var(--muted); font-size: var(--fs-sm); line-height: var(--lh-text); }
+.rs-map__more { margin-top: auto; padding-top: 6px; align-self: flex-start; font-size: var(--fs-sm); font-weight: 700; border-bottom: 2px solid var(--lime); }
+
+@media (max-width: 899px) {
+	ol.rs-map { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+	ol.rs-map::before { top: 22px; bottom: 22px; right: 22px; left: auto; width: 2px; height: auto; background: linear-gradient(to bottom, var(--lime), color-mix(in oklab, var(--lime) 30%, var(--line2))); }
+	.rs-map__link { display: grid; grid-template-columns: 46px minmax(0, 1fr); column-gap: 18px; row-gap: 8px; }
+	.rs-map__link > :not(.rs-map__node) { grid-column: 2; }
+	.rs-map__node { grid-row: 1 / span 5; }
+	.rs-map__icon { display: none; }
+}
+
+.rs-stagex { padding-block: var(--sec-y); scroll-margin-top: var(--header-h); }
+.rs-stagex__grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+.rs-stagex__side { position: sticky; top: calc(var(--header-h) + 32px); display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.rs-stagex__num { color: var(--hi); font-size: clamp(64px, 8vw, 112px); font-weight: 800; line-height: .9; }
+.rs-stagex__of { color: var(--muted); font-size: var(--fs-sm); font-weight: 600; }
+.rs-stagex__icon { display: grid; place-items: center; width: 56px; height: 56px; margin-top: 8px; border-radius: var(--rb); background: color-mix(in oklab, var(--hi) 14%, transparent); color: var(--hi); }
+.rs-stagex__icon svg { width: 28px; height: 28px; }
+.rs-stagex__title { margin: 0; font-size: clamp(26px, 2.8vw, 38px); font-weight: 800; line-height: var(--lh-head); }
+.rs-stagex__body { display: flex; flex-direction: column; gap: 18px; padding-top: 12px; }
+.rs-stagex__body p { margin: 0; color: color-mix(in oklab, var(--fg) 80%, var(--muted)); font-size: var(--fs-md); line-height: 2.05; }
+.rs-stagex__body p:first-child { color: var(--fg); font-size: clamp(19px, 1.6vw, 23px); font-weight: 600; line-height: 1.9; padding-inline-start: 20px; border-inline-start: 3px solid var(--hi); }
+ul.rs-routes { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+ul.rs-routes li { margin: 0; display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: var(--r); border: 1px solid var(--line2); background: var(--surf); font-weight: 700; }
+.rs-routes__icon { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--rb); background: var(--lime); color: var(--lime-ink); }
+.rs-routes__icon svg { width: 22px; height: 22px; }
+@media (max-width: 899px) {
+	.rs-stagex__grid { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+	.rs-stagex__side { position: static; }
+	.rs-stagex__num { font-size: 64px; }
+}
+@media (max-width: 559px) { ul.rs-routes { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .rs-dot { animation: none; } }
+
+/* «نقطه آغاز…»: the need and the solution side by side, joined by an arrow on a hairline. */
+.rs-pair { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: start; padding-block: 40px; border-block: 1px solid var(--line2); }
+.rs-pair__side { display: flex; flex-direction: column; gap: 12px; }
+.rs-pair__k { margin: 0; font-size: var(--fs-sm); font-weight: 600; color: var(--muted); }
+.rs-pair h3 { margin: 0; font-size: clamp(22px, 2.2vw, 30px); font-weight: 700; line-height: var(--lh-head); }
+.rs-pair__tag { margin: 0; color: var(--hi); font-weight: 600; font-size: var(--fs-md); }
+.rs-pair p:last-child { margin: 0; color: var(--muted); font-size: var(--fs-base); line-height: var(--lh-text); }
+.rs-pair__link { align-self: center; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--line2); background: var(--bg); color: var(--hi); font-size: 22px; }
+/* Wide screens: the gap between the two is the bridge reason-sig.js need() draws (strands, pulses, and the business
+   area of the moment crossing as a chip); the arrow stays for phones, where the two stack. */
+@media (min-width: 900px) { .rs-pair { grid-template-columns: minmax(0, 1fr) clamp(140px, 16vw, 240px) minmax(0, 1fr); } .rs-pair__link { visibility: hidden; } }
+@media (max-width: 899px) { .rs-pair { grid-template-columns: minmax(0, 1fr); } .rs-pair__link { justify-self: start; transform: rotate(-90deg); width: 44px; height: 44px; } }
+
+/* Text beside a media frame (the intro). */
+.rs-split { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 56px; align-items: center; }
+.rs-split__text { display: flex; flex-direction: column; gap: 20px; }
+.rs-split__media { aspect-ratio: 4 / 3.4; height: auto; }
+.rs-media.rs-aud__media { aspect-ratio: 16 / 10; height: auto; }
+@media (max-width: 899px) { .rs-split { grid-template-columns: 1fr; gap: 32px; } .rs-split__media { aspect-ratio: 16 / 10; } }
+
+/* «هوش مصنوعی، در دل صنعت»: the areas as a list beside one frame (areas() in theme.js). The chosen area is the
+   view's one signal: fg text and a lime number. */
+.rs-areas { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
+.rs-areas__list { display: flex; flex-direction: column; border-top: 1px solid var(--line2); }
+.rs-areas__list [data-area] { position: relative; display: flex; align-items: baseline; gap: 14px; width: 100%; padding: 13px 0; border: 0; border-bottom: 1px solid var(--line2); background: none; color: var(--muted); font: inherit; font-size: var(--fs-md); text-align: start; cursor: pointer; transition: color 200ms; }
+.rs-areas__list [data-area]:hover { color: var(--fg); }
+.rs-areas__list [data-area][aria-selected="true"] { color: var(--fg); font-weight: 700; }
+.rs-areas__n { flex: none; min-width: 22px; font-size: var(--fs-sm); font-weight: 600; color: var(--muted); }
+.rs-areas__list [data-area][aria-selected="true"] .rs-areas__n { color: var(--hi); }
+.rs-areas__stage { position: sticky; top: calc(var(--header-h) + 24px); }
+.rs-areas__panel { height: 100%; animation: rs-areas-in 500ms ease-out; }
+@keyframes rs-areas-in { from { opacity: 0; } }
+@media (max-width: 899px) {
+	.rs-areas { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+	.rs-areas__stage { position: relative; top: 0; order: -1; }
+	.rs-areas__list { display: grid; grid-template-columns: 1fr 1fr; column-gap: 16px; }
+	.rs-areas__list [data-area] { font-size: var(--fs-sm); padding: 11px 0; }
+}
+@media (prefers-reduced-motion: reduce) { .rs-areas__panel { animation: none; } }
+
+
+/* ── Light boxes (2026-10-14, after کوره) ──
+   Every card and box is a light Off White panel with a 2px dark border and a flat offset shadow, on dark sections and
+   light ones alike; inside one, the light-section colours apply, and lime is only a fill (icon tiles, a highlighter
+   stroke under numbers), never text. On hover the box steps up and left and its offset shadow turns lime. The logo's
+   cut corner stays (the corner list above). */
+:root { --box-off: rgba(244, 247, 242, .16); }
+:root[data-bg="mixed"] [data-band~="mixed:light"] { --box-off: rgba(11, 16, 32, .14); }
+:is(.rs-card, .rs-glance__item, .rs-fact, .rs-faq__item, ul.rs-routes li, li.rs-member, .rs-sol, .rs-ment__panel, .rs-course, .rs-aud) {
+	--fg: #0B1020; --muted: rgba(11, 16, 32, .72); --line: rgba(11, 16, 32, .10); --line2: rgba(11, 16, 32, .18);
+	--surf: #FFFFFF; --surf2: #E9EEE7; --bg: #F4F7F2; --accent-ink: #0B1020; --hi: #0B1020; --ai: rgba(11, 16, 32, .72);
+	color: var(--fg); background: #F4F7F2; border: 2px solid rgba(11, 16, 32, .9); box-shadow: 6px 6px 0 var(--box-off);
+	transition: transform 300ms cubic-bezier(.2, .7, .2, 1), box-shadow 300ms;
+}
+.rs-card__in { background: transparent; }
+.rs-course { padding: 10px 10px 18px; gap: 10px; }
+.rs-course > :not(.rs-media) { padding-inline: 8px; }
+:is(.rs-card, .rs-glance__item, .rs-fact, .rs-faq__item, ul.rs-routes li, li.rs-member, .rs-sol, .rs-course, .rs-aud):hover {
+	transform: translate(-3px, -3px); border-color: rgba(11, 16, 32, .9); box-shadow: 9px 9px 0 var(--lime);
+}
+.rs-faq__item[open] { border-color: rgba(11, 16, 32, .9); box-shadow: 6px 6px 0 var(--lime); }
+/* Lime inside a light box: a fill, never text. */
+.rs-glance__icon { background: var(--lime); color: var(--lime-ink); }
+:is(.rs-glance__value, .rs-fact__num) > bdi { background: linear-gradient(transparent 58%, var(--lime) 58%, var(--lime) 92%, transparent 92%); padding-inline: 2px; }
+.rs-glance__value, .rs-fact__num { color: var(--fg); }
+.rs-glance__item--text .rs-glance__value > bdi { background: none; }
+.rs-sol__tick { background: var(--lime); color: var(--lime-ink); }
+.rs-sol__cta:hover { color: var(--fg); }
+ul.rs-sol__list li { background: #FFFFFF; }
+ul.rs-sol__list li:hover { background: #FFFFFF; border-color: rgba(11, 16, 32, .9); }
+@media (prefers-reduced-motion: reduce) { :is(.rs-card, .rs-glance__item, .rs-fact, .rs-faq__item, ul.rs-routes li, li.rs-member, .rs-sol, .rs-course, .rs-aud) { transition: none; } :is(.rs-card, .rs-glance__item, .rs-fact, .rs-faq__item, ul.rs-routes li, li.rs-member, .rs-sol, .rs-course, .rs-aud):hover { transform: none; } }
+
+/* «همه پرسش‌ها» under the short FAQ, and «تماس با ما» under the full one (2026-10-17). */
+.rs-faq__more { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 28px 0 0; color: var(--muted); }
+
+/* ── Design pass (2026-10-17) ── */
+
+/* «شرایط پذیرش» on the home page: three cards in a row (one column on phones). */
+ol.rs-condcards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 639px) { ol.rs-condcards { grid-template-columns: minmax(0, 1fr); } }
+.rs-condcard { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 28px 28px 30px; }
+@media (max-width: 639px) { .rs-condcard { padding: 22px 20px 24px; } }
+.rs-condcard__num { font-size: clamp(40px, 4vw, 56px); font-weight: 600; line-height: 1.2; margin-bottom: 4px; color: transparent; -webkit-text-stroke: 1.5px var(--accent-ink); }
+.rs-condcard h3 { margin: 0; font-size: var(--fs-lg); font-weight: 800; line-height: var(--lh-head); }
+
+/* Phones: while the bottom «درخواست پذیرش» bar is up, the header's own button steps aside (two at once was one too many). */
+@media (max-width: 639px) { body:has(.rs-snav.is-on) .rs-header .rs-header__actions .rs-btn--sm { display: none; } }
+
+/* Wide screens: the section bar leaves while you read down and comes back when you scroll up (it covered the cards). */
+@media (min-width: 640px) { .rs-snav.is-on.is-away { opacity: 0; visibility: hidden; transform: translate(-50%, 16px); transition: opacity 250ms, transform 250ms, visibility 0s 250ms; } }
+
+/* Card and note text: a step larger, and darker on light sections. */
+.rs-course p, .rs-glance__note, .rs-map__text { font-size: var(--fs-base); }
+:root[data-palette="midnight"] { --l-muted: rgba(11, 16, 32, .75); }
+
+/* The application form, one step at a time (theme.js applySteps()). */
+.rs-steps { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; scroll-margin-top: calc(var(--header-h) + 16px); }
+.rs-steps__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
+.rs-steps__list li { position: relative; display: flex; justify-content: center; }
+/* the line from the step before (on the right) to this one; lime once reached */
+.rs-steps__list li + li::before { content: ''; position: absolute; top: 19px; left: 50%; right: -50%; height: 2px; background: rgba(244, 247, 242, .16); transition: background-color 300ms; }
+.rs-steps__list li.is-current::before, .rs-steps__list li.is-done::before { background: var(--lime); }
+.rs-steps__list button { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 4px; border: 0; background: none; color: var(--muted); cursor: pointer; text-align: center; }
+.rs-steps__list button:disabled { cursor: default; }
+.rs-steps__list b { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(244, 247, 242, .3); background: var(--bg); color: var(--fg); font-size: var(--fs-base); font-weight: 800; transition: background-color 300ms, border-color 300ms, color 300ms; }
+.rs-steps__list span { font-size: var(--fs-sm); font-weight: 600; line-height: 1.6; }
+.rs-steps__list .is-done b { border-color: var(--lime); color: var(--lime); }
+.rs-steps__list .is-current b { border-color: var(--lime); background: var(--lime); color: var(--lime-ink); }
+.rs-steps__list .is-current span { color: var(--fg); }
+.rs-steps__list button:not(:disabled):hover span { color: var(--fg); }
+.rs-steps__list button:focus-visible { outline: none; }
+.rs-steps__list button:focus-visible b { outline: 2px solid var(--lime); outline-offset: 3px; }
+.rs-steps__nav { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.rs-form[data-steps].is-stepped [data-step]:not(.is-current) { display: none; }
+.rs-form[data-steps].is-stepped:not(.is-last) .rs-form__foot { display: none; }
+
+/* ── Golrang's review (2026-10-17) ── */
+
+/* The hero centred, its headline in English (Rooyin, as the rest, since 2026-10-19), two lines. */
+.rs-hero__content { justify-content: center; }
+.rs-hero__copy { align-items: center; text-align: center; margin-inline: auto; }
+.rs-hero .rs-lead { margin-inline: auto; text-wrap: balance; }
+.rs-hero .rs-ctas { justify-content: center; }
+.rs-h1--en { font-family: Rooyin, IRANSansX, sans-serif; font-weight: 800; font-size: clamp(24px, 6.2vw, 64px); line-height: 1.25; letter-spacing: -.01em; text-wrap: balance; }
+.rs-hero__fade-side { background: radial-gradient(ellipse 62% 68% at 50% 50%, color-mix(in oklab, var(--bg) 82%, transparent) 0%, color-mix(in oklab, var(--bg) 40%, transparent) 55%, transparent 80%); }
+
+/* «چرا REASON؟» on wide screens: pinned, and scrolling down moves the cards sideways (theme.js whyScroll()). */
+.rs-hscroll.is-pinned { height: var(--hs-h, 100vh); padding-block: 0; }
+.rs-hscroll.is-pinned > [data-hscroll-view] { position: sticky; top: var(--header-h); min-height: calc(100vh - var(--header-h)); display: flex; flex-direction: column; justify-content: center; padding-block: 40px; overflow: hidden; }
+.rs-hscroll.is-pinned .rs-carousel { scroll-snap-type: none; scroll-behavior: auto; overflow-x: hidden; }
+.rs-hscroll.is-pinned .rs-carousel__nav { display: none; }
+
+/* «پرسش‌های رایج» page: the column in the middle. */
+.rs-faqpage .rs-page__head { align-items: center; text-align: center; margin-inline: auto; }
+.rs-faqpage .rs-faq { margin-inline: auto; }
+.rs-faqpage .rs-faq__more { justify-content: center; }
+
+/* «تماس با ما»: a place kept for a link still to come. */
+.rs-contact__soon { color: var(--muted); }
+.rs-hero__copy:has(.rs-h1--en) { flex-basis: 100%; max-width: 1080px; } /* «Reason from reality.» on one line on desktop */
+
+/* 2026-10-17: the logo is drawn in --logo-ink, Off White on Midnight; on a light section it is dark, or the partners'
+   REASON hub disappeared. */
+:root[data-bg="mixed"] :is([data-band~="mixed:light"], [data-band~="mixed:soft"]) { --logo-ink: #0B1020; }
+.rs-sol__tick svg { display: block; }
+
+/* Hero (2026-10-17): the countdown centred under the buttons; while the wordmark forms in the middle (--form 0…1, set by
+   theme.js on wide screens), the text fades out so the logo is clear, and the fades no longer veil the middle. */
+@media (min-width: 640px) { .rs-hero .rs-cd { align-self: center; } }
+.rs-hero__copy { opacity: calc(1 - min(1, max(0, (var(--form, 0) - .1) / .5))); transition: opacity 120ms linear; }
+.rs-hero.is-formed .rs-hero__copy { pointer-events: none; }
+.rs-hero__fade-side { opacity: calc(1 - var(--form, 0)); }
+
+/* The sign-up box (2026-10-17): on Midnight it needs its own edge — a lighter navy, a lime hairline and glow — and
+   no dotted wordmark beside the title (reason-sig.js cta() is off). */
+:root[data-palette="midnight"] .rs-cta__box { background: radial-gradient(120% 160% at 100% 0%, rgba(183,243,74,.16), transparent 55%), #0B1020; border: 1px solid rgba(183,243,74,.28); box-shadow: 0 24px 60px -30px rgba(183,243,74,.35); padding: 48px 52px; }
+@media (max-width: 639px) { :root[data-palette="midnight"] .rs-cta__box { padding: 30px 22px; } }
+
+/* ── After scale.com (2026-10-17) ── */
+
+/* The header steps away while scrolling down (theme.js headerAway()); sticky blocks then sit at the top (--head-live). */
+:root { --head-live: var(--header-h); }
+:root.is-head-up { --head-live: 0px; }
+.rs-header { transition: transform 320ms cubic-bezier(.2, .7, .2, 1); }
+.rs-header.is-away { transform: translateY(calc(-100% - 2px)); }
+.admin-bar .rs-header.is-away { transform: translateY(calc(-100% - 48px)); }
+.rs-hscroll.is-pinned > [data-hscroll-view] { top: var(--head-live); transition: top 320ms; }
+.rs-areas__stage { top: calc(var(--head-live) + 24px); transition: top 320ms; }
+.rs-stagex__side { top: calc(var(--head-live) + 32px); transition: top 320ms; }
+@media (prefers-reduced-motion: reduce) { .rs-header { transition: none; } }
+
+/* The hero on wide screens: as you scroll (--form 0…1) its text fades, the stage sinks towards black, the wordmark
+   forms large in the middle and a line comes up under it. */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+	/* Full width and height throughout (2026-10-17: no inset card); the stage only darkens as the wordmark forms. */
+	.rs-hero { background: #05070E; }
+	.rs-hero__focus {
+		position: absolute; z-index: 3; left: 0; right: 0; margin: 0; text-align: center; pointer-events: none;
+		top: calc(50% + min(62vw, 820px) * 18 / 222 + 40px);
+		color: var(--muted); font-size: var(--fs-lg); font-weight: 500; letter-spacing: .01em;
+		opacity: min(1, max(0, calc((var(--form, 0) - .72) * 5))); transform: translateY(calc((1 - min(1, max(0, calc((var(--form, 0) - .72) * 5)))) * 12px));
+	}
+}
+.rs-hero__focus { display: none; }
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) { .rs-hero__focus { display: block; } }
+
+/* «جریانی برای رشد»: four cards on a rail. */
+.rs-growth .rs-shead { align-items: flex-end; }
+ol.rs-flow__list { --fp: 0; position: relative; list-style: none; margin: 56px 0 0; padding: 34px 0 0; display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 20px; }
+ol.rs-flow__list::before, ol.rs-flow__list::after { content: ""; position: absolute; top: 6px; right: 0; height: 2px; border-radius: 2px; }
+ol.rs-flow__list::before { left: 0; background: var(--line2); }
+ol.rs-flow__list::after { width: calc(var(--fp) * 100%); background: var(--lime); transition: width 200ms linear; }
+.rs-flow__item { position: relative; margin: 0; display: flex; }
+.rs-flow__node { position: absolute; top: -34px; right: 22px; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); border: 2px solid var(--line2); z-index: 1; transition: background 300ms, border-color 300ms, box-shadow 300ms; }
+.rs-flow__item:nth-child(1) .rs-flow__node { --at: 0; } .rs-flow__item:nth-child(2) .rs-flow__node { --at: .25; }
+.rs-flow__item:nth-child(3) .rs-flow__node { --at: .5; } .rs-flow__item:nth-child(4) .rs-flow__node { --at: .75; }
+.rs-flow__card { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 26px 24px 28px; margin: 0; }
+.rs-flow__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.rs-flow__top .rs-glance__icon { margin: 0; }
+.rs-flow__step { color: var(--muted); font-size: var(--fs-sm); font-weight: 700; }
+.rs-flow__card h3 { margin: 4px 0 0; font-size: var(--fs-lg); font-weight: 800; line-height: var(--lh-head); }
+.rs-flow__card p { margin: 0; color: var(--muted); font-size: var(--fs-base); line-height: var(--lh-text); }
+ul.rs-flow__routes { list-style: none; margin: auto 0 0; padding: 8px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+ul.rs-flow__routes li { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid var(--line2); border-radius: var(--rp); corner-shape: var(--corner, round); font-size: var(--fs-sm); font-weight: 600; color: var(--fg); background: #FFFFFF; }
+ul.rs-flow__routes li::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 2px rgba(11, 16, 32, .85); }
+@media (max-width: 1099px) { ol.rs-flow__list { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-top: 0; } ol.rs-flow__list::before, ol.rs-flow__list::after, .rs-flow__node { display: none; } }
+@media (max-width: 639px) { ol.rs-flow__list { grid-template-columns: minmax(0, 1fr); margin-top: 36px; } .rs-growth .rs-shead { align-items: flex-start; } }
+.rs-flow__node::after { content: ""; position: absolute; inset: 1px; border-radius: 50%; background: var(--lime); opacity: clamp(0, calc((var(--fp, 0) - var(--at, 0)) * 20), 1); transition: opacity 300ms; }
+
+/* The hero's show (2026-10-17): the stage sinks towards black as the wordmark forms, so its glow carries. */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+	.rs-hero__stage { background-color: color-mix(in oklab, var(--bg), #010208 calc(min(1, var(--form, 0) * 1.3) * 78%)); }
+	.rs-hero__glow { opacity: calc(1 - var(--form, 0) * .7); }
+	.rs-hero__focus { color: #E9EEE7; font-size: clamp(16px, 1.25vw, 20px); }
+}
+
+/* ── 2026-10-17: lighter steps on phones, shorter flow cards ── */
+
+/* «حرکت به سوی راهکاری اثبات شده در ۴ گام» below 900px: no pinned scroll and no sliding track (heavy and slow on
+   phones), a short timeline — an outlined numeral and the title on each row, a rail through the dots. */
+@media (max-width: 899px) {
+	.rs-pin { height: auto; }
+	.rs-pin__view { position: static; height: auto; min-height: 0; overflow: visible; gap: 28px; padding-block: var(--sec-y); }
+	.rs-pin__pct { display: none; }
+	.rs-pin__rail { padding: 0 var(--pad); }
+	.rs-track { width: auto; flex-direction: column; gap: 0; padding: 0 22px 0 0; transform: none !important; will-change: auto; }
+	.rs-track__line { top: 12px; bottom: 12px; right: 6px; left: auto; width: 2px; height: auto; background: var(--line2); }
+	.rs-track__line span, .rs-track__head { display: none; }
+	.rs-stage { width: auto; opacity: 1 !important; flex-direction: row; align-items: center; gap: 16px; padding: 14px 0; }
+	.rs-stage + .rs-stage { border-top: 1px solid var(--line); }
+	.rs-stage__dot { top: 50%; right: -22px; transform: translateY(-50%); background: var(--lime); border-color: var(--lime); box-shadow: 0 0 0 4px color-mix(in oklab, var(--lime) 22%, transparent); }
+	.rs-stage__num { font-size: 44px; min-width: 40px; text-align: center; }
+	.rs-stage__title { font-size: var(--fs-lg); }
+	.rs-stage.rs-sig-num .rs-stage__num { opacity: 1; }
+}
+
+/* «جریانی برای رشد»: two by two, the icon tile beside the text, the routes in a row — a quarter of the height. */
+ol.rs-flow__list { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-top: 0; margin-top: 40px; }
+ol.rs-flow__list::before, ol.rs-flow__list::after, .rs-flow__node { display: none; }
+.rs-flow__card { display: grid; grid-template-columns: 48px minmax(0, 1fr); column-gap: 18px; row-gap: 6px; align-content: start; padding: 22px 24px; }
+.rs-flow__top { display: contents; }
+.rs-flow__top .rs-glance__icon { grid-column: 1; grid-row: 1 / span 4; width: 48px; height: 48px; }
+.rs-flow__card > :not(.rs-flow__top), .rs-flow__step { grid-column: 2; }
+.rs-flow__step { font-size: var(--fs-xs); }
+.rs-flow__card h3 { margin: 0; }
+.rs-flow__card p { font-size: var(--fs-sm); line-height: 1.85; }
+ul.rs-flow__routes { margin: 6px 0 0; padding: 0; gap: 6px; }
+ul.rs-flow__routes li { padding: 3px 10px; font-size: var(--fs-xs); }
+@media (max-width: 639px) { ol.rs-flow__list { grid-template-columns: minmax(0, 1fr); gap: 14px; } .rs-flow__card { grid-template-columns: 40px minmax(0, 1fr); column-gap: 14px; padding: 18px; } .rs-flow__top .rs-glance__icon { width: 40px; height: 40px; } }
+
+/* ── The journey (2026-10-17): the thread, each section's moment, the finale (reason-sig.js) ── */
+
+/* The margin thread: grey line, lime dot and nodes, readable over light and dark sections; it rests before the footer. */
+.rs-thread__line { background: linear-gradient(to bottom, transparent, rgba(152, 162, 179, .38) 14%, rgba(152, 162, 179, .38) 86%, transparent); }
+.rs-thread__mark { border-color: rgba(152, 162, 179, .55); background: #0B1020; }
+.rs-thread { transition: opacity 300ms; }
+.rs-thread.is-done { opacity: 0; }
+
+/* «در یک نگاه»: a tile ignites (lime offset shadow, the icon tile glowing); the number's marker sweeps in from the right. */
+.rs-glance__item.is-lit { box-shadow: 6px 6px 0 var(--lime), 0 0 40px -10px color-mix(in oklab, var(--lime) 55%, transparent); transform: translate(-2px, -2px); }
+.rs-glance__item.is-lit .rs-glance__icon { box-shadow: 0 0 0 5px color-mix(in oklab, var(--lime) 30%, transparent), 0 0 26px var(--lime); }
+.rs-sig-glance .rs-glance__value > bdi { background-repeat: no-repeat; background-position: right center; transition: background-size 800ms cubic-bezier(.22, 1, .36, 1); }
+.rs-sig-glance .rs-glance__item:not(.is-hl) .rs-glance__value > bdi { background-size: 0 100%; }
+.rs-sig-glance .rs-glance__item.is-hl .rs-glance__value > bdi { background-size: 100% 100%; }
+
+/* «هوش مصنوعی، در دل صنعت»: the chosen area's solutions tick in one by one. */
+.rs-areas__panel.is-run ul.rs-sol__list li { animation: rs-tickin 520ms cubic-bezier(.22, 1, .36, 1) both; }
+.rs-areas__panel.is-run ul.rs-sol__list li:nth-child(2) { animation-delay: 140ms; }
+.rs-areas__panel.is-run ul.rs-sol__list li:nth-child(3) { animation-delay: 280ms; }
+.rs-areas__panel.is-run ul.rs-sol__list li:nth-child(4) { animation-delay: 420ms; }
+.rs-areas__panel.is-run .rs-sol__tick { animation: rs-tickpop 700ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: inherit; }
+@keyframes rs-tickin { from { opacity: 0; transform: translateX(-14px); } }
+@keyframes rs-tickpop { 0% { transform: scale(.4); box-shadow: 0 0 0 0 color-mix(in oklab, var(--lime) 70%, transparent); } 60% { transform: scale(1.15); box-shadow: 0 0 0 8px transparent, 0 0 22px var(--lime); } 100% { transform: none; } }
+
+/* «جریانی برای رشد»: the charge reaching a card. */
+.rs-flow__card.is-lit { box-shadow: 6px 6px 0 var(--lime), 0 0 40px -10px color-mix(in oklab, var(--lime) 55%, transparent); transform: translate(-2px, -2px); }
+.rs-flow__card.is-lit .rs-glance__icon { box-shadow: 0 0 0 5px color-mix(in oklab, var(--lime) 30%, transparent), 0 0 26px var(--lime); }
+
+/* «چرا REASON؟»: the picture scanned like a labelling tool, once — a lime line passing down, the corners lit. */
+.rs-media.is-scan::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 26%; z-index: 2; pointer-events: none; background: linear-gradient(to bottom, transparent, color-mix(in oklab, var(--lime) 30%, transparent) 85%, var(--lime) 100%); animation: rs-scan 1100ms cubic-bezier(.4, 0, .2, 1) both; }
+.rs-media.is-scan .rs-media__corners { --c: var(--lime); opacity: 1; transition: opacity 400ms, inset 400ms; }
+@keyframes rs-scan { from { transform: translateY(-100%); opacity: 1; } 85% { opacity: 1; } to { transform: translateY(400%); opacity: 0; } }
+
+/* «شرایط پذیرش»: a condition read — its numeral fills with lime. */
+.rs-condcard__num { transition: color 500ms, text-shadow 500ms; }
+.rs-condcard.is-seen .rs-condcard__num { color: var(--lime); -webkit-text-stroke-color: #0B1020; text-shadow: 0 0 22px color-mix(in oklab, var(--lime) 60%, transparent); }
+#conditions .rs-ready { justify-content: center; }
+
+/* «فرایند پذیرش»: the stops light along the line. */
+.rs-map__node.is-on { animation: rs-nodeon 800ms cubic-bezier(.22, 1, .36, 1); }
+@keyframes rs-nodeon { 0% { transform: scale(.6); } 55% { transform: scale(1.12); box-shadow: 0 0 0 10px color-mix(in oklab, var(--lime) 25%, transparent), 0 0 30px var(--lime); } 100% { transform: none; } }
+
+/* The finale: the sign-up box as a centred column, REASON formed above the title, the button below it. */
+.rs-cta__box--finale { flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 18px; padding-block: 44px 52px; overflow: visible; }
+.rs-cta__box--finale > div:not(.rs-cta__stage) { display: flex; flex-direction: column; align-items: center; }
+.rs-cta__box--finale .rs-btn--dark { align-self: center; position: relative; z-index: 2; }
+.rs-cta__box--finale > :not(canvas) { position: relative; z-index: 1; }
+.rs-cta__stage { width: min(100%, 560px); height: clamp(84px, 9vw, 120px); }
+.rs-finale { z-index: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+	.rs-glance__item.is-lit, .rs-flow__card.is-lit { transform: none; }
+	.rs-areas__panel.is-run ul.rs-sol__list li, .rs-areas__panel.is-run .rs-sol__tick, .rs-map__node.is-on, .rs-media.is-scan::before { animation: none; }
+}
+
+/* Phone header (2026-10-17): the menu button at the right edge, the logo beside it, the apply button at the left. */
+@media (max-width: 1119px) { .rs-header__in > .rs-menu-btn { order: -1; flex: none; } .rs-brand { margin-inline-end: auto; } }
+
+/* The finale (2026-10-17): the last section is the hero's bookend — full width on near-black, the wordmark formed in
+   the middle (reason-sig.js finale()), the call to sign up under it; no box. */
+.rs-finale-sec { position: relative; padding: clamp(64px, 8vw, 120px) 0 clamp(72px, 9vw, 130px); overflow: hidden; text-align: center; }
+.rs-finale__stage { width: min(100% - 2 * var(--pad), 820px); height: clamp(110px, 13vw, 190px); margin: 0 auto 28px; }
+.rs-finale__copy { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.rs-finale__title { margin: 0; font-size: var(--fs-h2); font-weight: 800; line-height: var(--lh-head); }
+.rs-finale__note { margin: 0 0 10px; color: var(--muted); font-size: var(--fs-md); }
+.rs-finale-sec .rs-btn { position: relative; z-index: 2; }
+.rs-finale-sec canvas.rs-finale { z-index: 0; }
+/* The About and Program pages' sign-up box: flat near-black with a hairline, no olive wash or green glow. */
+:root[data-palette="midnight"] .rs-cta__box { background: #0B1020; border: 1px solid var(--line2); box-shadow: none; }
+
+/* «۴ گام» (2026-10-17): the steps start under the title, at the content column's edge, and the slide ends with the last
+   step at the column's other edge; the rail line still runs past the column as the track slides. */
+@media (min-width: 900px) { .rs-pin__rail { --edge: max(var(--pad), calc((100vw - var(--wrap)) / 2 + var(--pad))); padding: 0 var(--edge); } }
+
+/* «چرا REASON؟» (2026-10-17): the cards have the signature cut like every other box (they had no radius at all), and
+   while the section is pinned its heading keeps the content column's width — it shrank to the title and centred. */
+.rs-course { border-radius: var(--r); }
+.rs-hscroll.is-pinned > [data-hscroll-view] > .rs-wrap { width: 100%; }
+
+/* ── Inner pages (2026-10-17) ── */
+
+/* The Apply page's entry conditions: the site's cards (Off White, a dark border, a flat offset shadow), not charcoal. */
+li.rs-cond { --fg: #0B1020; --muted: rgba(11, 16, 32, .72); background: #F4F7F2; color: var(--fg); border: 2px solid rgba(11, 16, 32, .9); box-shadow: 6px 6px 0 var(--box-off); }
+li.rs-cond .rs-cond__mark { background: var(--lime); color: var(--lime-ink); }
+
+/* The About page's statement starts on the column's edge, like every title (it was centred). */
+p.rs-about__statement { text-align: start; margin-inline: 0; }
+
+/* A card lit by the moment that reaches it (ignite(), flowCards(), glance()): a lime offset shadow and glow, its icon lit. */
+:is(.rs-fact, .rs-about__step, li.rs-member, li.rs-cond).is-lit { box-shadow: 6px 6px 0 var(--lime), 0 0 40px -10px color-mix(in oklab, var(--lime) 55%, transparent); transform: translate(-2px, -2px); }
+:is(.rs-fact, .rs-about__step, li.rs-member, li.rs-cond).is-lit :is(.rs-flowcards__icon, .rs-cond__mark) { box-shadow: 0 0 0 5px color-mix(in oklab, var(--lime) 30%, transparent), 0 0 26px var(--lime); }
+.rs-stagex__side.is-lit .rs-stagex__icon { box-shadow: 0 0 0 5px color-mix(in oklab, var(--lime) 30%, transparent), 0 0 26px var(--lime); }
+:is(.rs-fact, .rs-about__step, li.rs-member, li.rs-cond, .rs-stagex__icon) { transition: transform 400ms cubic-bezier(.2, .7, .2, 1), box-shadow 400ms; }
+.rs-sig-glance .rs-fact:not(.is-hl) .rs-fact__num > bdi { background-size: 0 100%; }
+.rs-sig-glance .rs-fact .rs-fact__num > bdi { background-repeat: no-repeat; background-position: right center; transition: background-size 800ms cubic-bezier(.22, 1, .36, 1); }
+@media (prefers-reduced-motion: reduce) { :is(.rs-fact, .rs-about__step, li.rs-member, li.rs-cond).is-lit { transform: none; } }
+
+/* ── Golrang's second review (2026-10-17) ── */
+
+/* Every section's badge is the lime badge, on dark sections too. */
+.rs-eyebrow { display: inline-block; width: fit-content; padding: 2px 12px; border-radius: var(--rp); background: var(--lime); color: var(--lime-ink); font-weight: 700; }
+.rs-partners__head .rs-eyebrow { align-self: center; }
+
+/* The hero's English line in capitals, REASON in our lime. */
+.rs-h1--en { text-transform: uppercase; letter-spacing: .01em; }
+.rs-h1--en .rs-h1__brand { color: var(--lime); }
+
+/* «نقطه آغاز …»: only «کسب‌وکار است» green, on a line of its own (the <em>); the rest in the text's colour. */
+#need-h em, .rs-about__statement em { color: var(--lime); }
+
+/* No olive: the four steps' numerals on the light section are filled with our lime inside a dark outline. */
+:root[data-bg="mixed"] [data-band~="mixed:light"] .rs-stage__num { color: var(--lime); -webkit-text-stroke-color: #0B1020; }
+
+/* The footer in our colours: a lime line along its top, lime headings, a lime call to action, lime on hover. */
+.rs-footer::before { content: ""; position: absolute; top: -1px; left: 0; right: 0; height: 2px; background: linear-gradient(to left, var(--lime), color-mix(in oklab, var(--lime) 25%, transparent) 70%, transparent); }
+.rs-footer__col h2 { color: var(--lime); }
+.rs-footer__cta { margin-top: 16px; align-self: flex-start; }
+.rs-footer a:not(.rs-btn):hover { color: var(--lime); }
+.rs-footer__social a:hover { color: var(--lime-ink); background: var(--lime); border-color: var(--lime); }
+.rs-footer__tagline { font-family: Rooyin, IRANSansX, sans-serif; text-transform: uppercase; letter-spacing: .02em; direction: ltr; text-align: right; }
+
+/* Forms: the submit at the form's left; in the steps, «مرحله بعد» at the left, «مرحله قبل» at the right. */
+.rs-form__foot { flex-direction: row-reverse; justify-content: space-between; }
+.rs-steps__nav { flex-direction: row; justify-content: flex-start; align-items: center; }
+.rs-steps__nav [data-next], .rs-steps__nav [type="submit"] { margin-inline-start: auto; } /* «مرحله قبل» right, the way on left */
+.rs-form.is-stepped:not(.is-last) .rs-steps__nav [type="submit"] { display: none; }
+/* The badge beats the section heading's paragraph rule (.rs-shead p made its text grey and larger), and the steps'
+   «مرحله قبل» stays hidden on the first step (.rs-btn's display overrode [hidden]). */
+.rs-shead p.rs-eyebrow, p.rs-eyebrow { max-width: none; color: var(--lime-ink); font-size: var(--fs-sm); line-height: 1.6; }
+.rs-steps__nav [hidden] { display: none !important; }
+
+/* Forms, 2026-10-18 (theme.js forms()): each field's message under it, the team's fields for a team only, the long
+   answers' counters, the kept draft, and the send with the upload's progress filling the button right to left. */
+.rs-field[hidden] { display: none !important; }
+.rs-fgroup__note { grid-column: 1 / -1; margin: -6px 0 4px; color: var(--muted); font-size: var(--fs-sm); line-height: 1.9; }
+.rs-fgroup__title:focus { outline: none; }
+.rs-field__err { display: flex; align-items: flex-start; gap: 7px; color: var(--err); font-size: var(--fs-xs); font-weight: 600; line-height: 1.8; }
+.rs-field__err::before { content: '!'; flex: none; display: grid; place-items: center; width: 16px; height: 16px; margin-top: 3px; border-radius: 50%; background: var(--err); color: #0B1020; font-size: 11px; font-weight: 800; line-height: 1; }
+.rs-field__err[hidden] { display: none; }
+.rs-field.is-invalid input:not([type="radio"]), .rs-field.is-invalid select, .rs-field.is-invalid textarea, .rs-field.is-invalid .rs-file, .rs-field.is-invalid .rs-choice span { border-color: var(--err); }
+.rs-field.is-invalid input:focus, .rs-field.is-invalid select:focus, .rs-field.is-invalid textarea:focus, .rs-field.is-invalid .rs-file:focus-within { box-shadow: 0 0 0 3px color-mix(in oklab, var(--err) 30%, transparent); }
+.rs-terms .rs-field__err { padding-inline-start: 36px; }
+.rs-field__count { align-self: flex-end; margin-top: -4px; color: var(--muted); font-size: var(--fs-xs); }
+.rs-draft { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; padding: 12px 16px; border: 1px solid var(--line2); border-inline-start: 3px solid var(--lime); font-size: var(--fs-sm); line-height: 1.8; }
+.rs-draft button { padding: 4px 0; border: 0; background: none; color: var(--lime); font-weight: 600; text-decoration: underline; text-underline-offset: 5px; cursor: pointer; }
+.rs-form__status { flex-basis: 100%; margin: 0; color: var(--muted); font-size: var(--fs-sm); }
+.rs-form__status:empty { display: none; }
+.rs-form__status.is-err { color: var(--err); }
+.rs-form .rs-btn.is-busy { cursor: progress; min-width: 190px; justify-content: center; background: linear-gradient(to left, var(--lime) var(--p, 100%), color-mix(in oklab, var(--lime) 45%, var(--bg)) var(--p, 100%)); color: var(--lime-ink); }
+.rs-form.is-sending .rs-fgroup, .rs-form.is-sending [data-prev] { opacity: .6; pointer-events: none; transition: opacity 300ms; }
+
+/* ── «راهنمای پیچ‌دک» (page-pitch-deck.php, 2026-10-17) ──
+   The guide as its own page: smaller than the home page, with its own elements — a deck fanned out in the opening with a
+   laser dot moving over it, the two moments it is needed linked by an arrow, the eight slides drawn as slides (a screen
+   with its number, icon and the deck's progress), the closing checklist beside the screening session's clock. */
+.rs-pd-hero { position: relative; overflow: hidden; padding: clamp(64px, 8vw, 112px) 0 clamp(56px, 7vw, 96px); }
+.rs-pd-hero::before { content: ''; position: absolute; inset: -30% auto auto -10%; width: 70vw; height: 70vw; pointer-events: none; background: radial-gradient(closest-side, color-mix(in oklab, var(--lime) 12%, transparent), transparent); }
+.rs-pd-hero__grid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 56px; align-items: center; }
+@media (min-width: 900px) { .rs-pd-hero__grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 48px; } }
+.rs-pd-hero__copy { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+.rs-pd-hero__title { margin: 0; font-size: clamp(32px, 4.2vw, 54px); font-weight: 800; line-height: 1.4; }
+.rs-pd-hero__en { display: block; margin-top: 4px; text-align: right; font-family: Rooyin, IRANSansX, sans-serif; font-weight: 600; font-size: .7em; letter-spacing: .02em; line-height: 1.3; color: var(--lime); }
+.rs-pd-hero__lead { margin: 0; max-width: 620px; color: color-mix(in oklab, var(--fg) 82%, var(--muted)); font-size: clamp(17px, 1.4vw, 19px); line-height: 2; }
+ul.rs-pd-stats { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+ul.rs-pd-stats li { display: flex; align-items: baseline; gap: 8px; padding: 6px 16px; border: 1px solid var(--line2); border-radius: var(--rp); background: color-mix(in oklab, var(--fg) 4%, transparent); }
+ul.rs-pd-stats b { color: var(--lime); font-size: var(--fs-lg); font-weight: 800; }
+ul.rs-pd-stats span { color: var(--muted); font-size: var(--fs-sm); }
+
+/* The fan: three slides, the front one REASON's; they spread on arrival and a little more on hover. */
+.rs-pd-fan { position: relative; width: min(100%, 440px); aspect-ratio: 4 / 3; margin-inline: auto; }
+@media (max-width: 639px) { .rs-pd-fan { width: min(100%, 320px); } }
+.rs-pd-fan__slide { position: absolute; inset-inline: 7%; top: 20%; aspect-ratio: 16 / 10; display: flex; flex-direction: column; justify-content: center; gap: 9%; padding: 0 11%; border-radius: var(--r); border: 2px solid rgba(244, 247, 242, .22); background: #0B1020; transform-origin: 50% 110%; transform: var(--t); transition: transform 600ms cubic-bezier(.2, .7, .2, 1); animation: rs-pd-fan 1100ms cubic-bezier(.2, .7, .2, 1) backwards; }
+.rs-pd-fan__slide i { display: block; height: 7px; border-radius: 4px; background: rgba(244, 247, 242, .14); }
+.rs-pd-fan__slide i:nth-child(1) { width: 46%; background: rgba(244, 247, 242, .3); }
+.rs-pd-fan__slide i:nth-child(2) { width: 88%; }
+.rs-pd-fan__slide i:nth-child(3) { width: 72%; }
+.rs-pd-fan__slide i:nth-child(4) { width: 58%; }
+.rs-pd-fan__slide--3 { --t: rotate(-13deg) translate(-9%, 2%); --t-open: rotate(-17deg) translate(-13%, 3%); animation-delay: 250ms; }
+.rs-pd-fan__slide--2 { --t: rotate(-5deg) translate(-3%, -3%); --t-open: rotate(-7deg) translate(-5%, -5%); background: #0B1020; border-color: rgba(244, 247, 242, .3); animation-delay: 380ms; }
+.rs-pd-fan__slide--1 { --t: rotate(5deg) translate(4%, -6%); --t-open: rotate(7deg) translate(7%, -8%); --logo-ink: #0B1020; --logo-dot: #0B1020; overflow: hidden; justify-content: center; align-items: flex-start; gap: 8%; background: #F4F7F2; border-color: rgba(11, 16, 32, .9); box-shadow: 8px 8px 0 var(--lime); animation-delay: 520ms; }
+.rs-pd-fan:hover .rs-pd-fan__slide { transform: var(--t-open); }
+@keyframes rs-pd-fan { from { opacity: 0; transform: translateY(18%) rotate(0deg); } }
+.rs-pd-fan__logo { display: block; width: 46%; }
+.rs-pd-fan__logo svg { display: block; width: 100%; height: auto; }
+.rs-pd-fan__line { display: block; width: 78%; height: 7px; border-radius: 4px; background: rgba(11, 16, 32, .16); }
+.rs-pd-fan__line--short { width: 52%; margin-top: -4%; }
+.rs-pd-fan__n { position: absolute; bottom: 9%; inset-inline-end: 7%; color: rgba(11, 16, 32, .6); font-size: 12px; font-weight: 700; }
+/* the deck's progress along the bottom, from the right */
+.rs-pd-fan__slide--1::after { content: ''; position: absolute; inset-inline: 0; bottom: 0; height: 6px; background: linear-gradient(to left, var(--lime) 10%, rgba(11, 16, 32, .1) 10%); }
+/* the presenter's laser dot, drifting over the front slide */
+.rs-pd-fan__slide--1::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 30% 34%, #B7F34A 0 5px, rgba(183, 243, 74, .45) 6px, rgba(183, 243, 74, 0) 18px); animation: rs-pd-laser 9s ease-in-out 1.8s infinite; }
+@keyframes rs-pd-laser {
+	0%, 100% { transform: translate(0, 0); }
+	20% { transform: translate(28%, 4%); }
+	38% { transform: translate(14%, 34%); }
+	56% { transform: translate(-16%, 28%); }
+	76% { transform: translate(-6%, 8%); }
+}
+
+/* «در دو مرحله»: the two moments as cards, an arrow from the first to the second. */
+ol.rs-pd-when__steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; }
+@media (min-width: 900px) { ol.rs-pd-when__steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 72px; } }
+.rs-pd-when__step { position: relative; display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 28px 28px 30px; }
+@media (max-width: 639px) { .rs-pd-when__step { padding: 22px 20px 24px; } }
+.rs-pd-when__n { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 8px; border-radius: var(--rb); background: var(--lime); color: var(--lime-ink); font-size: 22px; font-weight: 800; }
+.rs-pd-when__k { color: var(--muted); font-size: var(--fs-sm); font-weight: 700; }
+.rs-card.rs-pd-when__step h3 { font-size: var(--fs-lg); font-weight: 800; }
+.rs-pd-when__step:first-child::after { content: '←'; position: absolute; top: 50%; inset-inline-end: -54px; display: grid; place-items: center; width: 36px; height: 36px; margin-top: -18px; border-radius: 50%; background: var(--lime); color: var(--lime-ink); font-size: 18px; font-weight: 800; line-height: 1; box-shadow: 0 0 0 6px color-mix(in oklab, var(--lime) 18%, transparent); }
+@media (max-width: 899px) { .rs-pd-when__step:first-child::after { content: '↓'; top: auto; bottom: -44px; inset-inline-end: auto; inset-inline-start: 28px; margin-top: 0; } }
+.rs-pd-when__note { margin: 44px 0 0; max-width: 760px; color: var(--muted); font-size: var(--fs-md); line-height: 2; }
+.rs-pd-when__note b { color: var(--fg); font-weight: 700; }
+.rs-pd-want { position: relative; margin: 28px 0 0; max-width: 820px; padding-inline-start: 24px; color: var(--fg); font-size: clamp(19px, 1.8vw, 24px); font-weight: 700; line-height: 1.9; }
+.rs-pd-want__mark { position: absolute; inset-block: 8px; inset-inline-start: 0; width: 4px; background: var(--lime); }
+
+/* «هشت بخش»: each slide drawn small beside its title, the guide's words under both. */
+ol.rs-pd-deck { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+@media (min-width: 900px) { ol.rs-pd-deck { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; } }
+.rs-pd-slide { display: grid; grid-template-columns: 148px minmax(0, 1fr); grid-template-areas: "screen head" "body body"; align-items: center; column-gap: 18px; row-gap: 16px; margin: 0; padding: 16px 18px 22px; }
+@media (max-width: 639px) { .rs-pd-slide { grid-template-columns: 112px minmax(0, 1fr); column-gap: 14px; padding: 14px 14px 18px; } }
+.rs-pd-slide__screen { grid-area: screen; position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--rs); background: #0B1020; color: #F4F7F2; }
+.rs-pd-slide__bar { position: absolute; top: 8px; inset-inline-start: 9px; display: flex; gap: 4px; }
+.rs-pd-slide__bar i { display: block; width: 5px; height: 5px; border-radius: 50%; background: rgba(244, 247, 242, .3); }
+.rs-pd-slide__num { position: absolute; bottom: 12px; inset-inline-start: 12px; font-size: 40px; font-weight: 800; line-height: 1; color: #F4F7F2; }
+.rs-pd-slide__icon { position: absolute; top: 12px; inset-inline-end: 12px; display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--rb); background: var(--lime); color: var(--lime-ink); }
+.rs-pd-slide__icon svg { width: 22px; height: 22px; }
+@media (max-width: 639px) { .rs-pd-slide__num { font-size: 28px; bottom: 8px; } .rs-pd-slide__icon { width: 32px; height: 32px; top: 9px; inset-inline-end: 9px; } .rs-pd-slide__icon svg { width: 18px; height: 18px; } }
+/* the deck's progress: this slide's share of eight, from the right, with REASON's dot at its end */
+.rs-pd-slide__screen::after { content: ''; position: absolute; inset-inline: 0; bottom: 0; height: 4px; background: linear-gradient(to left, var(--lime) var(--p), rgba(244, 247, 242, .14) var(--p)); }
+.rs-pd-slide__dot { position: absolute; bottom: -3px; inset-inline-start: calc(var(--p) - 5px); width: 10px; height: 10px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 10px var(--lime); }
+.rs-pd-slide__head { grid-area: head; display: flex; flex-direction: column; gap: 4px; }
+.rs-pd-slide__of { color: var(--muted); font-size: var(--fs-xs); font-weight: 700; }
+.rs-card.rs-pd-slide h3 { font-size: var(--fs-lg); font-weight: 800; }
+.rs-pd-slide__body { grid-area: body; display: flex; flex-direction: column; gap: 12px; }
+.rs-card .rs-pd-slide__body p { margin: 0; }
+.rs-card p.rs-pd-slide__note { padding: 10px 14px; border: 1px solid rgba(11, 16, 32, .14); border-radius: var(--rs); background: #FFFFFF; color: var(--fg); font-size: var(--fs-sm); line-height: 1.9; }
+.rs-pd-slide__note b, .rs-pd-slide__key { display: inline-block; padding: 0 8px; margin-inline-end: 6px; border-radius: var(--rs); background: var(--lime); color: var(--lime-ink); font-size: var(--fs-xs); font-weight: 800; line-height: 1.9; }
+.rs-pd-slide__key { margin-inline: 6px 0; }
+/* «اجرای آزمایشی»: REASON's own — a lime screen and a lime shadow. */
+.rs-pd-slide--key { box-shadow: 6px 6px 0 var(--lime); }
+.rs-pd-slide--key .rs-pd-slide__screen { background: var(--lime); color: #0B1020; }
+.rs-pd-slide--key .rs-pd-slide__num { color: #0B1020; }
+.rs-pd-slide--key .rs-pd-slide__icon { background: #0B1020; color: var(--lime); }
+.rs-pd-slide--key .rs-pd-slide__bar i { background: rgba(11, 16, 32, .35); }
+.rs-pd-slide--key .rs-pd-slide__screen::after { background: linear-gradient(to left, #0B1020 var(--p), rgba(11, 16, 32, .16) var(--p)); }
+.rs-pd-slide--key .rs-pd-slide__dot { background: #0B1020; box-shadow: none; }
+.rs-pd-when__step.is-lit, .rs-pd-slide.is-lit { box-shadow: 6px 6px 0 var(--lime), 0 0 40px -10px color-mix(in oklab, var(--lime) 55%, transparent); transform: translate(-2px, -2px); }
+.rs-pd-slide.is-lit .rs-pd-slide__icon { box-shadow: 0 0 0 4px color-mix(in oklab, var(--lime) 30%, transparent), 0 0 22px var(--lime); }
+
+/* «نکات پایانی»: a checklist beside the screening session's clock. */
+.rs-pd-tips__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; align-items: start; }
+@media (min-width: 900px) { .rs-pd-tips__grid { grid-template-columns: minmax(0, 1fr) 300px; gap: 56px; } }
+ul.rs-pd-checks { list-style: none; margin: 0; padding: 0; }
+li.rs-pd-check { display: flex; align-items: flex-start; gap: 14px; margin: 0; padding: 16px 0; border-top: 1px solid var(--line2); font-size: var(--fs-md); line-height: 1.9; }
+li.rs-pd-check:last-child { border-bottom: 1px solid var(--line2); }
+.rs-pd-check__tick { flex: none; display: grid; place-items: center; width: 28px; height: 28px; margin-top: 3px; border-radius: var(--rs); background: var(--lime); color: var(--lime-ink); transition: box-shadow 400ms; }
+li.rs-pd-check.is-lit .rs-pd-check__tick { box-shadow: 0 0 0 5px color-mix(in oklab, var(--lime) 25%, transparent), 0 0 22px var(--lime); }
+li.rs-pd-check a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+li.rs-pd-check a:hover { color: var(--lime); }
+.rs-pd-timer { display: flex; flex-direction: column; align-items: center; gap: 18px; margin: 0; padding: 28px 24px; text-align: center; }
+.rs-pd-timer__dial { position: relative; display: block; width: 176px; aspect-ratio: 1; }
+.rs-pd-timer__ring { display: block; width: 100%; height: 100%; transform: rotate(-90deg); fill: none; stroke-width: 12; }
+.rs-pd-timer__track { stroke: rgba(11, 16, 32, .08); }
+.rs-pd-timer__talk, .rs-pd-timer__qa { stroke-dasharray: 49 51; transition: stroke-dasharray 1200ms cubic-bezier(.4, 0, .2, 1); }
+.rs-pd-timer__talk { stroke: var(--lime); }
+.rs-pd-timer__qa { stroke: #0B1020; stroke-dashoffset: -50; transition-delay: 1100ms; }
+.rs-pd-timer.is-armed:not(.is-run) :is(.rs-pd-timer__talk, .rs-pd-timer__qa) { stroke-dasharray: 0 100; transition: none; }
+.rs-pd-timer__mid { position: absolute; inset: 0; display: grid; place-content: center; color: var(--muted); font-size: var(--fs-sm); line-height: 1.4; }
+.rs-pd-timer__mid b { color: var(--fg); font-size: 44px; font-weight: 800; line-height: 1.1; }
+.rs-pd-timer figcaption { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.rs-pd-timer__title { color: var(--fg); font-size: var(--fs-lg); font-weight: 800; }
+.rs-pd-timer__key { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: var(--fs-sm); }
+.rs-pd-timer__key::before { content: ''; width: 12px; height: 12px; border: 1.5px solid #0B1020; }
+.rs-pd-timer__key--talk::before { background: var(--lime); }
+.rs-pd-timer__key--qa::before { background: #0B1020; }
+.rs-pd-goodbye { margin: 64px 0 0; font-size: clamp(36px, 5vw, 64px); font-weight: 800; line-height: 1.3; }
+.rs-pd-goodbye__dot { display: inline-block; width: .2em; height: .2em; margin-inline-start: .1em; border-radius: 50%; background: var(--lime); box-shadow: 0 0 24px var(--lime); animation: rs-pd-breathe 2.6s ease-in-out infinite; }
+@keyframes rs-pd-breathe { 50% { box-shadow: 0 0 6px var(--lime); transform: scale(.85); } }
+@media (prefers-reduced-motion: reduce) {
+	.rs-pd-fan__slide, .rs-pd-fan__slide--1::before, .rs-pd-goodbye__dot { animation: none; }
+	.rs-pd-fan__slide, .rs-pd-timer__talk, .rs-pd-timer__qa { transition: none; }
+	.rs-pd-slide.is-lit { transform: none; }
+}
+
+/* The apply form's last step (2026-10-17): «راهنمای تهیه پیچ‌دک» above the uploads — a light box with a lime shadow,
+   the eight sections in order, the full guide in a new tab — and the required «قوانین و مقررات» tick before sending. */
+.rs-deckguide { grid-column: 1 / -1; --fg: #0B1020; --muted: rgba(11, 16, 32, .72); display: flex; flex-direction: column; gap: 12px; padding: 20px 22px 22px; color: var(--fg); background: #F4F7F2; border: 2px solid rgba(11, 16, 32, .9); border-radius: var(--r); box-shadow: 6px 6px 0 var(--lime); }
+@media (max-width: 639px) { .rs-deckguide { padding: 16px 16px 18px; } }
+.rs-deckguide__title { margin: 0; display: flex; align-items: center; gap: 10px; font-size: var(--fs-md); font-weight: 800; line-height: 1.5; }
+.rs-deckguide__icon { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--rb); background: var(--lime); color: var(--lime-ink); }
+.rs-deckguide__icon svg { width: 20px; height: 20px; }
+.rs-deckguide__lead { margin: 0; color: var(--muted); font-size: var(--fs-sm); line-height: 1.9; }
+ol.rs-deckguide__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 899px) { ol.rs-deckguide__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.rs-deckguide__list li { display: flex; align-items: center; gap: 8px; margin: 0; padding: 6px 10px; border: 1px solid rgba(11, 16, 32, .14); border-radius: var(--rs); background: #FFFFFF; font-size: var(--fs-xs); font-weight: 600; line-height: 1.6; }
+.rs-deckguide__list b { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #0B1020; color: var(--lime); font-size: 12px; font-weight: 800; }
+.rs-deckguide__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.rs-deckguide .rs-btn--accent, .rs-deckguide .rs-btn--accent:hover { background: #0B1020; color: #F4F7F2; text-decoration: none; }
+.rs-deckguide .rs-btn--accent:hover { box-shadow: 4px 4px 0 var(--lime); }
+/* A ghost button inside a light box (the guide box; the home page's pitch-deck box, 2026-10-17): dark on clear, not the
+   dark glass it has on a dark section. */
+:is(.rs-deckguide, .rs-aud, .rs-card) .rs-btn--ghost { text-decoration: none; color: #0B1020; border-color: rgba(11, 16, 32, .3); background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+:is(.rs-deckguide, .rs-aud, .rs-card) .rs-btn--ghost:hover { border-color: #0B1020; background: #FFFFFF; color: #0B1020; }
+.rs-terms { padding-top: 6px; }
+.rs-terms label { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: 600; line-height: 1.9; }
+.rs-field.rs-terms input[type="checkbox"] { -webkit-appearance: none; appearance: none; flex: none; width: 24px; height: 24px; margin: 3px 0 0; padding: 0; border-radius: var(--rs); border: 2px solid color-mix(in oklab, var(--fg) 55%, transparent); background: transparent; cursor: pointer; transition: background-color 200ms, border-color 200ms; }
+.rs-field.rs-terms input[type="checkbox"]:checked { border-color: var(--lime); background: var(--lime) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' stroke='%230B1020' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat; }
+.rs-field.rs-terms input[type="checkbox"]:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; box-shadow: none; }
+.rs-terms a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.rs-terms a:hover { color: var(--lime); }
+.rs-terms .rs-field__hint { padding-inline-start: 36px; }
+
+/* 2026-10-18 (Golrang: «only the palette's colours»): every dark section is Midnight #0B1020 — the near-black second
+   tone is gone — so a «deep» section is told from its dark neighbours by a hairline of Off White. */
+:root[data-bg="mixed"] [data-band~="mixed:deep"] { box-shadow: inset 0 1px 0 rgba(244, 247, 242, .08), inset 0 -1px 0 rgba(244, 247, 242, .08); }
+
+/* ── After sending (2026-10-18, functions.php reason_done_html()): the tick draws itself, then the words, the tracking
+   code, the steps from here (the first done) and the ways on. ── */
+.rs-done { max-width: 820px; padding: clamp(28px, 4vw, 48px); border-radius: var(--r); border: 1px solid var(--line2); border-top: 3px solid var(--lime); background: color-mix(in oklab, var(--surf) 60%, transparent); outline: none; }
+.rs-done__mark { display: block; width: 56px; height: 56px; margin-bottom: 20px; color: var(--lime); }
+.rs-done__mark svg { display: block; overflow: visible; }
+.rs-done__mark circle { fill: color-mix(in oklab, var(--lime) 14%, transparent); stroke: var(--lime); stroke-width: 2; stroke-dasharray: 164; stroke-dashoffset: 164; transition: stroke-dashoffset 700ms cubic-bezier(.4, 0, .2, 1); }
+.rs-done__mark path { fill: none; stroke: var(--lime); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 40; transition: stroke-dashoffset 450ms cubic-bezier(.4, 0, .2, 1) 550ms; }
+.rs-done.is-in .rs-done__mark circle, .rs-done.is-in .rs-done__mark path { stroke-dashoffset: 0; }
+.rs-done > :not(.rs-done__mark) { opacity: 0; transform: translateY(8px); transition: opacity 500ms 700ms, transform 500ms 700ms; }
+.rs-done.is-in > :not(.rs-done__mark) { opacity: 1; transform: none; }
+.rs-done .rs-eyebrow { margin: 0 0 12px; }
+.rs-done .rs-done__title { margin: 0; font-size: var(--fs-h2); font-weight: 800; line-height: var(--lh-head); }
+.rs-done .rs-done__lead { max-width: 640px; margin: 14px 0 0; color: var(--muted); line-height: 2; }
+.rs-done .rs-done__ref { border-radius: var(--rs); display: inline-flex; align-items: center; gap: 14px; margin: 24px 0 0; padding: 10px 16px; border: 1px dashed color-mix(in oklab, var(--lime) 70%, transparent); }
+.rs-done__ref span { color: var(--muted); font-size: var(--fs-sm); }
+.rs-done__ref b { color: var(--lime); font-family: 'JetBrains Mono', ui-monospace, monospace; /* a code: fixed width */ font-size: var(--fs-lg); font-weight: 600; letter-spacing: .06em; }
+.rs-done .rs-done__h { margin: 32px 0 14px; font-size: var(--fs-md); font-weight: 800; }
+.rs-done .rs-done__steps { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.rs-done .rs-done__steps li { margin: 0; display: flex; align-items: flex-start; gap: 14px; }
+.rs-done__steps li > b { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border: 2px solid rgba(244, 247, 242, .3); border-radius: 50%; font-size: var(--fs-sm); font-weight: 800; }
+.rs-done__steps li.is-done > b { border-color: var(--lime); background: var(--lime); color: var(--lime-ink); }
+.rs-done__steps li > span { display: flex; flex-direction: column; gap: 2px; padding-top: 3px; }
+.rs-done__steps strong { font-weight: 700; }
+.rs-done__steps small { color: var(--muted); font-size: var(--fs-sm); line-height: 1.8; }
+.rs-done__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+@media (prefers-reduced-motion: reduce) { .rs-done__mark circle, .rs-done__mark path, .rs-done > :not(.rs-done__mark) { transition: none; } }
+/* «Pitch Deck» in a FAQ answer opens its guide (2026-10-18). */
+.rs-faq__a a { color: var(--fg); text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.rs-faq__a a:hover { color: var(--lime); }
+
+/* ── «خبرنامه REASON» (2026-10-19, functions.php reason_newsletter_html()): above the footer on every page but the
+   application's, on a light band — the report's cover tilted on the right, the line and the form beside it. ── */
+.rs-news { padding-block: clamp(48px, 7vw, 88px); }
+.rs-news__in { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; align-items: center; }
+@media (min-width: 760px) { .rs-news__in { grid-template-columns: 200px minmax(0, 1fr); gap: 56px; } }
+.rs-news__cover { display: block; justify-self: start; width: 150px; transform: rotate(-4deg); box-shadow: 14px 18px 0 -2px var(--lime), 0 24px 48px rgba(11, 16, 32, .28); transition: transform 400ms cubic-bezier(.2, .7, .2, 1); }
+@media (min-width: 760px) { .rs-news__cover { width: 184px; } }
+.rs-news__cover:hover { transform: rotate(-1deg) translateY(-4px); }
+.rs-news__cover img { display: block; width: 100%; height: auto; }
+.rs-news__copy { max-width: 680px; }
+.rs-news .rs-eyebrow { margin: 0 0 12px; }
+.rs-news__title { margin: 0; font-size: var(--fs-h2); font-weight: 800; line-height: var(--lh-head); }
+.rs-news__lead { margin: 12px 0 0; color: var(--muted); line-height: 2; }
+.rs-news__box { margin-top: 22px; }
+.rs-news__form { display: flex; flex-wrap: wrap; gap: 10px; }
+.rs-news__form input[type="email"] { flex: 1 1 240px; min-width: 0; min-height: 50px; padding: 12px 16px; font-size: 16px; color: var(--fg); background: var(--surf); border: 1px solid var(--line2); border-radius: var(--rb); outline: none; text-align: left; transition: border-color 200ms, box-shadow 200ms; }
+.rs-news__form input[type="email"]:focus { border-color: var(--fg); box-shadow: 0 0 0 3px color-mix(in oklab, var(--lime) 55%, transparent); }
+.rs-news__form input[aria-invalid="true"] { border-color: var(--err); }
+.rs-news__form button { flex: none; min-height: 50px; cursor: pointer; }
+.rs-news__form button.is-busy { cursor: progress; opacity: .7; }
+.rs-news__reply { border-radius: var(--rs); display: flex; flex-direction: column; gap: 2px; margin-bottom: 12px; padding: 12px 16px; border: 1px solid var(--line2); border-inline-start: 3px solid var(--lime); font-size: var(--fs-sm); line-height: 1.9; background: var(--surf); }
+.rs-news__reply b { font-weight: 800; }
+.rs-news__reply span { color: var(--muted); }
+.rs-news__reply--err { border-inline-start-color: var(--err); }
+.rs-news__get { margin-top: 4px; }
+.rs-news__get small { font-weight: 500; opacity: .8; }
+.rs-news__fine { margin: 14px 0 0; color: var(--muted); font-size: var(--fs-xs); line-height: 1.9; }
+
+/* ── Phones (2026-10-21, Golrang's review: «a bit of motion on the phone», «the layouts are a little messy») ──
+   Titles break into even lines instead of leaving one word on the last; the facts sit two to a row with each figure on
+   one line; the apply bar steps away while you read down (theme.js sectionNav()) and drops its frame; the newsletter's
+   button takes the row; the pitch-deck figures share one row. Motion: where the browser can tie an animation to the
+   scroll (html.rs-sd, theme.js), what was revealed once on a timer now follows the finger — cards rise as they come up
+   (the second column a beat later), the stills drift inside their frames, the figures' highlighter draws, the eyebrows
+   slide in. Transform and opacity only, so it stays on the compositor (the phone pages were «heavy and slow» with the
+   pinned scenes, 2026-10-17). */
+
+.rs-h2, h2, h3, .rs-news__title, .rs-pd-hero__title, p.rs-footer__tagline { text-wrap: balance; }
+:where(.rs-root) p { text-wrap: pretty; }
+
+@media (max-width: 639px) {
+	ul.rs-glance, ul.rs-facts { gap: 10px; }
+	.rs-glance__item, .rs-fact { gap: 4px; padding: 16px 14px 14px; }
+	.rs-glance__icon { width: 34px; height: 34px; margin-bottom: 8px; }
+	.rs-glance__icon svg { width: 18px; height: 18px; }
+	.rs-glance__value, .rs-fact__num { font-size: 30px; line-height: 1.3; white-space: nowrap; }
+	:is(.rs-glance__value, .rs-fact__num) small { font-size: 14px; }
+	.rs-glance__item--text .rs-glance__value { font-size: 18px; line-height: 1.6; white-space: normal; }
+	.rs-glance__note, .rs-fact__label { font-size: 13px; line-height: 1.85; }
+
+	.rs-snav { bottom: 12px; left: 16px; right: 16px; }
+	.rs-snav__in { padding: 0; background: none; border: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; overflow: visible; }
+	.rs-snav .rs-snav__cta { min-height: 48px; padding: 12px 18px; box-shadow: 0 12px 28px -10px rgba(11, 16, 32, .7), 0 0 24px -4px color-mix(in oklab, var(--lime) 40%, transparent); }
+	.rs-snav.is-on.is-away { opacity: 0; visibility: hidden; transform: translateY(20px); transition: opacity 250ms, transform 250ms, visibility 0s 250ms; }
+
+	.rs-news__cover { width: 128px; }
+	.rs-news__form button { flex: 1 1 100%; justify-content: center; }
+
+	ul.rs-pd-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; gap: 8px; }
+	ul.rs-pd-stats li { flex-direction: column; align-items: center; gap: 0; padding: 10px 6px; text-align: center; }
+	ul.rs-pd-stats span { font-size: 12px; line-height: 1.7; }
+}
+
+@keyframes rs-sd-rise { from { opacity: .15; transform: translateY(48px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes rs-sd-line { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes rs-sd-mask { from { transform: translateY(105%); } to { transform: none; } }
+@keyframes rs-sd-drift { from { transform: translateY(-7%) scale(1.16); } to { transform: translateY(7%) scale(1.16); } }
+@keyframes rs-sd-slide { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes rs-sd-draw { from { background-size: 0% 100%; } to { background-size: 100% 100%; } }
+@keyframes rs-sd-cover { from { transform: rotate(-11deg) translateY(36px); } to { transform: rotate(-3deg) translateY(-6px); } }
+
+@media (max-width: 899px) and (prefers-reduced-motion: no-preference) {
+	/* overflow: hidden makes a box a scroller, and an animation tied to the view of a scroller that never scrolls never
+	   runs: these frames clip instead. */
+	html.rs-sd :is(.rs-media, .rs-program__head, .rs-pd-hero) { overflow: clip; }
+	html.rs-sd [data-reveal]:not([data-reveal="line"], [data-reveal="mask"]) { animation: rs-sd-rise linear both; animation-timeline: view(); animation-range: cover 0px cover 200px; }
+	html.rs-sd [data-stagger] > [data-reveal]:nth-child(2n) { animation-range: cover 50px cover 250px; }
+	html.rs-sd [data-reveal].rs-sd-now { animation: rs-sd-rise 900ms cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--sd-i, 0) * 70ms); animation-timeline: auto; }
+	html.rs-sd [data-reveal="line"] { transform-origin: right center; animation: rs-sd-line linear both; animation-timeline: view(); animation-range: cover 0px cover 280px; }
+	html.rs-sd [data-reveal="mask"] { animation: rs-sd-mask linear both; animation-timeline: view(); animation-range: cover 0px cover 220px; }
+	html.rs-sd .rs-media img { animation: rs-sd-drift linear both; animation-timeline: view(); animation-range: cover; }
+	html.rs-sd .rs-eyebrow { animation: rs-sd-slide linear both; animation-timeline: view(); animation-range: cover 20px cover 200px; }
+	html.rs-sd :is(.rs-glance__value, .rs-fact__num) > bdi { background-repeat: no-repeat; background-position: right center; animation: rs-sd-draw linear both; animation-timeline: view(); animation-range: cover 140px cover 380px; }
+	html.rs-sd .rs-news__cover { animation: rs-sd-cover linear both; animation-timeline: view(); animation-range: entry 0% cover 50%; }
+}
+
+/* ── Glyphs (functions.php reason_glyphs(), 2026-10-21): Iconsax «Linear» arrows, menu and ticks, at the text's size ── */
+.rs-ico { display: block; flex: none; width: 1.2em; height: 1.2em; stroke-width: 1.5; }
+/* In a button the arrow takes the old text arrow's width (the hero's two buttons fill a 390px row exactly), a little
+   bolder to hold its own beside the button's bold text. */
+.rs-btn .rs-ico { width: 1em; height: 1em; stroke-width: 1.75; }
+span[aria-hidden="true"]:has(> .rs-ico) { display: inline-flex; align-items: center; vertical-align: -.2em; }
+.rs-round { display: inline-grid; place-items: center; }
+.rs-round .rs-ico { width: 22px; height: 22px; }
+.rs-pair__link .rs-ico { width: 24px; height: 24px; }
+:is(.rs-sol__tick, .rs-done__steps b) .rs-ico { width: 16px; height: 16px; }
+.rs-pd-check__tick .rs-ico { width: 18px; height: 18px; }
+.rs-deck .rs-ico { width: 18px; height: 18px; }
+.rs-menu-btn { place-items: center; }
+.rs-menu-btn .rs-ico { width: 22px; height: 22px; }
+.rs-menu-btn .rs-ico + .rs-ico, .rs-menu-btn[aria-expanded="true"] .rs-ico:first-child { display: none; }
+.rs-menu-btn[aria-expanded="true"] .rs-ico + .rs-ico { display: block; }
+@media (prefers-reduced-motion: reduce) { .rs-faq__v { transition: none; } }
+
+/* The guide's link in a condition (2026-10-21, «رعایت ساختار استاندارد ارائه»): dark text, a lime underline. */
+:is(.rs-condcard, li.rs-cond) a { color: var(--fg); font-weight: 700; text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 3px; text-underline-offset: 5px; }
+:is(.rs-condcard, li.rs-cond) a:hover { text-decoration-color: var(--fg); }
+
+/* «هوش مصنوعی، در دل صنعت», the call's six areas (2026-10-21): each area's scope under its title. */
+.rs-sol__scope { margin: 2px 0 6px; color: var(--muted); font-size: var(--fs-base); line-height: 1.9; }
+
+/* REASON's LinkedIn (and Telegram) in the footer's «تماس با ما» (2026-10-24): the icon beside the name. */
+.rs-footer__profile { display: inline-flex; align-items: center; gap: 8px; }
+.rs-footer__profile svg { width: 18px; height: 18px; flex: none; }
+

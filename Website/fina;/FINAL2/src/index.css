@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Official Locked Seynaro 4-Color Brand Palette (Chapter 8.1) */
+    --bg-navy: #0C0F1A;
+    --teal-primary: #0AB7A3;
+    --coral-accent: #FE5A40;
+    --white-sovereign: #F6F9FD;
+
+    /* Official Seynaro Slate Baseline (Chapter 8.2) */
+    --slate-1: #1E2235;
+    --slate-2: #2B3048;
+    --slate-4: #5B6880;
+    --slate-6: #8A96AC;
+  }
+
+  * {
+    box-sizing: border-box;
+    letter-spacing: 0 !important;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #0C0F1A;
+    color: #F6F9FD;
+    font-family: "Vazirmatn", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-feature-settings: "ss01" 1, "tnum" 1;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  span,
+  li,
+  button,
+  td,
+  th {
+    letter-spacing: 0 !important;
+  }
+}
+
+.font-display {
+  font-family: "Estedad", "Vazirmatn", sans-serif;
+  letter-spacing: 0 !important;
+  line-height: 1.42;
+}
+
+.font-sans-fa {
+  font-family: "Vazirmatn", sans-serif;
+  letter-spacing: 0 !important;
+  line-height: 1.75;
+}
+
+.font-mono-ltr {
+  font-family: "JetBrains Mono", monospace;
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Architectural 16:9 Slide Frame with Generous Whitespace */
+.slide-frame {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2.25rem 2.5rem 2.25rem 4.25rem;
+  overflow-y: auto;
+  background-color: #0C0F1A;
+}
+
+@media (min-width: 1024px) {
+  .slide-frame {
+    padding: 3rem 4.5rem 3rem 5.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .slide-frame {
+    padding: 1.5rem 1.25rem 1.5rem 2.75rem;
+    justify-content: flex-start;
+  }
+}
+
+.slide-canvas-16x9 {
+  width: 100%;
+  max-width: 1240px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+/* Subtle Architectural Grid Backdrop */
+.bg-architectural-grid {
+  background-image: 
+    linear-gradient(to right, rgba(43, 48, 72, 0.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(43, 48, 72, 0.22) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* SVG Telemetry Pulse & Dash Flow (Chapter 12.2 Timing Curves) */
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -48;
+  }
+}
+
+.animate-dash-flow {
+  stroke-dasharray: 6 6;
+  animation: dash-flow 2.8s linear infinite;
+}
+
+@keyframes telemetry-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-telemetry-pulse {
+  animation: telemetry-pulse 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.slide-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.slide-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.slide-scroll::-webkit-scrollbar-thumb {
+  background: rgba(43, 48, 72, 0.8);
+  border-radius: 9999px;
+}

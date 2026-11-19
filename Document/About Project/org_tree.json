@@ -1,0 +1,196 @@
+{
+  "meta": {
+    "status": "DRAFT built from Ali's voice notes + scenario. Replace/adjust when the hand-drawn image is available. Structure authority = his image.",
+    "rtl": true
+  },
+  "root": {
+    "id": "seynaro",
+    "label": "سینارو",
+    "subtitle": "ثبت دانش و تداوم کار"
+  },
+  "inputs": [
+    {
+      "id": "logical",
+      "label": "دانش منطقی",
+      "note": "شش موتور + یک LLM [[نام موتورها از continuity_os.md]]"
+    },
+    {
+      "id": "practical",
+      "label": "دانش عملی",
+      "note": "تجربه اکتسابی؛ روزی ۳ دقیقه گفتگو"
+    }
+  ],
+  "branches": [
+    {
+      "id": "employee",
+      "label": "کارمند",
+      "color": "#0BB8A5",
+      "leaves": [
+        {
+          "id": "my_dashboard",
+          "label": "داشبورد کارهای من",
+          "note": "همه فایل‌ها یک‌جا؛ جستجو یا گفتگو با دستیار شخصی"
+        },
+        {
+          "id": "private_space",
+          "label": "فضای شخصی دانش",
+          "note": "سند اول به خود فرد نشان داده می‌شود؛ بدون اجازه‌اش دیده نمی‌شود"
+        },
+        {
+          "id": "info_levels",
+          "label": "سه سطح اطلاعات",
+          "note": "خصوصی • اشتراک کنترل‌شده • دانش سازمانی"
+        },
+        {
+          "id": "responder",
+          "label": "پاسخ‌گوی شخصی",
+          "note": "Auto-Answer • Draft Approval • Human Escalation"
+        },
+        {
+          "id": "timed_share",
+          "label": "اشتراک زمان‌دار",
+          "note": "تحویل موقت برای مرخصی"
+        },
+        {
+          "id": "handover",
+          "label": "تحویل هنگام خروج",
+          "note": "Onboarding / Offboarding"
+        },
+        {
+          "id": "skill_passport",
+          "label": "گذرنامه مهارتی",
+          "note": "رزومه، چارت مهارت، امتیاز روزانه"
+        },
+        {
+          "id": "transparency",
+          "label": "دفتر شفافیت دسترسی",
+          "note": "گراف: چه کسی به چه چیزی دسترسی دارد"
+        },
+        {
+          "id": "extra_work",
+          "label": "رسید کار اضافه",
+          "note": "ثبت مشارکت و کار اضافه"
+        },
+        {
+          "id": "team_space",
+          "label": "فضای مشترک تیم",
+          "note": "فقط سازنده آخر ویرایش می‌کند؛ عضو جدید سریع پاسخ می‌گیرد"
+        }
+      ]
+    },
+    {
+      "id": "manager",
+      "label": "مدیر واحد",
+      "color": "#0C1226",
+      "leaves": [
+        {
+          "id": "capacity",
+          "label": "ظرفیت تیم",
+          "note": ""
+        },
+        {
+          "id": "workload",
+          "label": "بار کاری و WBI",
+          "note": "[[تعریف WBI را تأیید کن]]"
+        },
+        {
+          "id": "dependency",
+          "label": "وابستگی افراد به کار",
+          "note": ""
+        },
+        {
+          "id": "leave_impact",
+          "label": "اثر مرخصی و غیبت",
+          "note": "چه کاری لنگ می‌ماند؛ تأیید/رد با دلیل"
+        },
+        {
+          "id": "stop_risk",
+          "label": "ریسک توقف عملیات",
+          "note": ""
+        },
+        {
+          "id": "successor_coverage",
+          "label": "پوشش مهارت جانشین",
+          "note": "برای هر کار: جانشین و مهارت لازم"
+        },
+        {
+          "id": "unit_report",
+          "label": "گزارش وضعیت واحد",
+          "note": ""
+        },
+        {
+          "id": "weekly_draft",
+          "label": "پیش‌نویس گزارش هفتگی",
+          "note": ""
+        },
+        {
+          "id": "overtime",
+          "label": "دفتر اضافه‌کار",
+          "note": ""
+        },
+        {
+          "id": "trend_alert",
+          "label": "روند عملکرد و هشدار افت",
+          "note": "[[تعریف «ای‌پی» را تأیید کن]]"
+        }
+      ]
+    },
+    {
+      "id": "ceo",
+      "label": "مدیرعامل",
+      "color": "#FF5B3F",
+      "leaves": [
+        {
+          "id": "org_glance",
+          "label": "سازمان در یک نگاه",
+          "note": "توسط LLM"
+        },
+        {
+          "id": "risk_map",
+          "label": "نقشه ریسک تمرکز",
+          "note": "توزیع کارهای حیاتی"
+        },
+        {
+          "id": "commitments",
+          "label": "تعهدات بحرانی و موعدها",
+          "note": ""
+        },
+        {
+          "id": "outputs",
+          "label": "ثبت خروجی کارکنان",
+          "note": ""
+        },
+        {
+          "id": "open_cases",
+          "label": "پرونده‌های باز افراد",
+          "note": ""
+        },
+        {
+          "id": "successor_assign",
+          "label": "تعیین جانشین",
+          "note": "برای همه کارهای حیاتی"
+        },
+        {
+          "id": "handover_check",
+          "label": "بررسی کامل بودن تحویل",
+          "note": ""
+        },
+        {
+          "id": "handover_cert",
+          "label": "گواهی تحویل و سوابق فایل",
+          "note": ""
+        },
+        {
+          "id": "profit",
+          "label": "سود شرکت",
+          "note": ""
+        },
+        {
+          "id": "pricing",
+          "label": "قیمت‌گذاری شفاف",
+          "note": "منشأ قیمت مشخص"
+        }
+      ]
+    }
+  ]
+}

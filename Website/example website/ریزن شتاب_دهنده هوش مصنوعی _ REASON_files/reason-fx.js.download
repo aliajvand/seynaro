@@ -1,0 +1,655 @@
+/* REASON — motion and canvas */
+(function () {
+  const FA = '۰۱۲۳۴۵۶۷۸۹';
+  const fa = (v) => String(v).replace(/\d/g, (d) => FA[d]);
+  const faSep = (n) => fa(Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '٬'));
+  const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+  const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+  const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const reduced = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const level = (m) => (reduced() ? 'off' : m || 'full');
+
+  const LOGO = [
+    'M25.5 6C31.299 6 36 10.701 36 16.5C36 22.0349 31.7174 26.5691 26.2852 26.9707L36 42H29.2695L19.5742 27H19.5L19.3467 26.6484L16.0039 21.4775C16.7661 21.6535 17.5593 21.75 18.375 21.75H25.5C28.3995 21.75 30.75 19.3995 30.75 16.5C30.75 13.6005 28.3995 11.25 25.5 11.25H9.375L6 6H25.5Z',
+    'M64.5 27H48V36H72V42H42V21H64.5V27Z', 'M72 12H42V6H72V12Z',
+    'M100.5 6L114 42H106.8L96 13.1997L85.2 42H78L91.5 6H100.5Z',
+    'M146.296 11.25H130.43C127.738 11.2501 125.555 13.4327 125.555 16.125C125.555 18.8173 127.738 20.9999 130.43 21H139.5C145.299 21.0001 150 25.7011 150 31.5C150 37.2989 145.299 41.9999 139.5 42H120.37L123.703 36.75H139.94C142.632 36.7499 144.815 34.5673 144.815 31.875C144.815 29.1827 142.632 27.0001 139.94 27H130.5C124.701 27 120 22.299 120 16.5C120 10.701 124.701 6 130.5 6H149.63L146.296 11.25Z',
+    'M174 6C183.941 6 192 14.0589 192 24C192 33.9411 183.941 42 174 42C164.059 42 156 33.9411 156 24C156 14.0589 164.059 6 174 6ZM174 12C167.373 12 162 17.3726 162 24C162 30.6274 167.373 36 174 36C180.627 36 186 30.6274 186 24C186 17.3726 180.627 12 174 12Z',
+    'M203.197 6C203.699 6 204.167 6.25065 204.445 6.66795L222 33V6H228V40.5C228 41.3284 227.328 42 226.5 42H222.803C222.301 42 221.833 41.7493 221.555 41.3321L204 15V42H198V7.5C198 6.67157 198.672 6 199.5 6H203.197Z',
+  ];
+
+  // points inside the wordmark (letters span x 6..228, y 6..42 in the 234×48 viewBox)
+  function sampleLogo(w, n) {
+    const s = w / 222, h = 36 * s;
+    const c = document.createElement('canvas');
+    c.width = Math.ceil(w); c.height = Math.ceil(h);
+    const x = c.getContext('2d');
+    x.setTransform(s, 0, 0, s, -6 * s, -6 * s);
+    LOGO.forEach((d) => x.fill(new Path2D(d), 'evenodd'));
+    x.beginPath(); x.arc(96, 35.25, 3.75, 0, 7); x.fill();
+    const data = x.getImageData(0, 0, c.width, c.height).data;
+    /* The grid's pitch from the letters' real ink, so it yields about n points, each stroke covered evenly. It used to
+       assume the ink filled 32% of the box (it is less), found far more points than dots, and kept a random n of them:
+       the word formed with holes, the thin R, S and N broken (2026-10-19). */
+    let ink = 0;
+    for (let i = 3; i < data.length; i += 4) if (data[i] > 120) ink++;
+    const step = Math.max(1, Math.sqrt(ink / n));
+    let pts = [];
+    for (let yy = step / 2; yy < c.height; yy += step)
+      for (let xx = step / 2; xx < c.width; xx += step)
+        if (data[((yy | 0) * c.width + (xx | 0)) * 4 + 3] > 120) pts.push({ x: xx, y: yy });
+    // more than n: thin them evenly along the word, never at random
+    if (pts.length > n) { const k = pts.length / n; pts = Array.from({ length: n }, (_, i) => pts[Math.floor(i * k)]); }
+    // shuffled only so the dots fly in to their places in no order
+    for (let i = pts.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [pts[i], pts[j]] = [pts[j], pts[i]]; }
+    if (!pts.length) pts = [{ x: w / 2, y: h / 2 }];
+    const out = [];
+    for (let i = 0; i < n; i++) out.push(pts[i % pts.length]);
+    return { pts: out, w, h };
+  }
+
+  const cCache = {};
+  function rgba(hex, a) {
+    hex = (hex || '#ffffff').trim();
+    let c = cCache[hex];
+    if (!c) {
+      let h = hex.replace('#', '');
+      if (h.length === 3) h = h.split('').map((x) => x + x).join('');
+      const n = parseInt(h.slice(0, 6), 16);
+      c = cCache[hex] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+    return `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+  }
+  function readColors(el) {
+    const cs = getComputedStyle(el);
+    const g = (k) => cs.getPropertyValue(k).trim();
+    return { fg: g('--fg') || '#ffffff', accent: g('--accent') || '#B7F34A', accent2: g('--accent2') || g('--accent') || '#B7F34A', lime: g('--lime') || '#B7F34A' };
+  }
+
+  function Engine(canvas, opts, impl) {
+    const ctx = canvas.getContext('2d');
+    const E = { canvas, ctx, opts, W: 0, H: 0, t: 0, visible: true, mouse: { x: -1e4, y: -1e4, in: false }, clicks: [], colors: readColors(canvas) };
+    let raf = 0, last = performance.now(), start = last, alive = true, lastColor = 0;
+    const drawStatic = () => { E.t = 1e6; E.colors = readColors(canvas); impl.frame(E, 16, true); };
+    function resize() {
+      const r = canvas.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      if (Math.abs(r.width - E.W) < 1 && Math.abs(r.height - E.H) < 1 && E.ready) return;
+      E.W = r.width; E.H = r.height;
+      canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      impl.setup(E); E.ready = true;
+      if (opts.motion === 'off') drawStatic();
+    }
+    function loop(now) {
+      if (!alive) return;
+      raf = requestAnimationFrame(loop);
+      if (!E.visible || document.hidden || !E.ready) { last = now; return; }
+      const dt = Math.min(50, now - last); last = now; E.t = now - start;
+      if (now - lastColor > 400) { E.colors = readColors(canvas); lastColor = now; }
+      impl.frame(E, dt, false);
+    }
+    const ro = new ResizeObserver(resize); ro.observe(canvas);
+    if (impl.place && document.fonts) document.fonts.ready.then(() => { if (alive && E.ready) { impl.place(E); if (opts.motion === 'off') drawStatic(); } });
+    const io = new IntersectionObserver((es) => { E.visible = es[es.length - 1].isIntersecting; }); io.observe(canvas);
+    const move = (e) => {
+      const r = canvas.getBoundingClientRect();
+      E.mouse.x = e.clientX - r.left; E.mouse.y = e.clientY - r.top;
+      E.mouse.in = E.mouse.x >= 0 && E.mouse.y >= 0 && E.mouse.x <= r.width && E.mouse.y <= r.height;
+    };
+    const leave = () => { E.mouse.in = false; };
+    const down = (e) => { move(e); if (E.mouse.in) E.clicks.push({ x: E.mouse.x, y: E.mouse.y, t: E.t }); };
+    window.addEventListener('pointermove', move, { passive: true });
+    document.documentElement.addEventListener('pointerleave', leave);
+    window.addEventListener('pointerdown', down, { passive: true });
+    resize();
+    if (opts.motion !== 'off') raf = requestAnimationFrame(loop);
+    return {
+      destroy() {
+        alive = false; cancelAnimationFrame(raf); ro.disconnect(); io.disconnect();
+        window.removeEventListener('pointermove', move);
+        document.documentElement.removeEventListener('pointerleave', leave);
+        window.removeEventListener('pointerdown', down);
+      },
+      redraw() { if (opts.motion === 'off' && E.ready) drawStatic(); },
+      /** The wordmark's dot in the canvas's own px, once laid out. */
+      dot() { return E.dot ? { x: E.dot.x, y: E.dot.y, r: E.dot.r } : null; },
+    };
+  }
+
+  /* A soft round glow, pre-rendered once per colour, drawn additively (cheaper than shadowBlur every frame). */
+  const glowCache = {};
+  function glowSprite(color) {
+    if (glowCache[color]) return glowCache[color];
+    const c = document.createElement('canvas'); c.width = c.height = 64;
+    const x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, rgba(color, 1)); g.addColorStop(0.22, rgba(color, 0.55)); g.addColorStop(0.55, rgba(color, 0.12)); g.addColorStop(1, rgba(color, 0));
+    x.fillStyle = g; x.fillRect(0, 0, 64, 64);
+    return (glowCache[color] = c);
+  }
+  /* The lock: sparks thrown off the letters, outwards from the middle of the word. */
+  function burstSparks(E, cx, cy) {
+    E.sparks = E.sparks || [];
+    const n = Math.min(140, E.nodes.length);
+    for (let i = 0; i < n; i++) {
+      const nd = E.nodes[(Math.random() * E.nodes.length) | 0];
+      const dx = nd.tx - cx, dy = nd.ty - cy, d = Math.hypot(dx, dy) || 1, sp = 2 + Math.random() * 6;
+      const life = 900 + Math.random() * 900;
+      E.sparks.push({ x: nd.tx, y: nd.ty, vx: (dx / d) * sp + (Math.random() - 0.5) * 2, vy: (dy / d) * sp * 0.6 + (Math.random() - 0.5) * 2 - 1, life, max: life, w: Math.random() < 0.35 });
+    }
+  }
+
+  /* neural field that condenses into the wordmark on scroll */
+  const neuralImpl = {
+    setup(E) {
+      const { W, H, opts } = E;
+      const full = opts.motion !== 'subtle';
+      // Denser where the wordmark forms on scroll (wide, full motion: the letters read crisply), lighter elsewhere.
+      const show = full && !!opts.progress;
+      const n = Math.round(clamp((W * H) / (show ? 3000 : full ? 4600 : 8200), 70, show ? 440 : full ? 280 : 160));
+      // Points inside the letters as fractions of the wordmark's box (u, v), so place() can size and move it.
+      const L = sampleLogo(600, n);
+      const u0 = (96 - 6) / 222, v0 = (35.25 - 6) / 36;
+      E.nodes = [];
+      for (let i = 0; i < n; i++) {
+        const u = L.pts[i].x / L.w, v = L.pts[i].y / L.h;
+        // The dot inside the «A» (96, 35.25 in the viewBox): reason-sig.js lifts it out of the wordmark and down the page.
+        E.nodes.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3, u, v, tx: 0, ty: 0, g: 0, px: 0, py: 0, d: Math.hypot((u - u0) * 222, (v - v0) * 36) < 6 });
+      }
+      E.nb = E.nodes.map(() => []);
+      E.pulses = []; E.spawn = 0;
+      neuralImpl.place(E);
+    },
+    /* Where the wordmark forms. Wide: large in the middle of the stage, while the centred hero's text fades out as you
+       scroll (theme.js sets --form on the hero). It used to look for a lane left of the text first, from the left-aligned
+       hero; once the text was centred and set in Rooyin, wide screens found one and the word formed small at the left
+       (2026-10-19). Narrow: across the bottom. */
+    place(E) {
+      const { W, H } = E;
+      const wide = W > 900;
+      const lw = wide ? Math.min(W * 0.62, 820) : W * 0.8;
+      const ox = (W - lw) / 2;
+      const oy = (wide ? H * 0.5 : H * 0.8) - (lw * 36 / 222) / 2;
+      const sc = lw / 222, h = 36 * sc;
+      for (const nd of E.nodes) { nd.tx = ox + nd.u * lw; nd.ty = oy + nd.v * h; nd.ig = nd.u * 420; }
+      E.box = { x: ox, y: oy, w: lw, h };
+      E.dot = { x: ox + (96 - 6) * sc, y: oy + (35.25 - 6) * sc, r: 3.75 * sc };
+    },
+    frame(E, dt, stat) {
+      const { ctx, W, H, nodes, nb, colors, mouse, opts } = E;
+      const full = opts.motion === 'full';
+      ctx.clearRect(0, 0, W, H);
+      const raw = stat ? 0 : clamp(opts.progress ? opts.progress() : 0);
+      const p = easeOut(raw); // eases out: the wordmark starts forming at the first scroll
+      const k = dt / 16;
+      /* The show (2026-10-17, «wow factor is a priority»): only where the wordmark forms on scroll — wide screens with
+         full motion. A lime glow under the dots, light trails as they fly in, and when it locks a ring and a burst of
+         sparks while the letters ignite left to right; formed, a beam sweeps the letters, the «A»'s dot glows and the
+         cursor wakes the dots it passes. */
+      const fx = full && !!opts.progress && !stat;
+      const box = E.box || { x: W * 0.2, y: H * 0.45, w: W * 0.6, h: H * 0.1 };
+      const cx = box.x + box.w / 2, cy = box.y + box.h / 2;
+      if (fx) {
+        if (raw > 0.93 && !E.locked) { E.locked = true; E.burstT = 0; nodes.forEach((nd) => { nd.lit = false; }); burstSparks(E, cx, cy); }
+        else if (raw < 0.7 && E.locked) E.locked = false;
+        if (E.burstT != null) E.burstT += dt;
+      }
+      for (const nd of nodes) {
+        nd.lx = nd.px; nd.ly = nd.py;
+        if (!stat) {
+          nd.x += nd.vx * k * (1 - p); nd.y += nd.vy * k * (1 - p);
+          if (nd.x < 0 || nd.x > W) nd.vx *= -1;
+          if (nd.y < 0 || nd.y > H) nd.vy *= -1;
+          if (full && mouse.in && p < 0.6) {
+            const dx = nd.x - mouse.x, dy = nd.y - mouse.y, d2 = dx * dx + dy * dy;
+            if (d2 < 24000) { const d = Math.sqrt(d2) || 1, f = (1 - d / 155) * 1.1 * k; nd.x += (dx / d) * f; nd.y += (dy / d) * f; }
+          }
+        }
+        nd.px = lerp(nd.x, nd.tx, p); nd.py = lerp(nd.y, nd.ty, p); nd.g *= 0.94;
+        if (fx && E.locked && !nd.lit && E.burstT >= nd.ig) { nd.lit = true; nd.g = 1; } // the ignition, left to right
+      }
+      if (fx && mouse.in && p > 0.6) for (const nd of nodes) {
+        const d = Math.hypot(nd.px - mouse.x, nd.py - mouse.y);
+        if (d < 110) nd.g = Math.max(nd.g, 1 - d / 110);
+      }
+      let sweepX = -1e5;
+      if (fx && p > 0.97) {
+        E.sweep = (E.sweep || 0) + dt;
+        const t = (E.sweep + 1800) % 3400;
+        if (t < 1400) sweepX = box.x - 90 + (box.w + 180) * easeInOut(t / 1400);
+      } else E.sweep = 0;
+      const beam = (x) => Math.max(0, 1 - Math.abs(x - sweepX) / 80);
+      const dk = stat || !opts.detach ? 0 : clamp(opts.detach()); // the wordmark's dot leaving (reason-sig.js)
+
+      const maxD = lerp(130, 12, p), maxD2 = maxD * maxD;
+      for (let i = 0; i < nb.length; i++) nb[i].length = 0;
+      ctx.lineWidth = 1; ctx.strokeStyle = colors.fg;
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        for (let j = i + 1; j < nodes.length; j++) {
+          const b = nodes[j], dx = a.px - b.px, dy = a.py - b.py, d2 = dx * dx + dy * dy;
+          if (d2 < maxD2) {
+            ctx.globalAlpha = (1 - Math.sqrt(d2) / maxD) * (0.26 + p * 0.44) * (a.d || b.d ? 1 - dk : 1);
+            ctx.beginPath(); ctx.moveTo(a.px, a.py); ctx.lineTo(b.px, b.py); ctx.stroke();
+            nb[i].push(j); nb[j].push(i);
+          }
+        }
+      }
+      if (full && mouse.in && p < 0.6) {
+        ctx.strokeStyle = colors.accent;
+        for (const nd of nodes) {
+          const dx = nd.px - mouse.x, dy = nd.py - mouse.y, d = Math.hypot(dx, dy);
+          if (d < 170) { ctx.globalAlpha = (1 - d / 170) * 0.55; ctx.beginPath(); ctx.moveTo(mouse.x, mouse.y); ctx.lineTo(nd.px, nd.py); ctx.stroke(); }
+        }
+      }
+
+      if (fx) {
+        // light trails while the dots fly in
+        if (p > 0.02 && p < 0.99) {
+          ctx.lineWidth = 1.4; ctx.strokeStyle = colors.fg; ctx.lineCap = 'round';
+          for (const nd of nodes) {
+            const dx = nd.px - nd.lx, dy = nd.py - nd.ly, v = dx * dx + dy * dy;
+            if (v < 2) continue;
+            ctx.globalAlpha = Math.min(0.55, v / 260) * (nd.d ? 1 - dk : 1);
+            ctx.beginPath(); ctx.moveTo(nd.px - dx * 5, nd.py - dy * 5); ctx.lineTo(nd.px, nd.py); ctx.stroke();
+          }
+        }
+        // the glow under the dots: additive, growing as it forms, hottest in the beam and where a dot is lit
+        ctx.globalCompositeOperation = 'lighter';
+        const spr = glowSprite(colors.lime), base = clamp((p - 0.25) / 0.75);
+        for (const nd of nodes) {
+          const b = beam(nd.px), a = base * 0.32 + nd.g * 0.6 + b * 0.8;
+          if (a < 0.02) continue;
+          const r = 5 + 12 * b + 8 * nd.g; // tight, so the lime stays lime (a wide faint glow read as olive, 2026-10-17)
+          ctx.globalAlpha = Math.min(1, a) * (nd.d ? 1 - dk : 1);
+          ctx.drawImage(spr, nd.px - r, nd.py - r, r * 2, r * 2);
+        }
+        // the lock: two rings from the middle of the word
+        if (E.burstT != null && E.burstT < 1500) {
+          const R = Math.max(W, H) * 0.75;
+          ctx.strokeStyle = colors.lime;
+          [[0, 3, 0.9], [170, 1.6, 0.55]].forEach(([delay, lw, al]) => {
+            const t = (E.burstT - delay) / 1300;
+            if (t <= 0 || t >= 1) return;
+            const rr = 20 + R * easeOut(t);
+            ctx.globalAlpha = (1 - t) * al * 0.35; ctx.lineWidth = lw * 6 * (1 - t * 0.5); // the ring's glow
+            ctx.beginPath(); ctx.ellipse(cx, cy, rr, rr * 0.42, 0, 0, 7); ctx.stroke();
+            ctx.globalAlpha = (1 - t) * al; ctx.lineWidth = lw * (1 - t * 0.6);
+            ctx.beginPath(); ctx.ellipse(cx, cy, rr, rr * 0.42, 0, 0, 7); ctx.stroke();
+          });
+          // and a flash behind the word as it locks
+          const ft = E.burstT / 600;
+          if (ft < 1) { ctx.globalAlpha = (1 - ft) * 0.55; const fr = box.w * (0.45 + ft * 0.35); ctx.drawImage(spr, cx - fr, cy - fr * 0.5, fr * 2, fr); }
+        }
+        // sparks
+        if (E.sparks && E.sparks.length) {
+          const white = glowSprite('#ffffff');
+          for (let q = E.sparks.length - 1; q >= 0; q--) {
+            const sp = E.sparks[q];
+            sp.life -= dt;
+            if (sp.life <= 0) { E.sparks.splice(q, 1); continue; }
+            sp.x += sp.vx * k; sp.y += sp.vy * k; sp.vx *= Math.pow(0.955, k); sp.vy = sp.vy * Math.pow(0.955, k) + 0.02 * k;
+            const f = sp.life / sp.max, r = 3 + 9 * f;
+            ctx.globalAlpha = f; ctx.drawImage(sp.w ? white : spr, sp.x - r, sp.y - r, r * 2, r * 2);
+          }
+        }
+        ctx.globalCompositeOperation = 'source-over';
+      }
+
+      if (!stat) {
+        E.spawn -= dt;
+        const busy = fx && p > 0.9; // current runs through the letters once formed
+        if (E.spawn <= 0 && E.pulses.length < (busy ? 90 : full ? 46 : 18)) {
+          E.spawn = busy ? 35 : full ? 90 : 260;
+          const i = (Math.random() * nodes.length) | 0;
+          if (nb[i].length) E.pulses.push({ a: i, b: nb[i][(Math.random() * nb[i].length) | 0], t: 0, h: 0 });
+        }
+        ctx.fillStyle = busy ? colors.lime : colors.accent;
+        for (let q = E.pulses.length - 1; q >= 0; q--) {
+          const pu = E.pulses[q], A = nodes[pu.a], B = nodes[pu.b];
+          const len = Math.hypot(B.px - A.px, B.py - A.py) || 1;
+          pu.t += (dt * (full ? 0.28 : 0.16)) / len;
+          if (pu.t >= 1) {
+            B.g = Math.max(B.g, busy ? 0.7 : 1); E.pulses.splice(q, 1);
+            if (pu.h < (busy ? 7 : 4) && nb[pu.b].length) E.pulses.push({ a: pu.b, b: nb[pu.b][(Math.random() * nb[pu.b].length) | 0], t: 0, h: pu.h + 1 });
+            continue;
+          }
+          const x = lerp(A.px, B.px, pu.t), y = lerp(A.py, B.py, pu.t);
+          ctx.globalAlpha = 0.18; ctx.beginPath(); ctx.arc(x, y, 5, 0, 7); ctx.fill();
+          ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(x, y, 1.8, 0, 7); ctx.fill();
+        }
+      }
+      ctx.fillStyle = colors.fg;
+      for (const nd of nodes) {
+        const b = fx ? beam(nd.px) : 0;
+        ctx.globalAlpha = Math.min(1, 0.55 + p * 0.45 + b * 0.3) * (nd.d ? 1 - dk : 1);
+        ctx.beginPath(); ctx.arc(nd.px, nd.py, 1.15 + p * 1.1 + b * 1.1 + (fx ? nd.g * 0.8 : 0), 0, 7); ctx.fill();
+      }
+      ctx.fillStyle = fx ? colors.lime : colors.accent;
+      for (const nd of nodes) if (nd.g > 0.05) { ctx.globalAlpha = nd.g; ctx.beginPath(); ctx.arc(nd.px, nd.py, 1.5 + nd.g * 2.2, 0, 7); ctx.fill(); }
+      // the logo's lime dot, glowing and breathing once the word has formed (unless reason-sig.js has lifted it away)
+      if (fx && E.dot && p > 0.85 && dk < 1) {
+        const a = clamp((p - 0.85) / 0.15) * (1 - dk), pulse = 1 + 0.18 * Math.sin(E.t / 380);
+        ctx.globalCompositeOperation = 'lighter';
+        const r = E.dot.r * 7 * pulse;
+        ctx.globalAlpha = a * 0.9; ctx.drawImage(glowSprite(colors.lime), E.dot.x - r, E.dot.y - r, r * 2, r * 2);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = a; ctx.fillStyle = colors.lime;
+        ctx.beginPath(); ctx.arc(E.dot.x, E.dot.y, E.dot.r * 1.15, 0, 7); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    },
+  };
+
+  /* logo assembles from nodes (< 1.2s) */
+  function logoAssemble(wrap, lv) {
+    const svg = wrap && wrap.querySelector('svg');
+    if (!svg) return;
+    if (lv === 'off') { svg.style.opacity = '1'; return; }
+    const r = svg.getBoundingClientRect();
+    if (!r.width) return;
+    svg.style.opacity = '0';
+    const pad = 34, W = r.width + pad * 2, H = r.height + pad * 2, dpr = Math.min(2, devicePixelRatio || 1);
+    const c = document.createElement('canvas');
+    c.width = W * dpr; c.height = H * dpr;
+    Object.assign(c.style, { position: 'absolute', left: -pad + 'px', top: -pad + 'px', width: W + 'px', height: H + 'px', pointerEvents: 'none' });
+    wrap.appendChild(c);
+    const x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const sc = r.width / 234, L = sampleLogo(222 * sc, 110);
+    const ps = L.pts.map((p) => {
+      const a = Math.random() * Math.PI * 2, rr = 20 + Math.random() * 60;
+      const tx = pad + 6 * sc + p.x, ty = pad + 6 * sc + p.y;
+      return { sx: tx + Math.cos(a) * rr, sy: ty + Math.sin(a) * rr * 0.6, tx, ty, dl: Math.random() * 220 };
+    });
+    const col = readColors(wrap), t0 = performance.now();
+    const f = (now) => {
+      const t = now - t0;
+      x.clearRect(0, 0, W, H);
+      const pos = ps.map((p) => { const k = easeOut(clamp((t - p.dl) / 640)); return [lerp(p.sx, p.tx, k), lerp(p.sy, p.ty, k)]; });
+      x.strokeStyle = col.accent; x.lineWidth = 0.6;
+      for (let i = 0; i < pos.length; i += 2)
+        for (let j = i + 1; j < Math.min(pos.length, i + 12); j++) {
+          const d = Math.hypot(pos[i][0] - pos[j][0], pos[i][1] - pos[j][1]);
+          if (d < 22) { x.globalAlpha = (1 - d / 22) * 0.5; x.beginPath(); x.moveTo(pos[i][0], pos[i][1]); x.lineTo(pos[j][0], pos[j][1]); x.stroke(); }
+        }
+      x.fillStyle = col.fg; x.globalAlpha = 0.9;
+      pos.forEach((p) => { x.beginPath(); x.arc(p[0], p[1], 1.1, 0, 7); x.fill(); });
+      if (t > 680 && svg.style.opacity === '0') { svg.style.transition = `opacity 380ms ${EASE}`; svg.style.opacity = '1'; }
+      c.style.opacity = String(1 - clamp((t - 760) / 380));
+      if (t < 1160) requestAnimationFrame(f); else c.remove();
+    };
+    requestAnimationFrame(f);
+  }
+
+  function streamWords(h, lv, delay) {
+    if (!h) return () => {};
+    const ws = [...h.querySelectorAll('[data-w]')];
+    const caret = h.querySelector('[data-caret]');
+    let dead = false, tm;
+    if (caret) {
+      caret.getAnimations().forEach((a) => a.cancel());
+      if (lv !== 'off') caret.animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0, offset: 0.51 }, { opacity: 0 }], { duration: 1000, iterations: Infinity });
+    }
+    // Hidden, not display: none, so the headline keeps its two lines from the start and nothing under it moves as the
+    // words come in (2026-10-16: the lead, buttons and countdown jumped down — most of the page's layout shift).
+    if (lv === 'off') { ws.forEach((w) => (w.style.visibility = '')); return () => {}; }
+    ws.forEach((w) => (w.style.visibility = 'hidden'));
+    let i = 0;
+    const gap = lv === 'full' ? 120 : 70;
+    const next = () => {
+      if (dead || i >= ws.length) return;
+      const w = ws[i++];
+      w.style.visibility = '';
+      w.animate([{ opacity: 0, filter: 'blur(8px)' }, { opacity: 1, filter: 'blur(0px)' }], { duration: 380, easing: EASE });
+      tm = setTimeout(next, gap + Math.random() * gap * 0.9);
+    };
+    tm = setTimeout(next, delay == null ? 450 : delay);
+    return () => { dead = true; clearTimeout(tm); ws.forEach((w) => (w.style.visibility = '')); };
+  }
+
+  function makeGrain() {
+    if (makeGrain.url) return makeGrain.url;
+    const c = document.createElement('canvas'); c.width = c.height = 180;
+    const x = c.getContext('2d'), d = x.createImageData(180, 180);
+    for (let i = 0; i < d.data.length; i += 4) { const v = (Math.random() * 255) | 0; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
+    x.putImageData(d, 0, 0);
+    return (makeGrain.url = c.toDataURL());
+  }
+
+  /* page-level motion: reveals, count-ups, countdown, tilt, loops, pinned tracks */
+  function mount(root, o) {
+    const lv = level(o.motion);
+    const offs = [], timers = [], anims = [], ios = [];
+    const on = (t, e, f, opt) => { t.addEventListener(e, f, opt); offs.push(() => t.removeEventListener(e, f, opt)); };
+    const every = (f, ms) => timers.push(setInterval(f, ms));
+    document.documentElement.lang = 'fa'; document.documentElement.dir = 'rtl';
+
+    root.querySelectorAll('[data-grain]').forEach((el) => { el.style.backgroundImage = `url(${makeGrain()})`; });
+
+    const rev = [...root.querySelectorAll('[data-reveal]')];
+    const hidden = (el) => {
+      const k = el.dataset.reveal;
+      if (k === 'line') return 'scaleX(0)';
+      if (k === 'mask') return 'translateY(105%)';
+      return `translateY(${lv === 'full' ? 28 : 14}px)`;
+    };
+    // html.rs-sd (theme.js): a phone whose reveals style.css ties to the scroll; nothing to set here.
+    if (lv !== 'off' && !document.documentElement.classList.contains('rs-sd')) {
+      const io = new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const el = e.target; io.unobserve(el);
+        const g = el.parentElement && el.parentElement.closest('[data-stagger]');
+        const idx = g ? [...g.querySelectorAll('[data-reveal]')].indexOf(el) : 0;
+        const delay = (+el.dataset.delay || 0) + Math.max(0, idx) * (lv === 'full' ? 90 : 50);
+        const dur = el.dataset.reveal === 'line' ? 1100 : 800;
+        el.style.transition = `opacity 700ms ${EASE} ${delay}ms, transform ${dur}ms ${EASE} ${delay}ms`;
+        el.style.opacity = '1'; el.style.transform = el.dataset.reveal === 'line' ? 'scaleX(1)' : 'none';
+        el.__rv = 1;
+        setTimeout(() => { el.style.transition = ''; if (el.dataset.reveal !== 'line') el.style.transform = ''; }, delay + dur + 60);
+      }), { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
+      ios.push(io);
+      rev.forEach((el) => {
+        if (el.__rv) return;
+        if (el.dataset.reveal === 'line') el.style.transformOrigin = 'right center';
+        else if (el.dataset.reveal !== 'mask') el.style.opacity = '0';
+        el.style.transform = hidden(el);
+        io.observe(el);
+      });
+    } else rev.forEach((el) => { el.style.opacity = ''; el.style.transform = ''; el.__rv = 1; });
+
+    const io2 = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      io2.unobserve(e.target);
+      const el = e.target, to = +el.dataset.count;
+      if (lv === 'off') { el.textContent = faSep(to); return; }
+      const dur = lv === 'full' ? 1700 : 900, t0 = performance.now();
+      const st = (now) => { const k = clamp((now - t0) / dur); el.textContent = faSep(to * easeOut(k)); if (k < 1) requestAnimationFrame(st); };
+      requestAnimationFrame(st);
+    }), { threshold: 0.4 });
+    ios.push(io2);
+    root.querySelectorAll('[data-count]').forEach((el) => { if (el.__ct) return; el.__ct = 1; if (lv !== 'off') el.textContent = fa(0); io2.observe(el); });
+
+    if (o.deadline) {
+      const tick = () => {
+        let s = Math.max(0, Math.floor((o.deadline - Date.now()) / 1000));
+        const d = Math.floor(s / 86400); s -= d * 86400;
+        const h = Math.floor(s / 3600); s -= h * 3600;
+        const m = Math.floor(s / 60); s -= m * 60;
+        const v = { d: fa(d), h: fa(String(h).padStart(2, '0')), m: fa(String(m).padStart(2, '0')), s: fa(String(s).padStart(2, '0')) };
+        root.querySelectorAll('[data-cd]').forEach((el) => { const x = v[el.dataset.cd]; if (el.textContent !== x) el.textContent = x; });
+      };
+      tick(); every(tick, 1000);
+    }
+
+    let tiltEl = null;
+    const resetTilt = (el) => { el.style.setProperty('--spot', '0'); el.style.transition = `transform 600ms ${EASE}`; el.style.transform = ''; };
+    on(root, 'pointermove', (e) => {
+      const el = e.target.closest && e.target.closest('[data-tilt]');
+      if (tiltEl && tiltEl !== el) resetTilt(tiltEl);
+      tiltEl = el;
+      if (!el) return;
+      const r = el.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      el.style.setProperty('--mx', x + 'px'); el.style.setProperty('--my', y + 'px'); el.style.setProperty('--spot', '1');
+      if (lv !== 'off' && el.__rv !== undefined ? true : lv !== 'off') {
+        const amt = lv === 'full' ? 5 : lv === 'subtle' ? 2 : 0;
+        if (!amt) return;
+        el.style.transition = `transform 200ms ${EASE}`;
+        el.style.transform = `perspective(1000px) rotateX(${(y / r.height - 0.5) * -amt}deg) rotateY(${(x / r.width - 0.5) * amt}deg)`;
+      }
+    }, { passive: true });
+    on(root, 'pointerleave', () => { if (tiltEl) resetTilt(tiltEl); tiltEl = null; });
+
+    if (lv !== 'off') {
+      root.querySelectorAll('[data-drift]').forEach((el, i) => anims.push(el.animate(
+        [{ transform: 'translate3d(0,0,0) scale(1)' }, { transform: 'translate3d(-7%,5%,0) scale(1.14)' }, { transform: 'translate3d(5%,-4%,0) scale(0.95)' }, { transform: 'translate3d(0,0,0) scale(1)' }],
+        { duration: 26000 + i * 7000, iterations: Infinity, easing: 'ease-in-out' })));
+      root.querySelectorAll('[data-flow]').forEach((el) => anims.push(el.animate(
+        [{ backgroundPosition: '0% 50%' }, { backgroundPosition: '100% 50%' }, { backgroundPosition: '0% 50%' }], { duration: 9000, iterations: Infinity })));
+    }
+
+    root.querySelectorAll('[data-loop]').forEach((box) => {
+      const type = box.dataset.loop;
+      if (type === 'cycle') {
+        const items = [...box.querySelectorAll('[data-item]')];
+        items.forEach((it, k) => { it.style.opacity = k ? '0' : '1'; it.style.transform = 'none'; });
+        if (lv === 'off') return;
+        let i = 0;
+        every(() => {
+          const a = items[i]; i = (i + 1) % items.length; const b = items[i];
+          a.style.transition = `opacity 450ms ${EASE}, transform 600ms ${EASE}`; a.style.opacity = '0'; a.style.transform = 'translateY(-16px)';
+          b.style.transition = 'none'; b.style.transform = 'translateY(16px)'; b.offsetHeight;
+          b.style.transition = `opacity 500ms ${EASE} 120ms, transform 650ms ${EASE} 120ms`; b.style.opacity = '1'; b.style.transform = 'none';
+        }, 1900);
+      } else if (type === 'bars') {
+        const bars = [...box.querySelectorAll('[data-bar]')], val = box.querySelector('[data-val]');
+        const upd = () => {
+          let sum = 0;
+          bars.forEach((b) => { const v = 30 + Math.random() * 66; sum += v; b.style.transition = `height 700ms ${EASE}`; b.style.height = v + '%'; });
+          if (val) val.textContent = fa(Math.round(sum / bars.length)) + '٪';
+        };
+        upd(); if (lv !== 'off') every(upd, 950);
+      } else if (type === 'spark') {
+        const pl = box.querySelector('[data-spark]'), N = 26;
+        let v = 40; const ys = Array.from({ length: N }, () => (v = clamp(v + (Math.random() - 0.38) * 12, 8, 92)));
+        const draw = () => pl && pl.setAttribute('points', ys.map((y, i) => `${100 - (i / (N - 1)) * 100},${100 - y}`).join(' '));
+        draw();
+        if (lv !== 'off') every(() => { ys.shift(); let nv = ys[ys.length - 1] + (Math.random() - 0.4) * 14; if (nv > 92) nv = 60; ys.push(clamp(nv, 8, 92)); draw(); }, 650);
+      } else if (type === 'pulse') {
+        if (lv === 'off') return;
+        box.querySelectorAll('[data-ring]').forEach((r, k) => anims.push(r.animate(
+          [{ transform: 'scale(1)', opacity: 0.7 }, { transform: 'scale(3.4)', opacity: 0 }], { duration: 2700, iterations: Infinity, delay: k * 900, easing: EASE })));
+      } else if (type === 'dots') {
+        if (lv === 'off') return;
+        const ds = [...box.querySelectorAll('[data-dot]')];
+        every(() => {
+          const d = ds[(Math.random() * ds.length) | 0];
+          if (d.__bg === undefined) d.__bg = d.style.background;
+          const onn = d.dataset.on !== '1'; d.dataset.on = onn ? '1' : '0';
+          d.style.transition = 'background 400ms'; d.style.background = onn ? 'var(--accent)' : d.__bg;
+        }, 320);
+      } else if (type === 'seq') {
+        const st = [...box.querySelectorAll('[data-step]')];
+        let i = 0;
+        const upd = () => {
+          st.forEach((s, k) => {
+            s.style.transition = `opacity 450ms ${EASE}`; s.style.opacity = k === i ? '1' : '0.4';
+            s.querySelectorAll('[data-mark]').forEach((m) => {
+              if (m.__bg === undefined) m.__bg = m.style.background;
+              m.style.transition = 'background 400ms'; m.style.background = k === i ? 'var(--accent)' : m.__bg;
+            });
+          });
+          i = (i + 1) % st.length;
+        };
+        upd(); if (lv !== 'off') every(upd, 1350);
+      }
+    });
+
+    root.querySelectorAll('[data-pin]').forEach((sec) => {
+      const track = sec.querySelector('[data-track]'), view = sec.querySelector('[data-pin-view]') || sec;
+      const line = sec.querySelector('[data-line]'), stages = [...sec.querySelectorAll('[data-stage]')], pct = sec.querySelector('[data-pct]');
+      if (!track) return;
+      const upd = () => {
+        // Phones (2026-10-17: «heavy and slow»): a plain list, no pinned scroll, nothing moves.
+        if (innerWidth < 900) { if (track.style.transform) { track.style.transform = ''; stages.forEach((s) => { s.__on = true; s.style.opacity = ''; }); } return; }
+        const r = sec.getBoundingClientRect(), total = sec.offsetHeight - innerHeight;
+        const p = total > 0 ? clamp(-r.top / total) : 0;
+        // The rail is padded to the page's content edges (2026-10-17: the steps started at the screen's edge while the title
+        // sat in the content column): slide until the last step reaches the far edge, not the screen's.
+        const rail = track.parentElement, rs = getComputedStyle(rail);
+        const avail = rail.clientWidth - parseFloat(rs.paddingLeft) - parseFloat(rs.paddingRight);
+        const shift = Math.max(0, track.scrollWidth - avail);
+        track.style.transform = `translate3d(${shift * p}px,0,0)`;
+        if (line) { line.style.transformOrigin = 'right center'; line.style.transform = `scaleX(${p})`; }
+        const tr = track.getBoundingClientRect();
+        stages.forEach((s) => {
+          const sr = s.getBoundingClientRect();
+          const frac = (tr.right - sr.right + 30) / tr.width;
+          const onn = p >= frac - 0.001;
+          if (s.__on === onn) return;
+          s.__on = onn;
+          s.style.transition = `opacity 450ms ${EASE}`; s.style.opacity = onn ? '1' : '0.45';
+          s.querySelectorAll('[data-stage-dot]').forEach((dot) => {
+            if (dot.__bg === undefined) { dot.__bg = dot.style.background; dot.__bs = dot.style.boxShadow; }
+            dot.style.transition = 'background 300ms, box-shadow 300ms';
+            dot.style.background = onn ? 'var(--accent)' : dot.__bg;
+            dot.style.boxShadow = onn ? '0 0 0 6px color-mix(in oklab, var(--accent) 22%, transparent)' : dot.__bs;
+          });
+        });
+        if (pct) pct.textContent = fa(Math.round(p * 100)) + '٪';
+      };
+      on(window, 'scroll', upd, { passive: true }); on(window, 'resize', upd); upd();
+      timers.push(setTimeout(upd, 300));
+    });
+
+    return () => {
+      offs.forEach((f) => f()); timers.forEach((t) => { clearInterval(t); clearTimeout(t); });
+      anims.forEach((a) => a.cancel()); ios.forEach((i) => i.disconnect());
+    };
+  }
+
+  /** The room a block's text takes, in a canvas's px: { left: its leftmost ink, bottom }. Lines of text count by their
+      words, not their full-width boxes; buttons and the countdown by their own boxes. */
+  const inkOf = (el, canvas) => () => {
+    const c = canvas.getBoundingClientRect();
+    let left = Infinity, bottom = -Infinity;
+    el.querySelectorAll('h1, h2, p, .rs-btn, .rs-cd').forEach((n) => {
+      let rects = [n.getBoundingClientRect()];
+      if (n.matches('h1, h2, p')) { const r = document.createRange(); r.selectNodeContents(n); rects = [...r.getClientRects()]; }
+      rects.forEach((r) => { if (r.width > 1) { left = Math.min(left, r.left); bottom = Math.max(bottom, r.bottom); } });
+    });
+    return left === Infinity ? null : { left: left - c.left, bottom: bottom - c.top };
+  };
+
+  /* How far a pinned block has been scrolled through, 0…1, counted from where it starts under the sticky header
+     (2026-10-17: counting from the top of the window, the first 73px of scroll did nothing). */
+  const progressOf = (el) => () => {
+    if (!el) return 0;
+    const hd = document.querySelector('.rs-header'), head = hd ? Math.max(0, hd.getBoundingClientRect().bottom) : 0;
+    const r = el.getBoundingClientRect(), total = el.offsetHeight - innerHeight + head;
+    return total > 0 ? clamp((head - r.top) / total) : 0;
+  };
+
+  function hexMix(a, b, t) {
+    const p = (h) => { h = h.replace('#', ''); if (h.length === 3) h = h.split('').map((x) => x + x).join(''); const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+    const A = p(a), B = p(b);
+    return '#' + A.map((v, i) => Math.round(lerp(v, B[i], t)).toString(16).padStart(2, '0')).join('');
+  }
+  function onColor(hex) {
+    const h = hex.replace('#', ''), n = parseInt(h.length === 3 ? h.split('').map((x) => x + x).join('') : h, 16);
+    const lin = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+    const L = 0.2126 * lin((n >> 16) & 255) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
+    return L > 0.36 ? '#0B1020' : '#FFFFFF';
+  }
+  function applyVars(el, vars) { if (!el) return; for (const k in vars) el.style.setProperty(k, vars[k]); }
+
+  window.ReasonFX = {
+    fa, faSep, level, EASE, mount, logoAssemble, streamWords, progressOf, inkOf, hexMix, onColor, applyVars,
+    sampleLogo, readColors, rgba, glowSprite, clamp, lerp, easeOut, easeInOut,
+    neural: (c, o) => Engine(c, o, neuralImpl),
+    DEADLINE: new Date('2026-11-21T23:59:59+03:30').getTime(),
+  };
+  window.dispatchEvent(new Event('reasonfx-ready'));
+})();

@@ -1,0 +1,6 @@
+{
+  "name": "سینارو (SEYNARO) — ارائه تعاملی زیرساخت حافظه عملیاتی",
+  "description": "ارائه تعاملی ۱۷ اسلایدی سینارو (SEYNARO): زیرساخت هوشمند حافظه عملیاتی و راستی‌آزمایی منطق تصمیم در سازمان‌ها",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,318 @@
+{
+  "persian": {
+    "Vazirmatn": {
+      "source": "Google Fonts / Saber Rastikerdar GitHub",
+      "license": "SIL Open Font License 1.1",
+      "weights": [],
+      "variable": "Vazirmatn[wght].ttf",
+      "files": {}
+    },
+    "Estedad": {
+      "source": "Official GitHub (aminabedi68/estedad)",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        500,
+        600,
+        700,
+        800
+      ],
+      "variable": "Estedad[wght].ttf",
+      "files": {
+        "500": "Estedad-500.ttf",
+        "600": "Estedad-600.ttf",
+        "700": "Estedad-700.ttf",
+        "800": "Estedad-800.ttf"
+      }
+    },
+    "Shabnam": {
+      "source": "Official GitHub (rastikerdar/shabnam-font)",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        500,
+        700
+      ],
+      "variable": null,
+      "files": {
+        "300": "Shabnam-300.ttf",
+        "400": "Shabnam-400.ttf",
+        "500": "Shabnam-500.ttf",
+        "700": "Shabnam-700.ttf"
+      }
+    },
+    "Sahel": {
+      "source": "Official GitHub (rastikerdar/sahel-font)",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        600,
+        700
+      ],
+      "variable": null,
+      "files": {
+        "300": "Sahel-300.ttf",
+        "400": "Sahel-400.ttf",
+        "600": "Sahel-600.ttf",
+        "700": "Sahel-700.ttf"
+      }
+    },
+    "Samim": {
+      "source": "Official GitHub (rastikerdar/samim-font)",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        400,
+        500,
+        700
+      ],
+      "variable": null,
+      "files": {
+        "400": "Samim-400.ttf",
+        "500": "Samim-500.ttf",
+        "700": "Samim-700.ttf"
+      }
+    },
+    "IBM Plex Sans Arabic": {
+      "source": "Google Fonts / IBM",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        500,
+        600,
+        700
+      ],
+      "variable": null,
+      "files": {
+        "300": "IBMPlexSansArabic-300.woff2",
+        "400": "IBMPlexSansArabic-400.woff2",
+        "500": "IBMPlexSansArabic-500.woff2",
+        "600": "IBMPlexSansArabic-600.woff2",
+        "700": "IBMPlexSansArabic-700.woff2"
+      }
+    },
+    "Noto Sans Arabic": {
+      "source": "Google Fonts / Google",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        500,
+        600,
+        700,
+        800
+      ],
+      "variable": null,
+      "files": {
+        "300": "NotoSansArabic-300.woff2",
+        "400": "NotoSansArabic-400.woff2",
+        "500": "NotoSansArabic-500.woff2",
+        "600": "NotoSansArabic-600.woff2",
+        "700": "NotoSansArabic-700.woff2",
+        "800": "NotoSansArabic-800.woff2"
+      }
+    },
+    "Readex Pro": {
+      "source": "Google Fonts / Thomas Jockin",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        500,
+        600,
+        700
+      ],
+      "variable": null,
+      "files": {
+        "300": "ReadexPro-300.woff2",
+        "400": "ReadexPro-400.woff2",
+        "500": "ReadexPro-500.woff2",
+        "600": "ReadexPro-600.woff2",
+        "700": "ReadexPro-700.woff2"
+      }
+    },
+    "Rubik Arabic": {
+      "source": "Google Fonts / Philipp Nurullin",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        500,
+        600,
+        700,
+        800
+      ],
+      "variable": null,
+      "files": {
+        "300": "Rubik-300.woff2",
+        "400": "Rubik-400.woff2",
+        "500": "Rubik-500.woff2",
+        "600": "Rubik-600.woff2",
+        "700": "Rubik-700.woff2",
+        "800": "Rubik-800.woff2"
+      }
+    },
+    "Alexandria": {
+      "source": "Google Fonts / Mai Ersu",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        500,
+        600,
+        700,
+        800
+      ],
+      "variable": null,
+      "files": {
+        "300": "Alexandria-300.woff2",
+        "400": "Alexandria-400.woff2",
+        "500": "Alexandria-500.woff2",
+        "600": "Alexandria-600.woff2",
+        "700": "Alexandria-700.woff2",
+        "800": "Alexandria-800.woff2"
+      }
+    },
+    "B Yekan (Legacy)": {
+      "source": "Local 384 Persian Collection (MaryamSoft MRT)",
+      "license": "Public Domain / Freeware (Legacy 2000s conversion)",
+      "weights": [],
+      "variable": null,
+      "files": {}
+    },
+    "B Nazanin (Legacy)": {
+      "source": "Local 384 Persian Collection (MaryamSoft MRT)",
+      "license": "Public Domain / Freeware (Legacy 2000s conversion)",
+      "weights": [],
+      "variable": null,
+      "files": {}
+    }
+  },
+  "latin": {
+    "Inter": {
+      "source": "Google Fonts / Rasmus Andersson",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        500,
+        600,
+        700,
+        800
+      ],
+      "variable": null,
+      "files": {
+        "300": "Inter-300.woff2",
+        "400": "Inter-400.woff2",
+        "500": "Inter-500.woff2",
+        "600": "Inter-600.woff2",
+        "700": "Inter-700.woff2",
+        "800": "Inter-800.woff2"
+      }
+    },
+    "Geist": {
+      "source": "Vercel / Fontsource",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        500,
+        600,
+        700,
+        800
+      ],
+      "variable": null,
+      "files": {
+        "300": "GeistSans-300.woff",
+        "400": "GeistSans-400.woff",
+        "500": "GeistSans-500.woff",
+        "600": "GeistSans-600.woff",
+        "700": "GeistSans-700.woff",
+        "800": "GeistSans-800.woff"
+      }
+    },
+    "Plus Jakarta Sans": {
+      "source": "Google Fonts / Tokotype",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        500,
+        600,
+        700,
+        800
+      ],
+      "variable": null,
+      "files": {
+        "300": "PlusJakartaSans-300.woff2",
+        "400": "PlusJakartaSans-400.woff2",
+        "500": "PlusJakartaSans-500.woff2",
+        "600": "PlusJakartaSans-600.woff2",
+        "700": "PlusJakartaSans-700.woff2",
+        "800": "PlusJakartaSans-800.woff2"
+      }
+    },
+    "IBM Plex Sans": {
+      "source": "Google Fonts / IBM",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        500,
+        600,
+        700
+      ],
+      "variable": null,
+      "files": {
+        "300": "IBMPlexSans-300.woff2",
+        "400": "IBMPlexSans-400.woff2",
+        "500": "IBMPlexSans-500.woff2",
+        "600": "IBMPlexSans-600.woff2",
+        "700": "IBMPlexSans-700.woff2"
+      }
+    },
+    "Manrope": {
+      "source": "Google Fonts / Mikhail Sharanda",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        500,
+        600,
+        700,
+        800
+      ],
+      "variable": null,
+      "files": {
+        "300": "Manrope-300.woff2",
+        "400": "Manrope-400.woff2",
+        "500": "Manrope-500.woff2",
+        "600": "Manrope-600.woff2",
+        "700": "Manrope-700.woff2",
+        "800": "Manrope-800.woff2"
+      }
+    },
+    "Sora": {
+      "source": "Google Fonts / Jonathan Barnbrook",
+      "license": "SIL Open Font License 1.1",
+      "weights": [
+        300,
+        400,
+        500,
+        600,
+        700,
+        800
+      ],
+      "variable": null,
+      "files": {
+        "300": "Sora-300.woff2",
+        "400": "Sora-400.woff2",
+        "500": "Sora-500.woff2",
+        "600": "Sora-600.woff2",
+        "700": "Sora-700.woff2",
+        "800": "Sora-800.woff2"
+      }
+    }
+  }
+}

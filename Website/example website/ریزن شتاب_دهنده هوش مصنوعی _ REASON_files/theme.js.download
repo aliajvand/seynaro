@@ -1,0 +1,1010 @@
+/* REASON — page motion (stacked sections, reveals, counters, countdown, card tilt, pinned steps), the logo intro,
+   the headline reveal, the hero canvas and the mobile menu. */
+(function () {
+	'use strict';
+
+	/* The admins' wording of a browser message, from «متن‌های سایت» (texts.php); {name} stands for a value. */
+	function T(text, vars) {
+		var edited = window.reasonTexts || {};
+		var out = edited[text] !== undefined ? edited[text] : text;
+		Object.keys(vars || {}).forEach(function (k) { out = out.split('{' + k + '}').join(vars[k]); });
+		return out;
+	}
+
+	function menu() {
+		var btn = document.querySelector('[data-menu-toggle]');
+		var nav = document.getElementById('rs-mnav');
+		if (!btn || !nav) return;
+		btn.addEventListener('click', function () {
+			var open = btn.getAttribute('aria-expanded') !== 'true';
+			btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+			nav.hidden = !open;
+		});
+		nav.addEventListener('click', function (e) {
+			if (e.target.closest('a')) { btn.setAttribute('aria-expanded', 'false'); nav.hidden = true; }
+		});
+		window.addEventListener('resize', function () {
+			if (window.innerWidth >= 1120 && !nav.hidden) { nav.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+		});
+	}
+
+	/* Home page: the sections stack like sheets. Each one sticks once it has been read to its end (a short one under
+	   the header, a tall one when its bottom reaches the screen's) and the next slides up over it, while the covered one
+	   sinks back a little and dims. A sheet that is fully covered lets go (it is no longer sticky and scrolls away
+	   behind the header), so only the two in play are pinned and nothing buried keeps animating. Sticky positioning
+	   never changes the page's length, so a zero-height mark before each sheet gives where it really sits:
+	   ReasonStack.top() for the section menu and the margin thread, and in-page links scroll there. Off with reduced
+	   motion: the sections are then a plain column, as before. */
+	function stack() {
+		var api = window.ReasonStack = { top: function (el) { return el.getBoundingClientRect().top + window.scrollY; } };
+		var main = document.querySelector('[data-stack]');
+		if (!main || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+		/* Only the hero is a sheet that sticks; the first section after it slides up over it, and the rest scroll as usual
+		   (2026-10-10: one moment, not every section). */
+		var sheets = [].slice.call(main.children).filter(function (el) { return el.tagName === 'SECTION'; }).slice(0, 2);
+		if (sheets.length < 2) return;
+		sheets[0].classList.add('is-sheet');
+		sheets[1].classList.add('is-cover');
+		var marks = sheets.map(function (s) {
+			var m = document.createElement('i');
+			m.className = 'rs-stack-mark';
+			m.setAttribute('aria-hidden', 'true');
+			main.insertBefore(m, s);
+			return m;
+		});
+		api.top = function (el) {
+			var i = sheets.indexOf(el);
+			return (i < 0 ? el : marks[i]).getBoundingClientRect().top + window.scrollY;
+		};
+		main.classList.add('is-stacked');
+
+		var header = document.querySelector('.rs-header');
+		var head = 0, vh = 0, stick = [], heights = [], frame = 0;
+		var depth = function () { return window.innerWidth >= 900 ? 0.05 : 0.03; };
+		var update = function () {
+			frame = 0;
+			var d = depth();
+			sheets.forEach(function (s, k) {
+				var next = sheets[k + 1], c = 0, buried = false;
+				if (next) {
+					var nt = next.getBoundingClientRect().top, bottom = stick[k] + heights[k];
+					buried = nt <= head + 0.5;
+					c = buried ? 1 : Math.min(1, Math.max(0, (bottom - nt) / Math.max(1, bottom - head)));
+				}
+				s.classList.toggle('is-buried', buried);
+				s.classList.toggle('is-covered', c > 0 && !buried);
+				s.style.setProperty('--cover', buried ? '0' : c.toFixed(3));
+				s.style.transform = c > 0 && !buried ? 'scale(' + (1 - d * c).toFixed(4) + ')' : '';
+			});
+		};
+		var measure = function () {
+			vh = window.innerHeight;
+			head = header ? (parseFloat(getComputedStyle(header).top) || 0) + header.offsetHeight : 0;
+			sheets.forEach(function (s, k) {
+				heights[k] = s.offsetHeight;
+				stick[k] = Math.min(head, vh - heights[k]);
+				/* Only the sheet sticks. On the cover, which is position: relative, a top moved it off its place
+				   (2026-10-16: on a phone it came up 145px over the hero's countdown before any scroll). */
+				s.style.top = k < sheets.length - 1 ? (stick[k] === head ? 'var(--head-live, ' + head + 'px)' : stick[k] + 'px') : '';
+				/* Sink towards the middle of the part on screen, not the sheet's own middle (which may be far above). */
+				s.style.setProperty('--origin', Math.round((head + vh) / 2 - stick[k]) + 'px');
+			});
+			update();
+		};
+		window.addEventListener('scroll', function () { if (!frame) frame = requestAnimationFrame(update); }, { passive: true });
+		var mt = 0;
+		var remeasure = function () { if (!mt) mt = requestAnimationFrame(function () { mt = 0; measure(); }); };
+		window.addEventListener('resize', remeasure);
+		if (window.ResizeObserver) { var ro = new ResizeObserver(remeasure); sheets.forEach(function (s) { ro.observe(s); }); }
+		measure();
+
+		/* A pinned sheet reports where it is pinned, so the browser would think it is already in view. */
+		document.addEventListener('click', function (e) {
+			if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+			var a = e.target.closest && e.target.closest('a[href*="#"]');
+			if (!a || !a.hash || a.pathname !== location.pathname || a.host !== location.host) return;
+			var t = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+			if (sheets.indexOf(t) < 0) return;
+			e.preventDefault();
+			window.scrollTo({ top: api.top(t) - (parseFloat(getComputedStyle(t).scrollMarginTop) || 0), behavior: 'smooth' });
+			if (history.pushState) history.pushState(null, '', a.hash);
+		});
+	}
+
+	/* Home page section menu: shows once the hero is scrolled past and marks the section being read. */
+	function sectionNav() {
+		var nav = document.querySelector('[data-snav]');
+		if (!nav) return;
+		var hero = document.querySelector('[data-hero]');
+		var foot = document.querySelector('.rs-footer');
+		/* Blocks with a button of their own: the closing «ثبت‌نام» and the newsletter's form. */
+		var own = [].slice.call(document.querySelectorAll('[data-finale-host], #newsletter'));
+		var links = [].slice.call(nav.querySelectorAll('[data-snav-link]'));
+		var secs = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+		var frame = 0, lastY = window.scrollY;
+		var update = function () {
+			frame = 0;
+			/* Reading down it steps away, scrolling up brings it back (2026-10-17: it sat over the cards). Phones too since
+			   2026-10-21: as the apply bar it stood over every screen read (Golrang's screenshots). */
+			var y = window.scrollY;
+			if (Math.abs(y - lastY) > 6) { nav.classList.toggle('is-away', y > lastY); lastY = y; }
+			/* Where the hero really ends: while the sections stack, it stays pinned under the next one for a while. */
+			var heroEnd = hero ? window.ReasonStack.top(hero) - window.scrollY + hero.offsetHeight : 0;
+			/* …and leaves once the footer comes up: it would cover the footer's links (and sit under it, as it lives in main). */
+			var footTop = foot ? foot.getBoundingClientRect().top : Infinity;
+			var mine = own.some(function (s) { var r = s.getBoundingClientRect(); return r.top < window.innerHeight - 40 && r.bottom > 80; });
+			nav.classList.toggle('is-on', (hero ? heroEnd < window.innerHeight * 0.4 : true) && footTop > window.innerHeight - 24 && !mine);
+			/* Only the section the reading line is inside, not the last one scrolled past. */
+			var cur = -1, line = window.innerHeight * 0.35;
+			secs.forEach(function (s, i) {
+				if (!s) return;
+				var r = s.getBoundingClientRect();
+				if (r.top <= line && r.bottom > line) cur = i;
+			});
+			links.forEach(function (a, i) {
+				if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+			});
+		};
+		window.addEventListener('scroll', function () { if (!frame) frame = requestAnimationFrame(update); }, { passive: true });
+		window.addEventListener('resize', update);
+		update();
+	}
+
+	/* Growth flow: a pinned vertical slider. The background stays put while the stages slide up one per stretch
+	   of scroll. Only on wide screens with motion allowed; otherwise the stages stay a plain list. */
+	function vslider() {
+		var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+		[].forEach.call(document.querySelectorAll('[data-vslider]'), function (sec) {
+			var slides = [].slice.call(sec.querySelectorAll('[data-vs-slide]'));
+			var marks = [].slice.call(sec.querySelectorAll('[data-vs-mark]'));
+			if (!slides.length) return;
+			var frame = 0, cur = -1;
+			var update = function () {
+				frame = 0;
+				var pinned = !reduce && window.innerWidth >= 900;
+				sec.classList.toggle('is-pinned', pinned);
+				if (!pinned) {
+					cur = -1;
+					slides.forEach(function (s) { s.classList.remove('is-active', 'is-past'); });
+					return;
+				}
+				var r = sec.getBoundingClientRect(), total = sec.offsetHeight - window.innerHeight;
+				var p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
+				var i = Math.min(slides.length - 1, Math.floor(p * slides.length));
+				sec.style.setProperty('--p', p.toFixed(4));
+				if (i === cur) return;
+				cur = i;
+				slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); s.classList.toggle('is-past', k < i); });
+				marks.forEach(function (m, k) { m.classList.toggle('is-on', k <= i); m.classList.toggle('is-cur', k === i); });
+			};
+			window.addEventListener('scroll', function () { if (!frame) frame = requestAnimationFrame(update); }, { passive: true });
+			window.addEventListener('resize', update);
+			update();
+		});
+	}
+
+	/* «چرا REASON؟» carousel: native horizontal scroll with snap; the arrows move it by one card. RTL: "next" goes left. */
+	function carousels() {
+		[].forEach.call(document.querySelectorAll('[data-carousel]'), function (track) {
+			var nav = track.parentElement.querySelector('[data-carousel-nav]');
+			if (!nav) return;
+			var prev = nav.querySelector('[data-carousel-prev]'), next = nav.querySelector('[data-carousel-next]');
+			var step = function () { var c = track.firstElementChild; return c ? c.getBoundingClientRect().width + 20 : 300; };
+			var sync = function () {
+				var max = track.scrollWidth - track.clientWidth, at = Math.abs(track.scrollLeft);
+				prev.disabled = at < 4;
+				next.disabled = at > max - 4;
+			};
+			prev.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
+			next.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
+			track.addEventListener('scroll', sync, { passive: true });
+			window.addEventListener('resize', sync);
+			sync();
+		});
+	}
+
+	/* Tabs beside a stack of panels (the entry conditions): click or arrow keys; the chosen panel on top. In a section
+	   with [data-tabs-scroll] on wide screens with motion, the section is pinned and scrolling walks through the panels
+	   one by one (clicking a tab scrolls to its stretch); otherwise the tabs work by click alone. */
+	function tabs() {
+		var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+		[].forEach.call(document.querySelectorAll('[data-tabs]'), function (box) {
+			var list = [].slice.call(box.querySelectorAll('[data-tab]'));
+			var panels = [].slice.call(box.querySelectorAll('[data-panel]'));
+			var sec = box.closest('[data-tabs-scroll]');
+			var cur = -1;
+			var show = function (i, focus) {
+				if (i === cur && !focus) return;
+				cur = i;
+				list.forEach(function (t, k) {
+					t.setAttribute('aria-selected', k === i ? 'true' : 'false');
+					t.tabIndex = k === i ? 0 : -1;
+				});
+				panels.forEach(function (p, k) {
+					var d = (k - i + panels.length) % panels.length;
+					p.style.setProperty('--d', d);
+					if (d === 0) p.removeAttribute('inert'); else p.setAttribute('inert', '');
+				});
+				if (focus) list[i].focus();
+			};
+			var pinned = function () { return !!sec && !reduce && window.innerWidth >= 900; };
+			/* Where the page stands when panel i fills the view: the middle of its stretch of the pinned section. */
+			var stretch = function (i) {
+				var total = sec.offsetHeight - window.innerHeight;
+				return sec.getBoundingClientRect().top + window.scrollY + total * (i + 0.5) / list.length;
+			};
+			var go = function (i, focus) {
+				if (pinned()) window.scrollTo({ top: stretch(i), behavior: 'smooth' });
+				show(i, focus);
+			};
+			list.forEach(function (t, i) {
+				t.addEventListener('click', function () { go(i, false); });
+				t.addEventListener('keydown', function (e) {
+					var n = { ArrowDown: 1, ArrowLeft: 1, ArrowUp: -1, ArrowRight: -1 }[e.key];
+					if (!n) return;
+					e.preventDefault();
+					go((i + n + list.length) % list.length, true);
+				});
+			});
+			show(0, false);
+			if (!sec) return;
+			var frame = 0;
+			var update = function () {
+				frame = 0;
+				sec.classList.toggle('is-pinned', pinned());
+				if (!pinned()) return;
+				var r = sec.getBoundingClientRect(), total = sec.offsetHeight - window.innerHeight;
+				var p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 0;
+				sec.style.setProperty('--p', p.toFixed(4));
+				show(Math.min(list.length - 1, Math.floor(p * list.length)), false);
+			};
+			window.addEventListener('scroll', function () { if (!frame) frame = requestAnimationFrame(update); }, { passive: true });
+			window.addEventListener('resize', update);
+			update();
+		});
+	}
+
+	function start() {
+		var fx = window.ReasonFX;
+		var root = document.querySelector('[data-reason-root]');
+		if (!fx || !root) return;
+
+		var lv = fx.level('full');
+		/* Phones that can tie an animation to the scroll (2026-10-21, Golrang: «a bit of motion on the phone»): the reveals
+		   follow the finger instead of playing once, drawn by style.css under html.rs-sd, on the compositor. */
+		if (lv !== 'off' && window.innerWidth < 900 && window.CSS && CSS.supports && CSS.supports('animation-timeline: view()')) {
+			document.documentElement.classList.add('rs-sd');
+			/* What the first screen already shows plays in once, in turn; tied to the scroll it would wait, half drawn. */
+			[].filter.call(root.querySelectorAll('[data-reveal]'), function (el) {
+				var r = el.getBoundingClientRect();
+				return r.top < window.innerHeight && r.bottom > 0;
+			}).forEach(function (el, i) { el.style.setProperty('--sd-i', i); el.classList.add('rs-sd-now'); });
+		}
+		var deadline = Date.parse(root.getAttribute('data-deadline') || '');
+		fx.mount(root, { motion: 'full', deadline: isNaN(deadline) ? fx.DEADLINE : deadline });
+
+		/* Section signatures (reason-sig.js): the intro, the path, the closing box and the footer. */
+		var eng = null;
+		var sig = window.ReasonSig ? window.ReasonSig.mount(root, { lv: lv, engine: function () { return eng; } }) : null;
+
+		var logo = root.querySelector('[data-logo]');
+		if (logo) fx.logoAssemble(logo, lv);
+
+		var h1 = root.querySelector('[data-stream]');
+		if (h1) fx.streamWords(h1, lv);
+
+		/* Hero: on wide screens the stage is pinned and the field condenses into the wordmark as you scroll. */
+		var hero = root.querySelector('[data-hero]');
+		var canvas = root.querySelector('[data-hero-canvas]');
+		if (!hero || !canvas) return;
+		var wide = null, t = 0;
+		var boot = function () {
+			var w = window.innerWidth >= 900;
+			if (eng && w === wide) return;
+			wide = w;
+			if (eng) eng.destroy();
+			eng = fx.neural(canvas, { motion: lv, progress: w && lv !== 'off' ? fx.progressOf(hero) : null, detach: w && sig ? sig.detach : null });
+		};
+		setTimeout(boot, 30);
+		window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(boot, 200); });
+
+		/* How far the wordmark has formed, for the CSS: the hero's text fades as it does (wide screens with motion). */
+		var form = fx.progressOf(hero), ff = 0;
+		var setForm = function () {
+			ff = 0;
+			var f = window.innerWidth >= 900 && lv !== 'off' ? form() : 0;
+			if (f > 0 || hero.style.getPropertyValue('--form')) hero.style.setProperty('--form', f.toFixed(3));
+			hero.classList.toggle('is-formed', f > 0.55);
+		};
+		window.addEventListener('scroll', function () { if (!ff) ff = requestAnimationFrame(setForm); }, { passive: true });
+		window.addEventListener('resize', setForm);
+		setForm();
+	}
+
+	/* «انتخاب فایل»: the browser's own file control speaks the browser's language («No file chosen»), so it sits
+	   transparent over a Persian one (style.css .rs-file) and the chosen file's name is shown here. */
+	function filePickers() {
+		[].forEach.call(document.querySelectorAll('.rs-file input[type="file"]'), function (input) {
+			var name = input.parentNode.querySelector('.rs-file__name');
+			input.addEventListener('change', function () {
+				/* The name isolated (<bdi>), so a Latin name does not turn the size around it. */
+				name.textContent = '';
+				[].forEach.call(input.files || [], function (f, i) {
+					var b = document.createElement('bdi');
+					b.textContent = f.name;
+					name.appendChild(document.createTextNode(i ? '، ' : ''));
+					name.appendChild(b);
+					name.appendChild(document.createTextNode(' (' + megabytes(f.size) + ')'));
+				});
+				if (!name.firstChild) name.textContent = name.getAttribute('data-empty');
+				name.classList.toggle('is-set', !!(input.files && input.files.length));
+			});
+		});
+	}
+
+	/* Background videos ([data-video]): the file loads once one comes near the screen, plays while it is on it and
+	   pauses off it. Reduced motion or data saver: no video, the poster frame stays. */
+	function media() {
+		var videos = [].slice.call(document.querySelectorAll('video[data-video]'));
+		var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+		var save = navigator.connection && navigator.connection.saveData;
+		if (!videos.length || reduce || save || !('IntersectionObserver' in window)) return;
+		var io = new IntersectionObserver(function (entries) {
+			entries.forEach(function (e) {
+				var v = e.target;
+				if (e.isIntersecting) {
+					if (!v.src) { v.src = v.getAttribute('data-video'); v.addEventListener('playing', function () { v.classList.add('is-playing'); }, { once: true }); }
+					var p = v.play();
+					if (p && p.catch) p.catch(function () {});
+				} else if (v.src) {
+					v.pause();
+				}
+			});
+		}, { rootMargin: '200px 0px' });
+		videos.forEach(function (v) { v.muted = true; io.observe(v); });
+		// A tab opened in the background may refuse to start; try again once it is shown.
+		document.addEventListener('visibilitychange', function () {
+			if (document.hidden) return;
+			videos.forEach(function (v) {
+				var r = v.getBoundingClientRect();
+				if (v.src && v.paused && r.bottom > 0 && r.top < window.innerHeight) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+			});
+		});
+	}
+
+	/* «هوش مصنوعی، در دل صنعت»: the six areas switch the one frame beside them (click, or arrow keys along the list).
+	   Nothing moves on by itself (2026-10-12: a clip changing every few seconds was too much). A hidden panel's clip is
+	   never loaded or played (media()). */
+	function areas() {
+		[].forEach.call(document.querySelectorAll('[data-areas]'), function (box) {
+			var tabs = [].slice.call(box.querySelectorAll('[data-area]'));
+			var panels = [].slice.call(box.querySelectorAll('[data-area-panel]'));
+			var show = function (i, focus) {
+				tabs.forEach(function (t, k) {
+					t.setAttribute('aria-selected', k === i ? 'true' : 'false');
+					t.tabIndex = k === i ? 0 : -1;
+				});
+				panels.forEach(function (p, k) { p.hidden = k !== i; });
+				if (focus) tabs[i].focus();
+			};
+			tabs.forEach(function (t, i) {
+				t.addEventListener('click', function () { show(i, false); });
+				t.addEventListener('keydown', function (e) {
+					var n = { ArrowDown: 1, ArrowLeft: 1, ArrowUp: -1, ArrowRight: -1 }[e.key];
+					if (!n) return;
+					e.preventDefault();
+					show((i + n + tabs.length) % tabs.length, true);
+				});
+			});
+		});
+	}
+
+	/* «خبرنامه REASON» (2026-10-19, functions.php reason_newsletter_html()): the address checked here, the form sent here,
+	   and the server's reply put in its place; without JavaScript it posts and the page shows the reply. */
+	function newsletter() {
+		[].forEach.call(document.querySelectorAll('form[data-subscribe]'), function (form) {
+			var box = form.closest('[data-news-box]');
+			var input = form.querySelector('input[type="email"]'), btn = form.querySelector('button[type="submit"]');
+			form.addEventListener('submit', function (e) {
+				var v = input.value.trim();
+				var old = box.querySelector('.rs-news__reply');
+				if (old) old.remove();
+				if (!/^[^\s@]+@[^\s@]+\.[^\s@.]{2,}$/.test(v)) {
+					e.preventDefault();
+					input.setAttribute('aria-invalid', 'true');
+					var r = document.createElement('div');
+					r.className = 'rs-news__reply rs-news__reply--err'; r.setAttribute('role', 'status');
+					r.innerHTML = '<b>' + T('این نشانی درست نیست') + '</b><span>' + T('یک نشانی ایمیل کامل بنویسید؛ مثلاً name@example.com') + '</span>';
+					box.insertBefore(r, form); input.focus();
+					return;
+				}
+				input.removeAttribute('aria-invalid');
+				if (!window.FormData || !window.XMLHttpRequest) return;
+				e.preventDefault();
+				btn.disabled = true; btn.classList.add('is-busy');
+				var xhr = new XMLHttpRequest();
+				xhr.open('POST', form.getAttribute('data-subscribe'));
+				xhr.setRequestHeader('X-Reason-Form', '1');
+				xhr.addEventListener('load', function () {
+					var r = null;
+					try { r = JSON.parse(xhr.responseText); } catch (err) { /* not JSON */ }
+					if (!r || !r.html) { form.submit(); return; }
+					btn.disabled = false; btn.classList.remove('is-busy');
+					var keep = /^(invalid|busy|expired)$/.test(r.state);
+					var tmp = document.createElement('div'); tmp.innerHTML = r.html;
+					if (keep) { box.insertBefore(tmp.firstChild, form); input.focus(); }
+					else { box.innerHTML = r.html; }
+				});
+				xhr.addEventListener('error', function () { form.submit(); });
+				xhr.send(new FormData(form));
+			});
+		});
+	}
+
+	/* The forms, application and contact (2026-10-18). Each field says in Persian, under itself, what is missing or
+	   wrong: once it has been typed in and left, and for every field on «مرحله بعد» or «ارسال» (the browser's own
+	   bubbles spoke English and vanished). The application goes in three named steps (data-steps); Enter on a step
+	   goes to the next one instead of sending a half form. The team's fields show for a team only ([data-when]). What
+	   is typed is kept in this browser as a draft (not the files) until the form is sent. The form is sent here, with
+	   the upload's progress on the button, and the server answers where to go (reason_form_go()). Without JavaScript
+	   the form is sent as it is, and the server checks everything in either case. */
+	var FA = '۰۱۲۳۴۵۶۷۸۹';
+	function faDigits(s) { return String(s).replace(/\d/g, function (d) { return FA[d]; }); }
+	function enDigits(s) {
+		return String(s).replace(/[۰-۹]/g, function (d) { return FA.indexOf(d); }).replace(/[٠-٩]/g, function (d) { return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); });
+	}
+	function megabytes(n) {
+		if (n < 102400) return faDigits(Math.max(1, Math.round(n / 1024))) + ' ' + T('کیلوبایت');
+		return faDigits(String(Math.round(n / 1048576 * 10) / 10).replace('.', '٫')) + ' ' + T('مگابایت');
+	}
+
+	function forms() {
+		/* A form that was sent leaves its draft behind; so does an application deleted from the reminder's link, before
+		   its empty form below could be filled again from here. */
+		[['apply', '#apply-form'], ['contact', '#contact-form']].forEach(function (p) {
+			if (document.querySelector(p[1] + ' .rs-done, ' + p[1] + ' .rs-alert--ok')) dropDraft(p[0]);
+		});
+		/* What a sent form says is read first, and its tick draws itself. */
+		var done = document.querySelector('[data-done]');
+		if (done) {
+			requestAnimationFrame(function () { requestAnimationFrame(function () { done.classList.add('is-in'); }); });
+			/* After the page's own load-time effects, which took the focus back when it was given at once. */
+			var take = function () { setTimeout(function () { try { done.focus({ preventScroll: true }); } catch (e) { done.focus(); } }, 300); };
+			if (document.readyState === 'complete') take(); else window.addEventListener('load', take, { once: true });
+		}
+		[].forEach.call(document.querySelectorAll('form.rs-form'), function (form) {
+			var kind = form.querySelector('input[name="reason_apply"]') ? 'apply' : form.querySelector('input[name="reason_contact"]') ? 'contact' : '';
+			if (kind) formify(form, kind);
+		});
+	}
+
+	function draftKey(kind) { return 'reason-draft-' + kind; }
+	function dropDraft(kind) {
+		try { localStorage.removeItem(draftKey(kind)); localStorage.removeItem(draftKey(kind) + '-key'); } catch (e) { /* storage off */ }
+	}
+	/* The application's token on the server (functions.php reason_draft_save()): made here, so a save sent as the page
+	   closes (no answer to read) still updates the same unfinished application. */
+	function draftToken(kind, fresh) {
+		var k = draftKey(kind) + '-key', t = '';
+		try { t = fresh ? '' : localStorage.getItem(k) || ''; } catch (e) { /* storage off */ }
+		if (!/^[a-f0-9]{32}$/.test(t)) {
+			var a = new Uint8Array(16);
+			(window.crypto || window.msCrypto).getRandomValues(a);
+			t = [].map.call(a, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+			try { localStorage.setItem(k, t); } catch (e) { /* storage off: kept for this page only */ }
+		}
+		return t;
+	}
+
+	function formify(form, kind) {
+		var submit = form.querySelector('.rs-form__foot button[type="submit"]');
+		var foot = form.querySelector('.rs-form__foot');
+		var status = document.createElement('p');
+		status.className = 'rs-form__status';
+		status.setAttribute('role', 'status');
+		foot.appendChild(status);
+
+		/* The fields that count: named, shown or in a step, not the honeypot, not a hidden team field; one per radio group. */
+		var controls = function (scope) {
+			var seen = {};
+			return [].filter.call((scope || form).querySelectorAll('input, select, textarea'), function (el) {
+				if (!el.name || el.type === 'hidden' || el.closest('.rs-hp') || el.closest('[data-when][hidden]')) return false;
+				if (el.type === 'radio') { if (seen[el.name]) return false; seen[el.name] = 1; }
+				return true;
+			});
+		};
+		var labelOf = function (el) {
+			var w = el.closest('.rs-field'), l = w && w.querySelector('label[for="' + el.id + '"]');
+			return l && l.firstChild ? l.firstChild.textContent.trim() : '';
+		};
+
+		var problem = function (el) {
+			if (el.type === 'checkbox') return el.required && !el.checked ? T('برای ثبت نهایی درخواست، قوانین و مقررات را بپذیرید.') : '';
+			if (el.type === 'radio') {
+				return el.required && !form.querySelector('input[name="' + el.name + '"]:checked') ? T('یکی از گزینه‌ها را انتخاب کنید.') : '';
+			}
+			if (el.type === 'file') {
+				var f = el.files && el.files[0];
+				if (!f) return el.required ? T('فایل «{label}» را انتخاب کنید.', { label: labelOf(el) }) : '';
+				var exts = (el.getAttribute('data-exts') || '').split(',').filter(Boolean);
+				var ext = f.name.indexOf('.') > -1 ? f.name.split('.').pop().toLowerCase() : '';
+				if (exts.length && exts.indexOf(ext) < 0) return 'فرمت این فایل پذیرفته نیست؛ ' + exts.map(function (x) { return x.toUpperCase(); }).join(' یا ') + ' بفرستید.';
+				var max = +el.getAttribute('data-max');
+				if (max && f.size > max) return T('حجم این فایل {size} است؛ حداکثر {max}.', { size: megabytes(f.size), max: megabytes(max) });
+				return '';
+			}
+			var v = el.value.trim();
+			if (el.tagName === 'SELECT') return el.required && !v ? T('یکی از گزینه‌ها را انتخاب کنید.') : '';
+			if (!v) return el.required ? T('«{label}» را بنویسید.', { label: labelOf(el) }) : '';
+			var k = el.getAttribute('data-kind'), d = enDigits(v).replace(/[\s()-]/g, '');
+			if (el.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@.]{2,}$/.test(v)) return T('این ایمیل درست نیست؛ مثلاً name@example.com');
+			if (k === 'mobile' && !/^(\+98|0098|98|0)?9\d{9}$/.test(d)) return T('شماره موبایل یازده رقم است و با ۰۹ شروع می‌شود.');
+			if (k === 'phone' && !/^\+?\d{7,15}$/.test(d)) return T('این شماره درست نیست؛ فقط رقم بنویسید.');
+			if (k === 'year') {
+				var y = +d;
+				if (!/^\d{4}$/.test(d) || !((y >= 1300 && y <= 1395) || (y >= 1921 && y <= 2016))) return T('سال تولد را چهار رقمی بنویسید؛ مثلاً ۱۳۷۵.');
+			}
+			if (k === 'count' && !(/^\d{1,2}$/.test(d) && +d > 0)) return T('تعداد را با رقم بنویسید؛ مثلاً ۳.');
+			if (k === 'url' && !/^https?:\/\/[^\s/.]+\.[^\s]{2,}$/i.test(v)) return T('این نشانی درست نیست؛ مثلاً https://example.com');
+			return '';
+		};
+
+		/* Shows (or clears) a field's message under it, tied to the control for screen readers. */
+		var say = function (el, msg) {
+			var w = el.closest('.rs-field');
+			if (!w) return !msg;
+			var id = (el.type === 'radio' ? el.name : el.id) + '-err';
+			var box = document.getElementById(id);
+			if (!box && msg) { box = document.createElement('small'); box.className = 'rs-field__err'; box.id = id; w.appendChild(box); }
+			if (box) { box.textContent = msg; box.hidden = !msg; }
+			w.classList.toggle('is-invalid', !!msg);
+			var all = el.type === 'radio' ? form.querySelectorAll('input[name="' + el.name + '"]') : [el];
+			[].forEach.call(all, function (t) {
+				var ids = (t.getAttribute('aria-describedby') || '').split(' ').filter(function (x) { return x && x !== id; });
+				if (msg) { ids.push(id); t.setAttribute('aria-invalid', 'true'); } else t.removeAttribute('aria-invalid');
+				if (ids.length) t.setAttribute('aria-describedby', ids.join(' ')); else t.removeAttribute('aria-describedby');
+			});
+			return !msg;
+		};
+		var test = function (el) { return say(el, problem(el)); };
+		/* Checks every field in scope, shows each message, and returns the first that is wrong. */
+		var testAll = function (scope) {
+			var first = null;
+			controls(scope).forEach(function (el) { if (!test(el) && !first) first = el; });
+			return first;
+		};
+		var reach = function (el) {
+			el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+		};
+		var fixUrl = function (el) {
+			var v = el.value.trim();
+			if (v && !/^[a-z][a-z0-9+.-]*:/i.test(v)) el.value = 'https://' + v.replace(/^\/+/, '');
+		};
+
+		/* The team's fields, for a team. */
+		var conditions = function () {
+			[].forEach.call(form.querySelectorAll('[data-when]'), function (w) {
+				var p = w.getAttribute('data-when').split('=');
+				var on = !!form.querySelector('input[name="' + p[0] + '"][value="' + p[1] + '"]:checked');
+				w.hidden = !on;
+				[].forEach.call(w.querySelectorAll('input, select, textarea'), function (el) {
+					if (w.hasAttribute('data-required')) el.required = on;
+					if (!on) say(el, '');
+				});
+			});
+		};
+
+		/* Counters under the long answers. */
+		[].forEach.call(form.querySelectorAll('textarea[maxlength]'), function (t) {
+			var c = document.createElement('small');
+			c.className = 'rs-field__count';
+			c.setAttribute('aria-hidden', 'true');
+			t.parentNode.insertBefore(c, t.nextSibling);
+			t.rsCount = function () { c.textContent = faDigits(t.value.length) + ' / ' + faDigits(t.maxLength); };
+			t.rsCount();
+		});
+
+		/* The draft: what is typed, in this browser, for two weeks or until the form is sent. */
+		var key = draftKey(kind), timer = 0;
+		var store = function () {
+			var v = {};
+			[].forEach.call(form.querySelectorAll('input, select, textarea'), function (el) {
+				if (!el.name || el.closest('.rs-hp') || /^(hidden|file|checkbox|submit)$/.test(el.type)) return;
+				if (el.type === 'radio') { if (el.checked) v[el.name] = el.value; return; }
+				if (el.value.trim()) v[el.name] = el.value;
+			});
+			try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), v: v })); } catch (e) { /* storage off */ }
+		};
+		/* A pause in typing saves; leaving the page saves at once. */
+		var keep = function (now) {
+			clearTimeout(timer);
+			if (now === true) store(); else timer = setTimeout(store, 400);
+		};
+		/* Puts saved values in the fields: only the empty ones, or (over) all that are named. */
+		var fill = function (v, over) {
+			var n = 0;
+			Object.keys(v).forEach(function (name) {
+				var els = form.querySelectorAll('[name="' + name.replace(/"/g, '') + '"]');
+				if (!els.length) return;
+				if (els[0].type === 'radio') {
+					if (!over && form.querySelector('input[name="' + els[0].name + '"]:checked')) return;
+					[].forEach.call(els, function (r) { r.checked = r.value === v[name]; if (r.checked) n++; });
+				} else if (over || !els[0].value) { els[0].value = v[name]; n++; }
+			});
+			return n;
+		};
+		/* The line above the form that says what came back, with a way to start over. */
+		var note = function (msg) {
+			var box = form.querySelector('.rs-draft');
+			if (box) { box.firstChild.textContent = msg; return; }
+			box = document.createElement('div');
+			box.className = 'rs-draft';
+			box.setAttribute('role', 'status');
+			box.innerHTML = '<span></span><button type="button">' + T('پاک کردن و شروع از نو') + '</button>';
+			box.firstChild.textContent = msg;
+			box.querySelector('button').addEventListener('click', function () {
+				form.reset();
+				dropDraft(kind);
+				if (saveUrl) { token = draftToken(kind, true); lastSaved = ''; if (tokenField) tokenField.value = token; }
+				box.remove();
+				controls().forEach(function (el) { say(el, ''); });
+				[].forEach.call(form.querySelectorAll('textarea[maxlength]'), function (t) { t.rsCount(); });
+				[].forEach.call(form.querySelectorAll('.rs-file input'), function (f) { f.dispatchEvent(new Event('change')); });
+				conditions();
+				if (steps) steps.go(1, true);
+			});
+			form.insertBefore(box, form.firstChild);
+		};
+		var restore = function () {
+			var d = null;
+			try { d = JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return; }
+			/* Nothing kept, or too old: only the values go. The token made above stays, so this browser goes on saving to
+			   one application on the server (dropping it made each visit a new one). */
+			if (!d || !d.v || Date.now() - d.t > 14 * 864e5) { try { localStorage.removeItem(key); } catch (e) { /* storage off */ } return; }
+			if (fill(d.v, false)) note(T('آنچه پیش‌تر در این فرم نوشته بودید سر جایش است.'));
+		};
+
+		/* Each step on the server as it is reached, and the one in hand when the page is left (sendBeacon), for the
+		   team to follow up who did not finish. Only once there is a name, phone or e-mail; not twice the same. */
+		var saveUrl = kind === 'apply' ? form.getAttribute('data-save') : '';
+		var token = saveUrl ? draftToken(kind) : '', lastSaved = '';
+		var tokenField = form.querySelector('input[name="reason_draft"]');
+		if (tokenField) tokenField.value = token;
+		var saveStep = function (step, closing) {
+			if (!saveUrl || !window.FormData) return;
+			var fd = new FormData(), sig = [];
+			[].forEach.call(form.querySelectorAll('input, select, textarea'), function (el) {
+				if (!el.name || /^(file|checkbox|submit|hidden)$/.test(el.type) || (el.type === 'radio' && !el.checked)) return;
+				fd.append(el.name, el.value);
+				if (el.name !== 'website') sig.push(el.name + '=' + el.value);
+			});
+			var who = ['r_name', 'r_phone', 'r_email'].some(function (n) { var f = form.elements[n]; return f && f.value.trim(); });
+			var key = step + '|' + sig.join('&');
+			if (!who || key === lastSaved) return;
+			lastSaved = key;
+			fd.append('action', 'reason_step');
+			fd.append('reason_step', step);
+			fd.append('reason_draft', token);
+			fd.append('reason_nonce', form.elements.reason_nonce.value);
+			if (closing && navigator.sendBeacon) { navigator.sendBeacon(saveUrl, fd); return; }
+			try { fetch(saveUrl, { method: 'POST', body: fd, credentials: 'same-origin', keepalive: !!closing }).catch(function () { lastSaved = ''; }); } catch (e) { lastSaved = ''; }
+		};
+		var leaving = function () {
+			if (form.classList.contains('is-sending')) return;
+			keep(true);
+			saveStep(steps ? steps.current() : 1, true);
+		};
+		window.addEventListener('pagehide', leaving);
+		document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') leaving(); });
+
+		/* The steps. */
+		var steps = form.hasAttribute('data-steps') ? stepper(form, testAll, reach, function (k) { saveStep(k, false); }) : null;
+
+		restore();
+		conditions();
+		[].forEach.call(form.querySelectorAll('textarea[maxlength]'), function (t) { t.rsCount(); });
+
+		/* Opened from the reminder e-mail (functions.php: ?resume= → ?reason=resumed and a cookie): the server hands this
+		   browser the application's token and what was saved, once. They replace what is here, and the form goes on at
+		   the step that was reached; later saves update the same application. */
+		if (saveUrl && window.fetch && /(^|&)reason=resumed(&|$)/.test(location.search.slice(1))) {
+			try { var u = new URL(location.href); u.searchParams.delete('reason'); history.replaceState(null, '', u.pathname + u.search + u.hash); } catch (e) { /* keep the address */ }
+			var ask = new FormData();
+			ask.append('action', 'reason_resume');
+			fetch(saveUrl, { method: 'POST', body: ask, credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (d) {
+				if (!d || !d.ok || !/^[a-f0-9]{32}$/.test(d.token || '')) return;
+				token = d.token; lastSaved = '';
+				try { localStorage.setItem(draftKey(kind) + '-key', token); } catch (e) { /* storage off: kept for this page only */ }
+				if (tokenField) tokenField.value = token;
+				fill(d.fields || {}, true);
+				conditions();
+				[].forEach.call(form.querySelectorAll('textarea[maxlength]'), function (t) { t.rsCount(); });
+				controls().forEach(function (el) { if (el.closest('.rs-field.is-invalid')) test(el); });
+				store();
+				note(T('درخواست ناتمام شما بازیابی شد؛ از همان‌جا که مانده بودید ادامه دهید.'));
+				if (steps && d.step > 1) steps.to(d.step);
+			}).catch(function () { /* the form as it is */ });
+		}
+
+		form.addEventListener('input', function (e) {
+			var el = e.target;
+			el.rsTyped = true;
+			if (el.rsCount) el.rsCount();
+			if (el.closest('.rs-field.is-invalid')) test(el);
+			keep();
+		});
+		form.addEventListener('change', function (e) {
+			var el = e.target;
+			if (el.type === 'radio') conditions();
+			if (/^(radio|checkbox|file)$/.test(el.type) || el.tagName === 'SELECT') test(el);
+			keep();
+		});
+		form.addEventListener('focusout', function (e) {
+			var el = e.target;
+			if (!el.name || !/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || /^(radio|checkbox|file)$/.test(el.type)) return;
+			if (el.getAttribute('data-kind') === 'url') fixUrl(el);
+			if (el.rsTyped || el.closest('.rs-field.is-invalid')) test(el);
+		});
+
+		form.addEventListener('submit', function (e) {
+			if (steps && !steps.last()) { e.preventDefault(); steps.next(); return; }
+			[].forEach.call(form.querySelectorAll('[data-kind="url"]'), fixUrl);
+			var bad = testAll();
+			if (bad) {
+				e.preventDefault();
+				if (steps) steps.show(bad);
+				reach(bad);
+				return;
+			}
+			if (!window.FormData || !window.XMLHttpRequest) return;
+			e.preventDefault();
+			send(form, submit, status, kind);
+		});
+	}
+
+	/* «اطلاعات شما › تیم و راهکار › فایل‌ها و ارسال»: the steps by name, the ones done can be gone back to. */
+	function stepper(form, testAll, reach, reached) {
+		var names = form.getAttribute('data-steps').split('|');
+		var groups = [].slice.call(form.querySelectorAll('[data-step]'));
+		var n = names.length, cur = 1, seen = 1;
+		var head = document.createElement('div');
+		head.className = 'rs-steps';
+		head.innerHTML = '<ol class="rs-steps__list">' + names.map(function (name, i) {
+			return '<li><button type="button" data-goto="' + (i + 1) + '"><b>' + faDigits(i + 1) + '</b><span>' + name + '</span></button></li>';
+		}).join('') + '</ol><p class="screen-reader-text" aria-live="polite"></p>';
+		form.insertBefore(head, form.firstChild);
+		var items = [].slice.call(head.querySelectorAll('li'));
+		var live = head.querySelector('p');
+		var nav = document.createElement('div');
+		nav.className = 'rs-steps__nav';
+		/* «مرحله قبل» on the right, «مرحله بعد» on the left (2026-10-18), and on the last step «ارسال درخواست» in its
+		   place, on the same row: the send button moves here from the foot. */
+		nav.innerHTML = '<button type="button" class="rs-btn rs-btn--ghost" data-prev><span aria-hidden="true"><svg class="rs-ico" width="20" height="20" aria-hidden="true" focusable="false"><use href="#rs-i-prev"/></svg></span> ' + T('مرحله قبل') + '</button>'
+			+ '<button type="button" class="rs-btn rs-btn--accent rs-btn--lg" data-next>' + T('مرحله بعد') + ' <span aria-hidden="true"><svg class="rs-ico" width="20" height="20" aria-hidden="true" focusable="false"><use href="#rs-i-next"/></svg></span></button>';
+		var foot = form.querySelector('.rs-form__foot');
+		form.insertBefore(nav, foot);
+		var send = foot && foot.querySelector('button[type="submit"]');
+		if (send) nav.appendChild(send);
+		var next = nav.querySelector('[data-next]'), prev = nav.querySelector('[data-prev]');
+		var scope = function (k) { return groups.filter(function (g) { return +g.getAttribute('data-step') === k; }); };
+		var bad = function (k) {
+			var first = null;
+			scope(k).forEach(function (g) { var b = testAll(g); if (b && !first) first = b; });
+			return first;
+		};
+		var show = function (k, focus) {
+			cur = k; seen = Math.max(seen, k);
+			groups.forEach(function (g) { g.classList.toggle('is-current', +g.getAttribute('data-step') === k); });
+			form.classList.toggle('is-last', k === n);
+			items.forEach(function (li, i) {
+				var s = i + 1, b = li.querySelector('button');
+				li.classList.toggle('is-current', s === k);
+				li.classList.toggle('is-done', s !== k && (s < k || s < seen));
+				b.disabled = s > seen;
+				if (s === k) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+				b.setAttribute('aria-label', T('گام {n} از {all}: {name}', { n: faDigits(s), all: faDigits(n), name: names[i] }));
+			});
+			live.textContent = T('گام {n} از {all}: {name}', { n: faDigits(k), all: faDigits(n), name: names[k - 1] });
+			if (focus && reached) reached(k);
+			next.hidden = k === n; prev.hidden = k === 1;
+			if (focus) {
+				head.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				var t = scope(k)[0].querySelector('.rs-fgroup__title');
+				if (t) { t.setAttribute('tabindex', '-1'); try { t.focus({ preventScroll: true }); } catch (e) { t.focus(); } }
+			}
+		};
+		/* Forward only past steps that are complete; the first thing wrong is shown in its step. */
+		var go = function (k, focus) {
+			for (var s = 1; s < k; s++) {
+				var b = bad(s);
+				if (b) { if (s !== cur) show(s, false); reach(b); return; }
+			}
+			show(k, focus);
+		};
+		next.addEventListener('click', function () { go(cur + 1, true); });
+		prev.addEventListener('click', function () { show(cur - 1, true); });
+		head.addEventListener('click', function (e) {
+			var b = e.target.closest('[data-goto]');
+			if (b && !b.disabled) { var k = +b.getAttribute('data-goto'); if (k < cur) show(k, true); else go(k, true); }
+		});
+		form.classList.add('is-stepped');
+		show(1, false);
+		return {
+			last: function () { return cur === n; },
+			current: function () { return cur; },
+			next: function () { go(cur + 1, true); },
+			to: function (k) { go(Math.min(n, k), true); },
+			go: function (k, focus) { seen = 1; show(k, focus); },
+			show: function (el) { var g = el.closest('[data-step]'); if (g && +g.getAttribute('data-step') !== cur) show(+g.getAttribute('data-step'), false); }
+		};
+	}
+
+	/* Sends the form here: the upload's progress on the button, the server's answer as the next address. */
+	function send(form, btn, status, kind) {
+		var hasFiles = [].some.call(form.querySelectorAll('input[type="file"]'), function (f) { return f.files && f.files.length; });
+		var label = btn.innerHTML;
+		var done = function (msg) {
+			btn.disabled = false; btn.classList.remove('is-busy'); btn.innerHTML = label; btn.style.removeProperty('--p');
+			form.classList.remove('is-sending');
+			status.textContent = msg; status.classList.add('is-err');
+		};
+		btn.disabled = true; btn.classList.add('is-busy'); form.classList.add('is-sending');
+		status.classList.remove('is-err');
+		status.textContent = hasFiles ? T('در حال بارگذاری فایل‌ها…') : T('در حال ارسال…');
+		btn.textContent = hasFiles ? T('بارگذاری {percent}٪', { percent: faDigits(0) }) : T('در حال ارسال…');
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', form.action);
+		xhr.setRequestHeader('X-Reason-Form', '1');
+		if (hasFiles && xhr.upload) {
+			xhr.upload.addEventListener('progress', function (e) {
+				if (!e.lengthComputable) return;
+				var p = Math.min(100, Math.round(e.loaded / e.total * 100));
+				btn.style.setProperty('--p', p + '%');
+				btn.textContent = p < 100 ? T('بارگذاری {percent}٪', { percent: faDigits(p) }) : T('در حال ثبت…');
+				if (p === 100) status.textContent = T('فایل‌ها رسید؛ در حال ثبت درخواست…');
+			});
+		}
+		xhr.addEventListener('load', function () {
+			var to = '';
+			try { to = (JSON.parse(xhr.responseText) || {}).to || ''; } catch (e) { /* not JSON */ }
+			if (!to && xhr.status >= 200 && xhr.status < 400) to = xhr.responseURL;
+			if (!to) { done(T('ارسال انجام نشد (خطای {status})؛ کمی بعد دوباره «ارسال» را بزنید. نوشته‌های شما سر جایش است.', { status: faDigits(xhr.status) })); return; }
+			var u = new URL(to, location.href);
+			if (u.origin !== location.origin) { done(T('ارسال انجام نشد؛ دوباره تلاش کنید.')); return; }
+			if (/[?&]reason=sent\b/.test(u.search)) dropDraft(kind);
+			if (u.pathname + u.search === location.pathname + location.search) { location.hash = u.hash; location.reload(); }
+			else location.assign(u.href);
+		});
+		var fail = function () { done(T('اتصال برقرار نشد و چیزی ارسال نشد؛ اینترنت را بررسی کنید و دوباره «ارسال» را بزنید. نوشته‌های شما سر جایش است.')); };
+		xhr.addEventListener('error', fail);
+		xhr.addEventListener('timeout', fail);
+		xhr.send(new FormData(form));
+	}
+
+	/* «چرا REASON؟» on wide screens with motion: the section is pinned for as long as its cards are wide, and scrolling
+	   down slides them sideways (RTL: towards the left). Narrow screens, or reduced motion: the swipeable carousel. */
+	function whyScroll() {
+		var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+		[].forEach.call(document.querySelectorAll('[data-hscroll]'), function (sec) {
+			var track = sec.querySelector('[data-carousel]');
+			if (!track) return;
+			var frame = 0, extra = 0;
+			var header = document.querySelector('.rs-header');
+			var measure = function () {
+				var on = !reduce && window.innerWidth >= 900;
+				sec.classList.toggle('is-pinned', on);
+				if (!on) { sec.style.removeProperty('--hs-h'); return; }
+				extra = Math.max(0, track.scrollWidth - track.clientWidth);
+				sec.style.setProperty('--hs-h', (window.innerHeight + extra) + 'px');
+				update();
+			};
+			var update = function () {
+				frame = 0;
+				if (!sec.classList.contains('is-pinned')) return;
+				var head = header ? header.offsetHeight : 0;
+				var r = sec.getBoundingClientRect(), total = sec.offsetHeight - (window.innerHeight - head);
+				var p = total > 0 ? Math.min(1, Math.max(0, (head - r.top) / total)) : 0;
+				track.scrollLeft = -p * extra;
+			};
+			window.addEventListener('scroll', function () { if (!frame) frame = requestAnimationFrame(update); }, { passive: true });
+			window.addEventListener('resize', measure);
+			window.addEventListener('load', measure);
+			measure();
+		});
+	}
+
+	/* The header steps away while you scroll down and comes back as soon as you scroll up (2026-10-17, as scale.com
+	   does), never while the phone menu is open. <html>.is-head-up tells the sticky blocks to sit at the top. */
+	function headerAway() {
+		var header = document.querySelector('.rs-header');
+		if (!header) return;
+		var btn = document.querySelector('[data-menu-toggle]');
+		var lastY = window.scrollY, frame = 0, root = document.documentElement;
+		var update = function () {
+			frame = 0;
+			var y = window.scrollY, d = y - lastY;
+			if (Math.abs(d) < 6) return;
+			var away = d > 0 && y > header.offsetHeight * 2 && !(btn && btn.getAttribute('aria-expanded') === 'true');
+			header.classList.toggle('is-away', away);
+			root.classList.toggle('is-head-up', away);
+			lastY = y;
+		};
+		window.addEventListener('scroll', function () { if (!frame) frame = requestAnimationFrame(update); }, { passive: true });
+		header.addEventListener('focusin', function () { header.classList.remove('is-away'); root.classList.remove('is-head-up'); });
+	}
+
+	/* «جریانی برای رشد»: how far the section has been read, 0…1 (--fp), for the rail and its nodes. */
+	function flowRail() {
+		[].forEach.call(document.querySelectorAll('[data-flow]'), function (sec) {
+			var list = sec.querySelector('.rs-flow__list');
+			if (!list) return;
+			var frame = 0;
+			var update = function () {
+				frame = 0;
+				var r = list.getBoundingClientRect(), vh = window.innerHeight;
+				var p = Math.min(1, Math.max(0, (vh * 0.85 - r.top) / (r.height + vh * 0.35)));
+				list.style.setProperty('--fp', p.toFixed(3));
+			};
+			window.addEventListener('scroll', function () { if (!frame) frame = requestAnimationFrame(update); }, { passive: true });
+			window.addEventListener('resize', update);
+			update();
+		});
+	}
+
+	/* The signature cut where CSS cannot draw it (Safari: no corner-shape, 2026-10-21). style.css hands each box its cut
+	   as a top-right radius a thousandth of the size; here that becomes a clip-path, the cut at the logo's angle and the
+	   rest of the box left free by a margin, so shadows still show. A box with a visible border gets the border's line
+	   along the cut too. Boxes added later (the form's steps, notes) are cut as they arrive. */
+	function corners() {
+		if (!window.CSS || !CSS.supports || CSS.supports('corner-shape', 'bevel') || !window.getComputedStyle) return;
+		var M = 48;
+		var cut = function (el) {
+			if (el.__cut) return;
+			var cs = getComputedStyle(el), r = cs.borderTopRightRadius.split(' ').map(parseFloat);
+			if (!(r[0] > 0 && r[0] < 1)) return;
+			el.__cut = 1;
+			var x = r[0] * 1000, y = (r[1] || r[0]) * 1000;
+			el.style.clipPath = 'polygon(-' + M + 'px -' + M + 'px, calc(100% - ' + (x + M * x / y).toFixed(2) + 'px) -' + M + 'px, calc(100% + ' + M + 'px) ' + (y + M * y / x).toFixed(2) + 'px, calc(100% + ' + M + 'px) calc(100% + ' + M + 'px), -' + M + 'px calc(100% + ' + M + 'px))';
+			var bw = parseFloat(cs.borderTopWidth), bc = cs.borderTopColor, a = /rgba\([^)]*,\s*([\d.]+)\)/.exec(bc);
+			if (bw >= 1 && cs.borderTopStyle !== 'none' && (!a || +a[1] >= 0.08) && cs.backgroundImage === 'none') {
+				el.style.backgroundImage = 'linear-gradient(to top right, transparent calc(50% - ' + bw + 'px), ' + bc + ' calc(50% - ' + bw + 'px), ' + bc + ' calc(50% + ' + bw + 'px), transparent calc(50% + ' + bw + 'px))';
+				el.style.backgroundSize = x + 'px ' + y + 'px';
+				el.style.backgroundPosition = 'right top';
+				el.style.backgroundRepeat = 'no-repeat';
+				el.style.backgroundOrigin = 'border-box';
+			}
+		};
+		var all = function (root) { if (root.nodeType !== 1) return; cut(root); [].forEach.call(root.querySelectorAll('*'), cut); };
+		all(document.body);
+		if (!window.MutationObserver) return;
+		var queue = [], frame = 0;
+		new MutationObserver(function (ms) {
+			ms.forEach(function (m) { [].forEach.call(m.addedNodes, function (n) { queue.push(n); }); });
+			if (!frame) frame = requestAnimationFrame(function () { frame = 0; var q = queue; queue = []; q.forEach(all); });
+		}).observe(document.body, { childList: true, subtree: true });
+	}
+
+	function ready() {
+		corners();
+		menu();
+		headerAway();
+		flowRail();
+		media();
+		filePickers();
+		forms();
+		newsletter();
+		stack();
+		sectionNav();
+		vslider();
+		carousels();
+		whyScroll();
+		tabs();
+		areas();
+		if (window.ReasonFX) start();
+		else window.addEventListener('reasonfx-ready', start, { once: true });
+	}
+
+	if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
+	else ready();
+})();

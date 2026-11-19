@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سربرگ رسمی سازمانی سینارو | SEYNARO Official Letterhead</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-dark: #0B0D1A;
+            --brand-teal: #0DB8A6;
+            --brand-coral: #FF5A40;
+            --brand-gold: #D69E2E;
+            --slate-900: #0F172A;
+            --slate-700: #334155;
+            --slate-500: #64748B;
+            --slate-200: #E2E8F0;
+            --slate-100: #F1F5F9;
+            --bg-paper: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #525659;
+            color: var(--slate-900);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 30px 10px;
+        }
+
+        .page-container {
+            width: 210mm;
+            min-height: 297mm;
+            background: var(--bg-paper);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            position: relative;
+            padding: 16mm 18mm 20mm 18mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        /* Subtle Luxury Watermark */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-12deg);
+            width: 420px;
+            height: 420px;
+            opacity: 0.028;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Top Accent Geometric Bar */
+        .top-stripe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--brand-coral) 0%, var(--brand-teal) 45%, var(--brand-dark) 100%);
+        }
+
+        /* Header Layout */
+        header {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 14px;
+            border-bottom: 1.5px solid var(--slate-200);
+            margin-bottom: 24px;
+        }
+
+        .brand-block {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-box {
+            width: 58px;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #FAFAFC;
+            border-radius: 12px;
+            border: 1px solid var(--slate-200);
+            padding: 4px;
+        }
+
+        .logo-box svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .brand-text h1 {
+            font-size: 21px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: var(--brand-dark);
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-text h1 span {
+            color: var(--brand-teal);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            color: var(--slate-500);
+            font-weight: 500;
+            margin-top: 3px;
+        }
+
+        .meta-table-box {
+            background: var(--slate-100);
+            border: 1px solid var(--slate-200);
+            border-radius: 8px;
+            padding: 8px 14px;
+            min-width: 190px;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .meta-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .meta-label {
+            color: var(--slate-500);
+            font-weight: 600;
+        }
+
+        .meta-val {
+            color: var(--brand-dark);
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .badge-confidential {
+            display: inline-block;
+            background: #FEE2E2;
+            color: #991B1B;
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Document Subject & Main Content */
+        .doc-body {
+            position: relative;
+            z-index: 10;
+            flex-grow: 1;
+        }
+
+        .recipient-box {
+            margin-bottom: 18px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .recipient-box .to {
+            font-weight: 800;
+            color: var(--brand-dark);
+            font-size: 14px;
+        }
+
+        .recipient-box .subject {
+            margin-top: 4px;
+            color: var(--brand-dark);
+            font-weight: 700;
+            background: #F8FAFC;
+            padding: 6px 12px;
+            border-right: 3px solid var(--brand-teal);
+            border-radius: 0 6px 6px 0;
+            display: inline-block;
+        }
+
+        .content-prose {
+            font-size: 12.5px;
+            line-height: 1.95;
+            color: var(--slate-700);
+            text-align: justify;
+        }
+
+        .content-prose p {
+            margin-bottom: 14px;
+        }
+
+        .executive-callout {
+            background: #F0FDFA;
+            border: 1px solid #CCFBF1;
+            border-right: 4px solid var(--brand-teal);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 16px 0;
+            font-size: 12px;
+            line-height: 1.8;
+            color: #0F766E;
+        }
+
+        .executive-callout strong {
+            color: #115E59;
+            font-weight: 800;
+        }
+
+        /* Key Metrics Grid in Letter */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .metric-card {
+            background: #FFFFFF;
+            border: 1px solid var(--slate-200);
+            border-radius: 8px;
+            padding: 10px 12px;
+            text-align: center;
+        }
+
+        .metric-card .num {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--brand-dark);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .metric-card .num.teal { color: var(--brand-teal); }
+        .metric-card .num.coral { color: var(--brand-coral); }
+
+        .metric-card .lbl {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--slate-500);
+            margin-top: 2px;
+        }
+
+        /* Signatures Area */
+        .signatures-area {
+            margin-top: 26px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-top: 10px;
+        }
+
+        .signature-block {
+            width: 220px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .signature-block .title {
+            font-weight: 800;
+            color: var(--brand-dark);
+            margin-bottom: 4px;
+        }
+
+        .signature-block .role {
+            font-size: 10.5px;
+            color: var(--slate-500);
+            font-weight: 600;
+        }
+
+        .signature-seal {
+            margin-top: 8px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-teal);
+            font-size: 10px;
+            font-weight: 700;
+            border: 1px dashed var(--brand-teal);
+            border-radius: 6px;
+            background: #F0FDFA;
+            letter-spacing: 0.5px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Footer */
+        footer {
+            position: relative;
+            z-index: 10;
+            border-top: 1px solid var(--slate-200);
+            padding-top: 12px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9.5px;
+            color: var(--slate-500);
+        }
+
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .footer-info span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .qr-placeholder {
+            width: 38px;
+            height: 38px;
+            background: #F1F5F9;
+            border: 1px solid var(--slate-200);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            color: var(--slate-500);
+            text-align: center;
+        }
+
+        .footer-hash {
+            font-family: monospace;
+            font-size: 8.5px;
+            color: var(--slate-500);
+            direction: ltr;
+        }
+
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            .page-container {
+                box-shadow: none;
+                width: 100%;
+                min-height: 100vh;
+                padding: 14mm 16mm 16mm 16mm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+    <div class="top-stripe"></div>
+
+    <div class="watermark">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="540 360 860 960" width="860" height="960" xmlns:c2pa="http://c2pa.org/manifest">
+<defs><mask id="m" maskUnits="userSpaceOnUse" x="500" y="300" width="960" height="1100"><rect x="500" y="300" width="960" height="1100" fill="#fff"/><circle cx="1020" cy="740" r="112" fill="#000"/><circle cx="910" cy="948" r="112" fill="#000"/></mask></defs>
+<g mask="url(#m)" stroke-linecap="round" stroke-width="260" fill="none"><line x1="1010" y1="530" x2="710" y2="870" stroke="#0DB8A6"/><line x1="1220" y1="820" x2="940" y2="1160" stroke="#0B0D1A"/></g>
+<circle cx="1020" cy="740" r="54" fill="#FF5A40"/><circle cx="910" cy="948" r="54" fill="#FF5A40"/>
+</svg>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="brand-block">
+            <div class="logo-box">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="540 360 860 960" width="860" height="960" xmlns:c2pa="http://c2pa.org/manifest">
+<defs><mask id="m" maskUnits="userSpaceOnUse" x="500" y="300" width="960" height="1100"><rect x="500" y="300" width="960" height="1100" fill="#fff"/><circle cx="1020" cy="740" r="112" fill="#000"/><circle cx="910" cy="948" r="112" fill="#000"/></mask></defs>
+<g mask="url(#m)" stroke-linecap="round" stroke-width="260" fill="none"><line x1="1010" y1="530" x2="710" y2="870" stroke="#0DB8A6"/><line x1="1220" y1="820" x2="940" y2="1160" stroke="#0B0D1A"/></g>
+<circle cx="1020" cy="740" r="54" fill="#FF5A40"/><circle cx="910" cy="948" r="54" fill="#FF5A40"/>
+</svg>
+            </div>
+            <div class="brand-text">
+                <h1>سینارو <span>SEYNARO</span></h1>
+                <p>سامانه هوشمند تداوم عملیات و تثبیت خرد سازمانی | Enterprise Continuity OS</p>
+            </div>
+        </div>
+
+        <div class="meta-table-box">
+            <div class="meta-row">
+                <span class="meta-label">شماره سند:</span>
+                <span class="meta-val">SYN-2026-B2B-042</span>
+            </div>
+            <div class="meta-row">
+                <span class="meta-label">تاریخ صدور:</span>
+                <span class="meta-val">۱۴۰۵/۰۸/۲۹</span>
+            </div>
+            <div class="meta-row">
+                <span class="meta-label">پیوست:</span>
+                <span class="meta-val">دارد (بسته B2B)</span>
+            </div>
+            <div class="meta-row">
+                <span class="meta-label">طبقه‌بندی:</span>
+                <span class="badge-confidential">محرمانه تجاری</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="doc-body">
+        <div class="recipient-box">
+            <div class="to">به: اعضای محترم هیئت مدیره، مدیرعامل و مدیران ارشد اجرایی</div>
+            <div class="subject">موضوع: ابلاغیه راهبردی استقرار معماری تداوم عملیات و حفاظت از سرمایه دانشی (SEYNARO v2.5)</div>
+        </div>
+
+        <div class="content-prose">
+            <p>
+                با احترام، بدین‌وسیله چارچوب اجرایی نوین پلتفرم <strong>سینارو (SEYNARO)</strong> جهت رفع دائمی وابستگی عملیاتی به افراد کلیدی، مهار پدیده انحصارطلبی اطلاعاتی و تضمین استمرار زنجیره ارزش تجاری شرکت ابلاغ می‌گردد. در این مدل انقلابی، پارادایم شکست‌خورده مستندسازی سنتی با رویکرد ارگونومیک <strong>«تفکیک حاکمیت اسناد از منطق عملیاتی»</strong> جایگزین شده است.
+            </p>
+
+            <div class="executive-callout">
+                <strong>اصل بنیادین معماری سینارو:</strong> کلیه اسناد، محاسبات و چرک‌نویس‌های خام در گاوصندوق رمزنگاری‌شده شخصی کارمند محفوظ می‌ماند و انتقال اسناد صرفاً با تایید صریح و دکمه خود کارمند میسر است؛ در مقابل، «منطق تصمیم‌گیری و شروط فرایندی» بدون ایجاد مزاحمت یا فرم‌پرانی، به عنوان دارایی نامشهود و جاودان شرکت به موتور حل‌کننده قطعی Z3 و دوقلوهای شناختی منتقل می‌گردد.
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="num teal">۹۱٫۸٪</div>
+                    <div class="lbl">نرخ همکاری پرسنل بدبین</div>
+                </div>
+                <div class="metric-card">
+                    <div class="num coral">&lt; ۵ ثانیه</div>
+                    <div class="lbl">سرعت انجام کارهای تکراری</div>
+                </div>
+                <div class="metric-card">
+                    <div class="num">۱۰۰٪</div>
+                    <div class="lbl">تداوم بدون گروگان‌گیری دانش</div>
+                </div>
+            </div>
+
+            <p>
+                بر اساس این ابلاغیه، سامانه در فرایندهای جاافتاده پیرو <strong>«اصل سکوت سیستمی»</strong> عمل کرده و با حذف کامل پرسش‌های تکراری، تنها به اخذ تاییدیه ۱ ثانیه‌ای کارمند اکتفا می‌نماید. در صورت غیبت یا جابه‌جایی نخبگان سازمانی، دوقلوی تصمیم‌گیری سینارو جریان عملیات را با دقت ریاضی پیش برده و خطاهای جانشین را طبق «پیمان‌نامه سپر بلا» از حیطه توبیخ فردی خارج می‌سازد.
+            </p>
+        </div>
+
+        <!-- Signatures Area -->
+        <div class="signatures-area">
+            <div class="signature-block">
+                <div class="title">معماری سیستم و فناوری</div>
+                <div class="role">صندوق توسعه دانش و حل‌کننده فرمال Z3</div>
+                <div class="signature-seal">VERIFIED SECURE</div>
+            </div>
+
+            <div class="signature-block">
+                <div class="title">شورای عالی راهبری سینارو</div>
+                <div class="role">مدیریت تداوم کسب‌وکار و پایلوت‌های سازمانی</div>
+                <div class="signature-seal">SEYNARO SEAL-2026</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-info">
+            <span><strong>پلتفرم سازمانی سینارو (SEYNARO Enterprise Continuity OS)</strong></span>
+            <span>نشانی وب: https://seynaro.ai | ارتباط سازمانی: enterprise@seynaro.ai | تلفن پشتیبانی: ۸۸۹۰۱۰۰۰-۰۲۱</span>
+        </div>
+
+        <div class="footer-right">
+            <div class="footer-hash">AUTH: 9f8a4e21...b8c7</div>
+            <div class="qr-placeholder">
+                QR VERIFIED
+            </div>
+        </div>
+    </footer>
+</div>
+
+</body>
+</html>
